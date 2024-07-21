@@ -1,4 +1,4 @@
-<resources>]
+<resources>
     <string name="app_name">Stempo</string>
 
     <string name="to_string">%s</string>
@@ -9,5 +9,5 @@
     <string name="adapter_not_initialized_error_msg">Adapter is not initialized</string>
     <string name="manager_not_initialized_error_msg">Billing Manager is not initialized</string>
     <string name="view_type_error_msg">Unknown View Type : %d</string>
-    ]
+
 </resources>
