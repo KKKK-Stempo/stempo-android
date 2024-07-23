@@ -74,7 +74,7 @@
                 android:src="@drawable/ic_change" />
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head3"
+                style="@style/TextAppearance.Stempo.Head4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingVertical="15dp"

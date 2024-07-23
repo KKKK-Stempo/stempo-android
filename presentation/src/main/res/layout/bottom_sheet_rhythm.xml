@@ -15,6 +15,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="24dp"
         android:background="@drawable/shape_white_fill_top20_rect">
 
         <View
@@ -171,6 +172,19 @@
                 android:textColor="@{vm.rhythmLevel == 9 ? @color/white : @color/gray700}" />
 
         </GridLayout>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginHorizontal="16dp"
+            android:text="완료하기"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/layout_level_grid"
+            android:paddingVertical="15dp"
+            style="@style/TextAppearance.Stempo.Head4"
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

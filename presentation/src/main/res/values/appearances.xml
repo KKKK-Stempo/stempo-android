@@ -9,25 +9,25 @@
         <item name="android:lineSpacingMultiplier">1.2</item>
     </style>
 
-    <style name="TextAppearance.Stempo.Head0">
+    <style name="TextAppearance.Stempo.Head1">
         <item name="fontFamily">@font/font_pretendard_semibold</item>
         <item name="android:textSize">26sp</item>
         <item name="android:paddingVertical">9sp</item>
     </style>
 
-    <style name="TextAppearance.Stempo.Head1">
+    <style name="TextAppearance.Stempo.Head2">
         <item name="fontFamily">@font/font_pretendard_semibold</item>
         <item name="android:textSize">24sp</item>
         <item name="android:paddingVertical">7sp</item>
     </style>
 
-    <style name="TextAppearance.Stempo.Head2">
+    <style name="TextAppearance.Stempo.Head3">
         <item name="fontFamily">@font/font_pretendard_semibold</item>
         <item name="android:textSize">20sp</item>
         <item name="android:paddingVertical">4sp</item>
     </style>
 
-    <style name="TextAppearance.Stempo.Head3">
+    <style name="TextAppearance.Stempo.Head4">
         <item name="fontFamily">@font/font_pretendard_semibold</item>
         <item name="android:textSize">18sp</item>
         <item name="android:paddingVertical">4sp</item>

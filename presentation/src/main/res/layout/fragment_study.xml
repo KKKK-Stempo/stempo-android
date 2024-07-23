@@ -11,7 +11,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            style="@style/TextAppearance.Stempo.Head0"
+            style="@style/TextAppearance.Stempo.Head1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="학습"
