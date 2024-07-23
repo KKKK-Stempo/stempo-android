@@ -85,4 +85,8 @@ dependencies {
         implementation(circularProgressBar)
         implementation(circleIndicator)
     }
+
+    JitPackDependencies.run {
+        implementation(mpChart)
+    }
 }
