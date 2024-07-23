@@ -8,6 +8,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
+import com.kkkk.presentation.main.MainActivity
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
@@ -58,7 +59,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
     }
 
     private fun navigateToMain() {
-        navigateToScreenClear<OnboardingActivity>()
+        navigateToScreenClear<MainActivity>()
     }
 
     private fun startTimer() {
