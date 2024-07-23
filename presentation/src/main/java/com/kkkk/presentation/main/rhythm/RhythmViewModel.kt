@@ -11,7 +11,7 @@ class RhythmViewModel
 constructor(
     // private val authRepository: AuthRepository,
 ) : ViewModel() {
-    var rhythmLevel = MutableLiveData<Int>()
+    var rhythmLevel = MutableLiveData<Int>(1)
 
     fun changeRhythmLevel(level: Int) {
         rhythmLevel.value = level

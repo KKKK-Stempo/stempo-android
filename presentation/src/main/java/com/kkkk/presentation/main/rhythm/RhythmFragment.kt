@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.colorOf
+import com.kkkk.core.extension.setOnSingleClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentRhythmBinding
@@ -14,6 +15,7 @@ import kr.genti.presentation.databinding.FragmentRhythmBinding
 class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhythm) {
 
     private val viewModel by activityViewModels<RhythmViewModel>()
+    private var rhythmBottomSheet: RhythmBottomSheet? = null
 
     override fun onViewCreated(
         view: View,
@@ -21,7 +23,15 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     ) {
         super.onViewCreated(view, savedInstanceState)
 
+        initChangeLevelBtnListener()
         setCurrentLevel()
+    }
+
+    private fun initChangeLevelBtnListener() {
+        binding.btnChangeLevel.setOnSingleClickListener {
+            rhythmBottomSheet = RhythmBottomSheet()
+            rhythmBottomSheet?.show(parentFragmentManager, BOTTOM_SHEET_CHANGE_LEVEL)
+        }
     }
 
     private fun setCurrentLevel() {
@@ -41,5 +51,14 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             tvRhythmStep.background =
                 ContextCompat.getDrawable(requireContext(), background)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        rhythmBottomSheet = null
+    }
+
+    companion object {
+        private const val BOTTOM_SHEET_CHANGE_LEVEL = "BOTTOM_SHEET_CHANGE_LEVEL"
     }
 }

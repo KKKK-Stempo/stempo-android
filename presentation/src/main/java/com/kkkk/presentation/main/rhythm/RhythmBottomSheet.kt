@@ -6,7 +6,7 @@ import com.kkkk.core.base.BaseBottomSheet
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.BottomSheetRhythmBinding
 
-class MobileBottomSheet :
+class RhythmBottomSheet :
     BaseBottomSheet<BottomSheetRhythmBinding>(R.layout.bottom_sheet_rhythm) {
 
     override fun onStart() {

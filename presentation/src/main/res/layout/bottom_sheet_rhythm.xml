@@ -65,7 +65,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.changeRhythmLevel(1)}"
                 android:text="1"
-                android:textColor="@{vm.rhythmLevel == 1 ? @color/white : @color/gray700}" />
+                android:textColor="@{vm.rhythmLevel == 1 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -78,7 +78,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.changeRhythmLevel(2)}"
                 android:text="2"
-                android:textColor="@{vm.rhythmLevel == 2 ? @color/white : @color/gray700}" />
+                android:textColor="@{vm.rhythmLevel == 2 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -91,7 +91,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.changeRhythmLevel(3)}"
                 android:text="3"
-                android:textColor="@{vm.rhythmLevel == 3 ? @color/white : @color/gray700}" />
+                android:textColor="@{vm.rhythmLevel == 3 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -104,7 +104,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.changeRhythmLevel(4)}"
                 android:text="4"
-                android:textColor="@{vm.rhythmLevel == 4 ? @color/white : @color/gray700}" />
+                android:textColor="@{vm.rhythmLevel == 4 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -117,7 +117,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.changeRhythmLevel(5)}"
                 android:text="5"
-                android:textColor="@{vm.rhythmLevel == 5 ? @color/white : @color/gray700}" />
+                android:textColor="@{vm.rhythmLevel == 5 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -130,7 +130,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.changeRhythmLevel(6)}"
                 android:text="6"
-                android:textColor="@{vm.rhythmLevel == 6 ? @color/white : @color/gray700}" />
+                android:textColor="@{vm.rhythmLevel == 6 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -143,7 +143,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.changeRhythmLevel(7)}"
                 android:text="7"
-                android:textColor="@{vm.rhythmLevel == 7 ? @color/white : @color/gray700}" />
+                android:textColor="@{vm.rhythmLevel == 7 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -156,7 +156,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.changeRhythmLevel(8)}"
                 android:text="8"
-                android:textColor="@{vm.rhythmLevel == 8 ? @color/white : @color/gray700}" />
+                android:textColor="@{vm.rhythmLevel == 8 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -169,7 +169,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.changeRhythmLevel(9)}"
                 android:text="9"
-                android:textColor="@{vm.rhythmLevel == 9 ? @color/white : @color/gray700}" />
+                android:textColor="@{vm.rhythmLevel == 9 ? @color/white : @color/gray_700}" />
 
         </GridLayout>
 
