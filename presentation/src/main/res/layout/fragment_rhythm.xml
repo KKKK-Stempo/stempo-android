@@ -11,14 +11,76 @@
         android:layout_height="match_parent">
 
         <TextView
-            style="@style/TextAppearance.Stempo.Head0"
+            android:id="@+id/tv_rhythm_level"
+            style="@style/TextAppearance.Stempo.Body2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="둠칫"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/shape_purple50_line_17_rect"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:text="1단계 리듬"
+            android:textColor="@color/purple_50"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_rhythm_title"
+            style="@style/TextAppearance.Stempo.Head1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:gravity="center"
+            android:text="@string/rhythm_tv_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_rhythm_level" />
+
+        <TextView
+            android:id="@+id/tv_rhythm_step"
+            style="@style/TextAppearance.Stempo.Body2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="34dp"
+            android:background="@drawable/shape_purple50_line_17_rect"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:text="000 걸음"
+            android:textColor="@color/purple_50"
+            app:layout_constraintBottom_toTopOf="@id/btn_change_level"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/btn_change_level"
+            style="@style/TextAppearance.Stempo.Body2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/shape_dark_fill_12_rect"
+            android:gravity="center"
+            android:textColor="@color/purple_50"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:src="@drawable/ic_change" />
+
+            <TextView
+                style="@style/TextAppearance.Stempo.Head3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="15dp"
+                android:text="@string/rhythm_btn_change_level"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
