@@ -3,7 +3,9 @@ package com.kkkk.presentation.main.onboarding.onbarding
 import android.os.Bundle
 import android.os.CountDownTimer
 import androidx.activity.viewModels
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseActivity
@@ -21,8 +23,12 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        supportFragmentManager.findFragmentById(R.id.fcv_onboarding)
+        initFragmentManager()
         observeOnboardingState()
+    }
+
+    private fun initFragmentManager() {
+        supportFragmentManager.findFragmentById(R.id.fcv_onboarding)
     }
 
     private fun observeOnboardingState() {
@@ -30,36 +36,12 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
             .flowWithLifecycle(lifecycle)
             .onEach { state ->
                 when (state) {
-                    OnboardingState.START -> showStartFragment()
-                    OnboardingState.MEASURE -> showMeasureFragment()
-                    OnboardingState.END -> showEndFragment()
-                    OnboardingState.DONE -> navigateToMain()
+                    OnboardingState.START -> navigateTo<OnboardingStartFragment>()
+                    OnboardingState.MEASURE -> navigateTo<OnboardingMeasureFragment>()
+                    OnboardingState.END -> navigateTo<OnboardingEndFragment>()
+                    OnboardingState.DONE -> navigateToScreenClear<MainActivity>()
                 }
             }.launchIn(lifecycleScope)
-    }
-
-
-    private fun showStartFragment() {
-        supportFragmentManager.commit {
-            replace(R.id.fcv_onboarding, OnboardingStartFragment())
-        }
-    }
-
-    private fun showMeasureFragment() {
-        supportFragmentManager.commit {
-            replace(R.id.fcv_onboarding, OnboardingMeasureFragment())
-        }
-        startTimer()
-    }
-
-    private fun showEndFragment() {
-        supportFragmentManager.commit {
-            replace(R.id.fcv_onboarding, OnboardingEndFragment())
-        }
-    }
-
-    private fun navigateToMain() {
-        navigateToScreenClear<MainActivity>()
     }
 
     private fun startTimer() {
@@ -76,6 +58,12 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
         super.onDestroy()
         if (::timer.isInitialized) {
             timer.cancel()
+        }
+    }
+
+    private inline fun <reified T : Fragment> navigateTo() {
+        supportFragmentManager.commit {
+            replace<T>(R.id.fcv_onboarding, T::class.java.canonicalName)
         }
     }
 }
