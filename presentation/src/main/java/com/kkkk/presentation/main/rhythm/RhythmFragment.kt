@@ -25,8 +25,9 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun setCurrentLevel() {
-        binding.tvRhythmLevel.text = getString(R.string.rhythm_tv_level, viewModel.rhythmLevel)
-        val (textColor, background) = when (viewModel.rhythmLevel % 3) {
+        binding.tvRhythmLevel.text =
+            getString(R.string.rhythm_tv_level, viewModel.rhythmLevel.value)
+        val (textColor, background) = when (viewModel.rhythmLevel.value?.rem(3)) {
             1 -> Pair(R.color.purple_50, R.drawable.shape_purple50_line_17_rect)
             2 -> Pair(R.color.sky_50, R.drawable.shape_sky50_line_17_rect)
             0 -> Pair(R.color.green_50, R.drawable.shape_green50_line_17_rect)

@@ -1,5 +1,6 @@
 package com.kkkk.presentation.main.rhythm
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -10,9 +11,9 @@ class RhythmViewModel
 constructor(
     // private val authRepository: AuthRepository,
 ) : ViewModel() {
-    var rhythmLevel: Int = 1
+    var rhythmLevel = MutableLiveData<Int>()
 
     fun changeRhythmLevel(level: Int) {
-        rhythmLevel = level
+        rhythmLevel.value = level
     }
 }
