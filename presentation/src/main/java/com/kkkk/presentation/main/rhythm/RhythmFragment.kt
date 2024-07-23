@@ -25,6 +25,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
         initChangeLevelBtnListener()
         setCurrentLevel()
+        observeRhythmLevel()
     }
 
     private fun initChangeLevelBtnListener() {
@@ -50,6 +51,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             tvRhythmStep.setTextColor(colorOf(textColor))
             tvRhythmStep.background =
                 ContextCompat.getDrawable(requireContext(), background)
+        }
+    }
+
+    private fun observeRhythmLevel() {
+        viewModel.rhythmLevel.observe(viewLifecycleOwner) {
+            setCurrentLevel()
         }
     }
 
