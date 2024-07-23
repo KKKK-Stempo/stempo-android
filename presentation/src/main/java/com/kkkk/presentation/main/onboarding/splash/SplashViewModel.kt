@@ -1,8 +1,6 @@
 package com.kkkk.presentation.main.onboarding.splash
 
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -23,7 +21,7 @@ class SplashViewModel @Inject constructor(
         initSplash()
     }
 
-    fun initSplash() {
+    private fun initSplash() {
         viewModelScope.launch {
             delay(DELAY_TIME)
             _userState.emit(true) // TODO: 추후 검증 로직이 생길 경우 변경 예정
