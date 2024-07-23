@@ -2,6 +2,7 @@ package com.kkkk.core.extension
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.View
@@ -64,4 +65,12 @@ fun Activity.initFocusWithKeyboard(editText: EditText) {
         editText,
         InputMethodManager.SHOW_IMPLICIT,
     )
+}
+
+inline fun <reified T : Activity> Activity.navigateToScreenClear() {
+    Intent(this, T::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(this)
+    }
+    finish()
 }

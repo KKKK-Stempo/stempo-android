@@ -13,4 +13,8 @@
 
     <style name="Theme.Stempo" parent="Base.Theme.Stempo" />
 
+    <style name="splash_delete" parent="Base.Theme.Stempo">
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
 </resources>
