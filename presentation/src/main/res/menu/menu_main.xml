@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_rhythm"
+        android:icon="@drawable/sel_bnv_rhythm"
+        android:title="@string/menu_rhythm" />
+
+    <item
+        android:id="@+id/menu_report"
+        android:icon="@drawable/sel_bnv_report"
+        android:title="@string/menu_report" />
+
+    <item
+        android:id="@+id/menu_study"
+        android:icon="@drawable/sel_bnv_study"
+        android:title="@string/menu_study" />
+
+    <item
+        android:id="@+id/menu_profile"
+        android:icon="@drawable/sel_bnv_my"
+        android:title="@string/menu_profile" />
+</menu>

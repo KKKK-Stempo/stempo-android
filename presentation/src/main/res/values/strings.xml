@@ -10,4 +10,9 @@
     <string name="manager_not_initialized_error_msg">Billing Manager is not initialized</string>
     <string name="view_type_error_msg">Unknown View Type : %d</string>
 
+    <string name="menu_rhythm">리듬</string>
+    <string name="menu_report">기록</string>
+    <string name="menu_study">학습</string>
+    <string name="menu_profile">마이</string>
+
 </resources>
