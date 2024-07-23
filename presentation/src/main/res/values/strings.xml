@@ -20,4 +20,8 @@
     <string name="rhythm_btn_change_level">단계 변경하기</string>
     <string name="rhythm_btn_submit_level">완료하기</string>
 
+    <string name="report_tv_title">동안의 성과에요!</string>
+    <string name="report_tv_achieve_title">달성한 업적</string>
+    <string name="report_btn_achieve_full">전체보기</string>
+
 </resources>
