@@ -15,4 +15,9 @@
     <string name="menu_study">학습</string>
     <string name="menu_profile">마이</string>
 
+    <string name="rhythm_tv_level">%d단계 리듬</string>
+    <string name="rhythm_tv_title">리듬에 맞춰 걸어주세요!</string>
+    <string name="rhythm_btn_change_level">단계 변경하기</string>
+    <string name="rhythm_btn_submit_level">완료하기</string>
+
 </resources>

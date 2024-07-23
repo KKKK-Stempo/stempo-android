@@ -6,6 +6,9 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
 
+        <!-- styles -->
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+
     </style>
 
     <style name="Theme.Stempo" parent="Base.Theme.Stempo" />
