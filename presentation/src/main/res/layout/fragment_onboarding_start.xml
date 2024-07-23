@@ -10,15 +10,38 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            style="@style/TextAppearance.Stempo.Head1"
+        <ImageView
+            android:id="@+id/iv_onboarding_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Start"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="31dp"
+            android:src="@drawable/ic_logo_full_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_onboarding_title"
+            style="@style/TextAppearance.Stempo.Head1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="39dp"
+            android:gravity="center"
+            android:text="리듬 추천을 위해\n보행속도 정보가 필요해요\n진행하시겠어요?"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_onboarding_logo" />
+
+        <ImageView
+            android:id="@+id/iv_onboarding_logo_illustration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="31dp"
+            android:src="@drawable/ic_logo_illustration"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_onboarding_title"
+            />
 
 
         <TextView
