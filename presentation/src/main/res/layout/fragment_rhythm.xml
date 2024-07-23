@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -19,11 +20,11 @@
             android:background="@drawable/shape_purple50_line_17_rect"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
-            android:text="1단계 리듬"
             android:textColor="@color/purple_50"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="1단계 리듬" />
 
         <TextView
             android:id="@+id/tv_rhythm_title"
