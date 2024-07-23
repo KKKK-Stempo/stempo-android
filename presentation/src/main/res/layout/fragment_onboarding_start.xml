@@ -11,7 +11,7 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/iv_onboarding_logo"
+            android:id="@+id/iv_onboarding_start_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="31dp"
@@ -21,7 +21,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_onboarding_title"
+            android:id="@+id/tv_onboarding_start_title"
             style="@style/TextAppearance.Stempo.Head1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,22 +30,22 @@
             android:text="리듬 추천을 위해\n보행속도 정보가 필요해요\n진행하시겠어요?"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_onboarding_logo" />
+            app:layout_constraintTop_toBottomOf="@id/iv_onboarding_start_logo" />
 
         <ImageView
-            android:id="@+id/iv_onboarding_logo_illustration"
+            android:id="@+id/iv_onboarding_start_logo_illustration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="31dp"
             android:src="@drawable/ic_logo_illustration"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_onboarding_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_onboarding_start_title"
             />
 
 
         <TextView
-            android:id="@+id/btn_onboarding_measure"
+            android:id="@+id/btn_onboarding_start_measure"
             style="@style/TextAppearance.Stempo.Head4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -56,12 +56,12 @@
             android:paddingVertical="15dp"
             android:text="보행속도 측정하기"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@id/btn_onboarding_later"
+            app:layout_constraintBottom_toTopOf="@id/btn_onboarding_start_later"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/btn_onboarding_later"
+            android:id="@+id/btn_onboarding_start_later"
             style="@style/TextAppearance.Stempo.Head4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
