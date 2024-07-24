@@ -16,10 +16,3 @@ class OnboardingViewModel @Inject constructor(
         _state.value = newState
     }
 }
-
-enum class OnboardingState {
-    START,
-    MEASURE,
-    END,
-    DONE
-}
