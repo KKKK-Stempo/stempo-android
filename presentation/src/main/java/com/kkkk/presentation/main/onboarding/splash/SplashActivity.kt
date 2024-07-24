@@ -8,7 +8,7 @@ import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.core.extension.setNavigationBarColorFromResource
 import com.kkkk.core.extension.setStatusBarColorFromResource
-import com.kkkk.presentation.main.MainActivity
+import com.kkkk.presentation.main.onboarding.onbarding.OnboardingActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -32,7 +32,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
     private fun observeUserState() {
         viewModel.userState.flowWithLifecycle(lifecycle).onEach { state ->
-            navigateToScreenClear<MainActivity>()
+            navigateToScreenClear<OnboardingActivity>()
         }.launchIn(lifecycleScope)
     }
 }
