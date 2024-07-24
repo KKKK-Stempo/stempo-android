@@ -26,7 +26,7 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
         Pair(10f, "2024-02-28"),
         Pair(20f, "2024-03-28"),
         Pair(30f, "2024-04-29"),
-        Pair(50f, "2024-05-23"),
+        Pair(100f, "2024-05-23"),
         Pair(90f, "2024-06-13")
     )
 
@@ -89,7 +89,10 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
                 textSize = 15f
                 textColor = colorOf(R.color.gray_600)
             }
-            axisLeft.isEnabled = false
+            axisLeft.apply {
+                isEnabled = false
+                axisMaximum = 100f
+            }
             axisRight.isEnabled = false
             legend.isEnabled = false
             description.isEnabled = false
