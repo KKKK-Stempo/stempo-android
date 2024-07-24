@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.text.TextUtils.replace
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.WindowInsets
@@ -13,6 +14,8 @@ import android.widget.EditText
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.kkkk.core.R
 
 fun Activity.setStatusBarColorFromResource(colorResId: Int) {
     val statusBarColor = ContextCompat.getColor(this, colorResId)
