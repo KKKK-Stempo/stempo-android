@@ -24,11 +24,12 @@
         android:layout_marginHorizontal="18dp"
         android:layout_marginTop="18dp"
         android:gravity="start"
-        android:text="영상 제목"
+        android:singleLine="true"
         android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_study_exercise_thumbnail" />
+        app:layout_constraintTop_toBottomOf="@id/iv_study_exercise_thumbnail"
+        tools:text="영상 제목" />
 
     <TextView
         android:id="@+id/tv_study_exercise_content"
@@ -39,11 +40,11 @@
         android:layout_marginBottom="18dp"
         android:gravity="start"
         android:singleLine="true"
-        android:text="보조설명 보조설명 보조설명 보조설명 보조설명"
         android:textColor="@color/gray_600"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_study_exercise_title" />
+        app:layout_constraintTop_toBottomOf="@id/tv_study_exercise_title"
+        tools:text="보조설명 보조설명 보조설명 보조설명 보조설명" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
