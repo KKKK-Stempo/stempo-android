@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -24,9 +25,9 @@
             android:layout_marginStart="18dp"
             android:layout_marginTop="32dp"
             android:onClick="@{() -> vm.setIsChangingMonth()}"
-            android:text="3개월"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="3개월" />
 
         <ImageView
             android:id="@+id/btn_change_month"
@@ -59,7 +60,7 @@
                 android:onClick="@{() -> vm.setReportMonth(1)}"
                 android:paddingHorizontal="44dp"
                 android:paddingVertical="9dp"
-                android:text="1개월"
+                android:text="@string/report_tv_month_1"
                 android:textColor="@{vm.reportMonth == 1 ? @color/purple_50 : @color/gray_300}" />
 
             <TextView
@@ -70,7 +71,7 @@
                 android:onClick="@{() -> vm.setReportMonth(3)}"
                 android:paddingHorizontal="44dp"
                 android:paddingVertical="9dp"
-                android:text="3개월"
+                android:text="@string/report_tv_month_3"
                 android:textColor="@{vm.reportMonth == 3 ? @color/purple_50 : @color/gray_300}" />
 
             <TextView
@@ -81,7 +82,7 @@
                 android:onClick="@{() -> vm.setReportMonth(6)}"
                 android:paddingHorizontal="44dp"
                 android:paddingVertical="9dp"
-                android:text="6개월"
+                android:text="@string/report_tv_month_6"
                 android:textColor="@{vm.reportMonth == 6 ? @color/purple_50 : @color/gray_300}" />
 
         </LinearLayout>

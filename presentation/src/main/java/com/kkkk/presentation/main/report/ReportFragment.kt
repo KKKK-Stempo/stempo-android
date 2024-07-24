@@ -3,6 +3,8 @@ package com.kkkk.presentation.main.report
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
@@ -10,7 +12,11 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.colorOf
+import com.kkkk.core.extension.stringOf
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentReportBinding
 import java.text.SimpleDateFormat
@@ -28,16 +34,37 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
         super.onViewCreated(view, savedInstanceState)
 
         binding.vm = viewModel
-        setGraphData()
-        setGraphSettings()
+        observeReportMonth()
+        observeChartEntry()
     }
 
-    private fun setGraphData() {
-        viewModel.setGraphValue()
-        binding.chartReport.apply {
-            data = LineData(LineDataSet(viewModel.chartEntry, CHART_REPORT).setDataSettings())
-            invalidate()
+    private fun observeReportMonth() {
+        viewModel.reportMonth.observe(viewLifecycleOwner) { month ->
+            binding.tvReportMonth.text = when (month) {
+                1 -> stringOf(R.string.report_tv_month_1)
+                3 -> stringOf(R.string.report_tv_month_3)
+                6 -> stringOf(R.string.report_tv_month_6)
+                else -> return@observe
+            }
+            viewModel.setGraphValue()
         }
+    }
+
+    private fun observeChartEntry() {
+        viewModel.chartEntry.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach {
+            if (it.isNotEmpty()) {
+                binding.chartReport.apply {
+                    data = LineData(
+                        LineDataSet(
+                            viewModel.chartEntry.value,
+                            CHART_REPORT
+                        ).setDataSettings()
+                    )
+                    invalidate()
+                }
+                setGraphSettings()
+            }
+        }.launchIn(lifecycleScope)
     }
 
     private fun LineDataSet.setDataSettings(): LineDataSet {
@@ -69,8 +96,8 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
         chart.xAxis.apply {
             valueFormatter = object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String? {
-                    return if (value.toInt() in viewModel.mockList.indices) {
-                        DATE_FORMAT.parse(viewModel.mockList[value.toInt()].second)
+                    return if (value.toInt() in viewModel.nowList.indices) {
+                        DATE_FORMAT.parse(viewModel.nowList[value.toInt()].second)
                             ?.let { DISPLAY_DATE_FORMAT.format(it) }
                     } else {
                         ""
@@ -80,7 +107,7 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
             position = XAxis.XAxisPosition.BOTTOM
             granularity = 1f
             axisMinimum = 0.7f
-            axisMaximum = viewModel.chartEntry.size - 0.8f
+            axisMaximum = viewModel.chartEntry.value.size - 0.8f
             setDrawGridLines(false)
             setDrawAxisLine(false)
             textSize = 15f

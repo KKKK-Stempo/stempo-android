@@ -24,4 +24,8 @@
     <string name="report_tv_achieve_title">달성한 업적</string>
     <string name="report_btn_achieve_full">전체보기</string>
 
+    <string name="report_tv_month_1">1개월</string>
+    <string name="report_tv_month_3">3개월</string>
+    <string name="report_tv_month_6">6개월</string>
+
 </resources>
