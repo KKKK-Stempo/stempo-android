@@ -12,6 +12,8 @@
 
     <string name="getting_start">시작하기</string>
     <string name="do_later">나중에 할래요</string>
+    <string name="before_page">이전페이지</string>
+    <string name="next_page">다음페이지</string>
 
     <string name="menu_rhythm">리듬</string>
     <string name="menu_report">기록</string>
