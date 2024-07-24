@@ -27,6 +27,7 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
     ) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.vm = viewModel
         setGraphData()
         setGraphSettings()
     }

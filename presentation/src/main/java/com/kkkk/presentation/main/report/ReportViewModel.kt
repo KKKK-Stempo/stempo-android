@@ -1,9 +1,9 @@
 package com.kkkk.presentation.main.report
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.mikephil.charting.data.Entry
 import dagger.hilt.android.lifecycle.HiltViewModel
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -12,6 +12,10 @@ class ReportViewModel
 constructor(
     // private val authRepository: AuthRepository,
 ) : ViewModel() {
+
+    val isChangingMonth = MutableLiveData<Boolean>(false)
+    val reportMonth = MutableLiveData<Int>(1)
+
     var chartEntry = arrayListOf<Entry>()
     val mockList = listOf(
         Pair(10f, "2024-02-28"),
@@ -21,6 +25,15 @@ constructor(
         Pair(100f, "2024-05-23"),
         Pair(90f, "2024-06-13")
     )
+
+    fun setIsChangingMonth() {
+        isChangingMonth.value = isChangingMonth.value?.not() ?: false
+    }
+
+    fun setReportMonth(month: Int) {
+        reportMonth.value = month
+        isChangingMonth.value = false
+    }
 
     fun setGraphValue() {
         chartEntry = arrayListOf<Entry>()

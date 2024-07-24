@@ -4,6 +4,12 @@
 
     <data>
 
+        <import type="android.view.View" />
+
+        <variable
+            name="vm"
+            type="com.kkkk.presentation.main.report.ReportViewModel" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,9 +23,68 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="18dp"
             android:layout_marginTop="32dp"
+            android:onClick="@{() -> vm.setIsChangingMonth()}"
             android:text="3개월"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/btn_change_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> vm.setIsChangingMonth()}"
+            android:src="@{vm.isChangingMonth ? @drawable/ic_drop_up : @drawable/ic_drop_down}"
+            app:layout_constraintBottom_toBottomOf="@id/tv_report_month"
+            app:layout_constraintStart_toEndOf="@id/tv_report_month"
+            app:layout_constraintTop_toTopOf="@id/tv_report_month" />
+
+        <LinearLayout
+            android:id="@+id/layout_change_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="@color/white"
+            android:elevation="5dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="@{vm.isChangingMonth ? View.VISIBLE : View.GONE}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_change_month">
+
+            <TextView
+                style="@style/TextAppearance.Stempo.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@{vm.reportMonth == 1 ? @color/purple_10 : @color/white}"
+                android:onClick="@{() -> vm.setReportMonth(1)}"
+                android:paddingHorizontal="44dp"
+                android:paddingVertical="9dp"
+                android:text="1개월"
+                android:textColor="@{vm.reportMonth == 1 ? @color/purple_50 : @color/gray_300}" />
+
+            <TextView
+                style="@style/TextAppearance.Stempo.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@{vm.reportMonth == 3 ? @color/purple_10 : @color/white}"
+                android:onClick="@{() -> vm.setReportMonth(3)}"
+                android:paddingHorizontal="44dp"
+                android:paddingVertical="9dp"
+                android:text="3개월"
+                android:textColor="@{vm.reportMonth == 3 ? @color/purple_50 : @color/gray_300}" />
+
+            <TextView
+                style="@style/TextAppearance.Stempo.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@{vm.reportMonth == 6 ? @color/purple_10 : @color/white}"
+                android:onClick="@{() -> vm.setReportMonth(6)}"
+                android:paddingHorizontal="44dp"
+                android:paddingVertical="9dp"
+                android:text="6개월"
+                android:textColor="@{vm.reportMonth == 6 ? @color/purple_50 : @color/gray_300}" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_report_title"
@@ -36,8 +101,9 @@
             android:id="@+id/border_chart_top"
             android:layout_width="0dp"
             android:layout_height="2dp"
-            android:layout_marginHorizontal="16dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="14dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/shape_gray300_dash_line"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -47,28 +113,27 @@
             android:id="@+id/border_chart_mid"
             android:layout_width="0dp"
             android:layout_height="2dp"
-            android:layout_marginHorizontal="16dp"
             android:background="@drawable/shape_gray300_dash_line"
             app:layout_constraintBottom_toBottomOf="@id/border_chart_bottom"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/border_chart_top"
+            app:layout_constraintStart_toStartOf="@id/border_chart_top"
             app:layout_constraintTop_toTopOf="@id/border_chart_top" />
 
         <View
             android:id="@+id/border_chart_bottom"
             android:layout_width="0dp"
             android:layout_height="2dp"
-            android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="37dp"
             android:background="@drawable/shape_gray300_dash_line"
             app:layout_constraintBottom_toBottomOf="@id/chart_report"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toEndOf="@id/border_chart_top"
+            app:layout_constraintStart_toStartOf="@id/border_chart_top" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart_report"
             android:layout_width="0dp"
             android:layout_height="300dp"
+            android:layout_marginHorizontal="5dp"
             android:layout_marginTop="26dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -103,7 +168,6 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
