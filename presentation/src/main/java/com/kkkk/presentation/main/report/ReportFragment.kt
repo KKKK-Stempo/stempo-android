@@ -2,14 +2,14 @@ package com.kkkk.presentation.main.report
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.colorOf
-import com.kkkk.core.extension.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentReportBinding
@@ -19,16 +19,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_report) {
 
-    val chartEntry = arrayListOf<Entry>()
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    private val displayDateFormat = SimpleDateFormat("MM/dd", Locale.getDefault())
-    private val mockList = listOf(
-        Pair(10f, "2024-02-28"),
-        Pair(20f, "2024-03-28"),
-        Pair(30f, "2024-04-29"),
-        Pair(100f, "2024-05-23"),
-        Pair(90f, "2024-06-13")
-    )
+    private val viewModel by activityViewModels<ReportViewModel>()
 
     override fun onViewCreated(
         view: View,
@@ -41,11 +32,9 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
     }
 
     private fun setGraphData() {
-        mockList.forEachIndexed { index, (value, _) ->
-            chartEntry.add(Entry(index.toFloat(), value))
-        }
+        viewModel.setGraphValue()
         binding.chartReport.apply {
-            data = LineData(LineDataSet(chartEntry, CHART_REPORT).setDataSettings())
+            data = LineData(LineDataSet(viewModel.chartEntry, CHART_REPORT).setDataSettings())
             invalidate()
         }
     }
@@ -69,31 +58,45 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
 
     private fun setGraphSettings() {
         binding.chartReport.apply {
-            xAxis.apply {
-                valueFormatter = object : ValueFormatter() {
-                    override fun getFormattedValue(value: Float): String {
-                        val index = value.toInt()
-                        return if (index in mockList.indices) {
-                            displayDateFormat.format(dateFormat.parse(mockList[index].second))
-                        } else {
-                            ""
-                        }
+            setXAxisSettings(this)
+            setYAxisSettings(this)
+            setCommonSettings(this)
+        }
+    }
+
+    private fun setXAxisSettings(chart: LineChart) {
+        chart.xAxis.apply {
+            valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String? {
+                    return if (value.toInt() in viewModel.mockList.indices) {
+                        DATE_FORMAT.parse(viewModel.mockList[value.toInt()].second)
+                            ?.let { DISPLAY_DATE_FORMAT.format(it) }
+                    } else {
+                        ""
                     }
                 }
-                position = XAxis.XAxisPosition.BOTTOM
-                granularity = 1f
-                axisMinimum = 0.7f
-                axisMaximum = mockList.size - 0.8f
-                setDrawGridLines(false)
-                setDrawAxisLine(false)
-                textSize = 15f
-                textColor = colorOf(R.color.gray_600)
             }
-            axisLeft.apply {
-                isEnabled = false
-                axisMaximum = 100f
-            }
-            axisRight.isEnabled = false
+            position = XAxis.XAxisPosition.BOTTOM
+            granularity = 1f
+            axisMinimum = 0.7f
+            axisMaximum = viewModel.chartEntry.size - 0.8f
+            setDrawGridLines(false)
+            setDrawAxisLine(false)
+            textSize = 15f
+            textColor = colorOf(R.color.gray_600)
+        }
+    }
+
+    private fun setYAxisSettings(chart: LineChart) {
+        chart.axisLeft.apply {
+            isEnabled = false
+            axisMaximum = 100f
+        }
+        chart.axisRight.isEnabled = false
+    }
+
+    private fun setCommonSettings(chart: LineChart) {
+        chart.apply {
             legend.isEnabled = false
             description.isEnabled = false
             setScaleEnabled(false)
@@ -104,5 +107,7 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
 
     companion object {
         private const val CHART_REPORT = "CHART_REPORT"
+        val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val DISPLAY_DATE_FORMAT = SimpleDateFormat("MM/dd", Locale.getDefault())
     }
 }
