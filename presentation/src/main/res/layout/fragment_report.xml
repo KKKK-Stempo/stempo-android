@@ -45,7 +45,7 @@
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="37dp"
             android:background="@drawable/shape_gray300_dash_line"
             app:layout_constraintBottom_toBottomOf="@id/chart_report"
             app:layout_constraintEnd_toEndOf="parent"
@@ -56,11 +56,11 @@
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="37dp"
             android:background="@drawable/shape_gray300_dash_line"
             app:layout_constraintBottom_toBottomOf="@id/chart_report"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart_report"

@@ -9,6 +9,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.colorOf
+import com.kkkk.core.extension.dpToPx
 import dagger.hilt.android.AndroidEntryPoint
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentReportBinding
@@ -20,7 +21,7 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
 
     val chartEntry = arrayListOf<Entry>()
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    private val displayDateFormat = SimpleDateFormat("MMdd", Locale.getDefault())
+    private val displayDateFormat = SimpleDateFormat("MM/dd", Locale.getDefault())
     private val mockList = listOf(
         Pair(10f, "2024-02-28"),
         Pair(20f, "2024-03-28"),
@@ -85,6 +86,8 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
                 axisMaximum = mockList.size - 0.8f
                 setDrawGridLines(false)
                 setDrawAxisLine(false)
+                textSize = 15f
+                textColor = colorOf(R.color.gray_600)
             }
             axisLeft.isEnabled = false
             axisRight.isEnabled = false
@@ -92,6 +95,7 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
             description.isEnabled = false
             setScaleEnabled(false)
             setDragEnabled(false)
+            setExtraOffsets(0f, 0f, 0f, 20f)
         }
     }
 
