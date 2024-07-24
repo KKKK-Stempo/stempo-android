@@ -25,17 +25,48 @@
             android:id="@+id/tv_report_title"
             style="@style/TextAppearance.Stempo.Head1"
             android:layout_width="wrap_content"
-            android:layout_marginTop="-5dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="18dp"
+            android:layout_marginTop="-5dp"
             android:text="@string/report_tv_title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_report_month" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="@drawable/shape_gray300_dash_line"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/chart_report" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/shape_gray300_dash_line"
+            app:layout_constraintBottom_toBottomOf="@id/chart_report"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/chart_report" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/shape_gray300_dash_line"
+            app:layout_constraintBottom_toBottomOf="@id/chart_report"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart_report"
             android:layout_width="0dp"
             android:layout_height="300dp"
+            android:layout_marginTop="26dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_report_title" />

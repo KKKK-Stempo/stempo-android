@@ -56,9 +56,10 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
             setCircleColor(colorOf(R.color.purple_50))
             setDrawFilled(true)
             setDrawValues(false)
-            lineWidth = 3F
+            lineWidth = 4F
             setDrawCircleHole(false)
             fillColor = colorOf(R.color.purple_10)
+            fillAlpha = 255
             isHighlightEnabled = false
             mode = LineDataSet.Mode.LINEAR
         }
