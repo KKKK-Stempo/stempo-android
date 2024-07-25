@@ -20,8 +20,7 @@
             app:tabIndicatorColor="@color/purple_50"
             app:tabIndicatorFullWidth="true"
             app:tabIndicatorHeight="4dp"
-            app:tabUnboundedRipple="true"
-            app:tabRippleColor="@android:color/transparent"
+            app:tabRippleColor="@android:color/white"
             app:tabSelectedTextColor="@color/black"
             app:tabTextAppearance="@style/TextAppearance.Stempo.Head3"
             app:tabTextColor="@color/gray_500" />
