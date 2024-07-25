@@ -2,7 +2,9 @@ package com.kkkk.core.extension
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Build
+import android.text.TextUtils.replace
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.WindowInsets
@@ -12,6 +14,8 @@ import android.widget.EditText
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.kkkk.core.R
 
 fun Activity.setStatusBarColorFromResource(colorResId: Int) {
     val statusBarColor = ContextCompat.getColor(this, colorResId)
@@ -64,4 +68,12 @@ fun Activity.initFocusWithKeyboard(editText: EditText) {
         editText,
         InputMethodManager.SHOW_IMPLICIT,
     )
+}
+
+inline fun <reified T : Activity> Activity.navigateToScreenClear() {
+    Intent(this, T::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(this)
+    }
+    finish()
 }

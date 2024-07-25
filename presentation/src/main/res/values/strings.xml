@@ -10,6 +10,9 @@
     <string name="manager_not_initialized_error_msg">Billing Manager is not initialized</string>
     <string name="view_type_error_msg">Unknown View Type : %d</string>
 
+    <string name="getting_start">시작하기</string>
+    <string name="do_later">나중에 할래요</string>
+
     <string name="menu_rhythm">리듬</string>
     <string name="menu_report">기록</string>
     <string name="menu_study">학습</string>
@@ -27,5 +30,14 @@
     <string name="report_tv_month_1">1개월</string>
     <string name="report_tv_month_3">3개월</string>
     <string name="report_tv_month_6">6개월</string>
+
+    <string name="onboarding_start_tv_title">리듬 추천을 위해\n보행속도 정보가 필요해요\n진행하시겠어요?</string>
+    <string name="onboarding_start_measure_button">보행속도 측정하기</string>
+
+    <string name="onboarding_measure_tv_title">보행속도를 측정합니다</string>
+    <string name="onboarding_measure_tv_subtitle">평소와 같은 걸음으로\n약 1분간 걸어주세요</string>
+
+    <string name="onboarding_end_tv_title">측정이 완료되었습니다</string>
+    <string name="onboarding_end_tv_subtitle">스템포를 시작해볼까요?</string>
 
 </resources>
