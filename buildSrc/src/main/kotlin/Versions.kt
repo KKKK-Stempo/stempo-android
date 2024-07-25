@@ -34,6 +34,8 @@ object Versions {
     const val circleIndicatorVersion = "2.1.6"
     const val shimmerVersion = "0.5.0"
 
+    const val mpChartVersion = "v3.1.0"
+
     const val junitVersion = "4.13.2"
     const val espressoVersion = "3.5.1"
     const val androidTestVersion = "1.1.2"
