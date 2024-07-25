@@ -19,7 +19,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:tabIndicatorColor="@color/purple_50"
             app:tabIndicatorFullWidth="true"
-            app:tabIndicatorHeight="2dp"
+            app:tabIndicatorHeight="4dp"
             app:tabUnboundedRipple="true"
             app:tabRippleColor="@android:color/transparent"
             app:tabSelectedTextColor="@color/black"
