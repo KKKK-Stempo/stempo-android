@@ -6,9 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.kkkk.core.state.UiState
 import com.kkkk.domain.repository.RhythmRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,7 +32,7 @@ constructor(
 
     fun postToGetRhythmFromServer() {
         viewModelScope.launch {
-            rhythmRepository.postToGetRhythm(bpm)
+            rhythmRepository.postToGetRhythmUrl(bpm)
                 .onSuccess {
                     currentMedia = it
                     _rhythmState.value = UiState.Success(it)

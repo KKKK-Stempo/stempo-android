@@ -10,7 +10,7 @@ constructor(
     private val rhythmDataSource: RhythmDataSource,
 ) : RhythmRepository {
 
-    override suspend fun postToGetRhythm(bpm: Int): Result<String> =
+    override suspend fun postToGetRhythmUrl(bpm: Int): Result<String> =
         runCatching {
             rhythmDataSource.postToGetRhythm(bpm).data
         }
