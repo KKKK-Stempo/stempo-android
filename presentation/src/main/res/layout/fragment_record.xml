@@ -98,47 +98,73 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_report_month" />
 
-        <View
-            android:id="@+id/border_chart_top"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_chart"
             android:layout_width="0dp"
-            android:layout_height="2dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/shape_gray300_dash_line"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/chart_report" />
+            app:layout_constraintTop_toBottomOf="@id/tv_report_title">
 
-        <View
-            android:id="@+id/border_chart_mid"
-            android:layout_width="0dp"
-            android:layout_height="2dp"
-            android:background="@drawable/shape_gray300_dash_line"
-            app:layout_constraintBottom_toBottomOf="@id/border_chart_bottom"
-            app:layout_constraintEnd_toEndOf="@id/border_chart_top"
-            app:layout_constraintStart_toStartOf="@id/border_chart_top"
-            app:layout_constraintTop_toTopOf="@id/border_chart_top" />
+            <View
+                android:id="@+id/border_chart_top"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/shape_gray300_dash_line"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/chart_report" />
 
-        <View
-            android:id="@+id/border_chart_bottom"
-            android:layout_width="0dp"
-            android:layout_height="2dp"
-            android:layout_marginBottom="37dp"
-            android:background="@drawable/shape_gray300_dash_line"
-            app:layout_constraintBottom_toBottomOf="@id/chart_report"
-            app:layout_constraintEnd_toEndOf="@id/border_chart_top"
-            app:layout_constraintStart_toStartOf="@id/border_chart_top" />
+            <View
+                android:id="@+id/border_chart_mid"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:background="@drawable/shape_gray300_dash_line"
+                app:layout_constraintBottom_toBottomOf="@id/border_chart_bottom"
+                app:layout_constraintEnd_toEndOf="@id/border_chart_top"
+                app:layout_constraintStart_toStartOf="@id/border_chart_top"
+                app:layout_constraintTop_toTopOf="@id/border_chart_top" />
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/chart_report"
+            <View
+                android:id="@+id/border_chart_bottom"
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginBottom="37dp"
+                android:background="@drawable/shape_gray300_dash_line"
+                app:layout_constraintBottom_toBottomOf="@id/chart_report"
+                app:layout_constraintEnd_toEndOf="@id/border_chart_top"
+                app:layout_constraintStart_toStartOf="@id/border_chart_top" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chart_report"
+                android:layout_width="0dp"
+                android:layout_height="300dp"
+                android:layout_marginHorizontal="5dp"
+                android:layout_marginTop="26dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/iv_chart_loading"
             android:layout_width="0dp"
-            android:layout_height="300dp"
-            android:layout_marginHorizontal="5dp"
-            android:layout_marginTop="26dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_report_title" />
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="@drawable/shape_gray100_fill_8_rect"
+            android:paddingTop="28dp"
+            android:paddingBottom="30dp"
+            android:src="@drawable/img_record_empty"
+            app:layout_constraintBottom_toBottomOf="@id/layout_chart"
+            app:layout_constraintEnd_toEndOf="@id/layout_chart"
+            app:layout_constraintStart_toStartOf="@id/layout_chart"
+            app:layout_constraintTop_toTopOf="@id/layout_chart"
+            tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_report_achieve"
@@ -147,7 +173,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/chart_report">
+            app:layout_constraintTop_toBottomOf="@id/layout_chart">
 
             <TextView
                 android:id="@+id/tv_report_achieve_title"

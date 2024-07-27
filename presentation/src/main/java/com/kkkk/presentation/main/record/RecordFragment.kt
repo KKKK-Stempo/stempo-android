@@ -2,6 +2,7 @@ package com.kkkk.presentation.main.record
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -53,6 +54,8 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
         viewModel.chartEntry.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { state ->
             when (state) {
                 is UiState.Success -> {
+                    binding.ivChartLoading.isVisible = false
+                    binding.layoutChart.isVisible = true
                     binding.chartReport.apply {
                         data = LineData(LineDataSet(state.data, CHART_RECORD).setDataSettings())
                         invalidate()
@@ -60,8 +63,14 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
                     setGraphSettings()
                 }
 
-                is UiState.Failure -> toast(stringOf(R.string.error_msg))
-                else -> return@onEach
+                is UiState.Failure -> {
+                    binding.ivChartLoading.isVisible = true
+                    toast(stringOf(R.string.error_msg))
+                }
+
+                is UiState.Loading -> binding.ivChartLoading.isVisible = false
+
+                is UiState.Empty -> binding.ivChartLoading.isVisible = true
             }
         }.launchIn(lifecycleScope)
     }
