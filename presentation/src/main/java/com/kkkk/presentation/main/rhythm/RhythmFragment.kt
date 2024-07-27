@@ -1,8 +1,10 @@
 package com.kkkk.presentation.main.rhythm
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +26,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private val viewModel by activityViewModels<RhythmViewModel>()
     private var rhythmBottomSheet: RhythmBottomSheet? = null
+    private lateinit var mediaPlayer: MediaPlayer
 
     override fun onViewCreated(
         view: View,
@@ -32,7 +35,8 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         super.onViewCreated(view, savedInstanceState)
 
         initChangeLevelBtnListener()
-        setCurrentLevel()
+        initPlayBtnListener()
+        initStopBtnListener()
         observeRhythmLevel()
         observeRhythmState()
     }
@@ -41,6 +45,33 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         binding.btnChangeLevel.setOnSingleClickListener {
             rhythmBottomSheet = RhythmBottomSheet()
             rhythmBottomSheet?.show(parentFragmentManager, BOTTOM_SHEET_CHANGE_LEVEL)
+        }
+    }
+
+    private fun initPlayBtnListener() {
+        binding.btnRhythmPlay.setOnSingleClickListener {
+            if (::mediaPlayer.isInitialized && viewModel.currentMedia.isNotBlank()) {
+                mediaPlayer.start()
+                switchPlayingState(true)
+            } else {
+                toast(stringOf(R.string.error_msg))
+            }
+        }
+    }
+
+    private fun initStopBtnListener() {
+        binding.btnRhythmStop.setOnSingleClickListener {
+            if (::mediaPlayer.isInitialized && viewModel.currentMedia.isNotBlank()) {
+                mediaPlayer.pause()
+                switchPlayingState(false)
+            }
+        }
+    }
+
+    private fun switchPlayingState(start: Boolean) {
+        with(binding) {
+            btnRhythmPlay.isVisible = !start
+            btnRhythmStop.isVisible = start
         }
     }
 
@@ -74,7 +105,11 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         viewModel.rhythmState.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { state ->
             when (state) {
                 is UiState.Success -> {
-
+                    if (::mediaPlayer.isInitialized) mediaPlayer.release()
+                    mediaPlayer = MediaPlayer().apply {
+                        setDataSource(viewModel.currentMedia)
+                        prepare()
+                    }
                 }
 
                 is UiState.Failure -> toast(stringOf(R.string.error_msg))
@@ -86,6 +121,9 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     override fun onDestroyView() {
         super.onDestroyView()
         rhythmBottomSheet = null
+        if (::mediaPlayer.isInitialized) {
+            mediaPlayer.release()
+        }
     }
 
     companion object {
