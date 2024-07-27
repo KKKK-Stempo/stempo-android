@@ -9,7 +9,7 @@
 
         <variable
             name="vm"
-            type="com.kkkk.presentation.main.report.ReportViewModel" />
+            type="com.kkkk.presentation.main.record.RecordViewModel" />
 
     </data>
 
