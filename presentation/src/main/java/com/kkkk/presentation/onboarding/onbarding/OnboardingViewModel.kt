@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.onboarding.onbarding
+package com.kkkk.presentation.onboarding.onbarding
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

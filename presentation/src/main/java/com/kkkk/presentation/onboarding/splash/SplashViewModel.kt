@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.onboarding.splash
+package com.kkkk.presentation.onboarding.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
