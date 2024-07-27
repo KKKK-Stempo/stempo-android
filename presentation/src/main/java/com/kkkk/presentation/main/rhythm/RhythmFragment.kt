@@ -4,10 +4,18 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.colorOf
 import com.kkkk.core.extension.setOnSingleClickListener
+import com.kkkk.core.extension.stringOf
+import com.kkkk.core.extension.toast
+import com.kkkk.core.state.UiState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentRhythmBinding
 
@@ -26,6 +34,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         initChangeLevelBtnListener()
         setCurrentLevel()
         observeRhythmLevel()
+        observeRhythmState()
     }
 
     private fun initChangeLevelBtnListener() {
@@ -52,12 +61,26 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             tvRhythmStep.background =
                 ContextCompat.getDrawable(requireContext(), background)
         }
+        viewModel.postToGetRhythmFromServer()
     }
 
     private fun observeRhythmLevel() {
         viewModel.rhythmLevel.observe(viewLifecycleOwner) {
             setCurrentLevel()
         }
+    }
+
+    private fun observeRhythmState() {
+        viewModel.rhythmState.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { state ->
+            when (state) {
+                is UiState.Success -> {
+
+                }
+
+                is UiState.Failure -> toast(stringOf(R.string.error_msg))
+                else -> return@onEach
+            }
+        }.launchIn(lifecycleScope)
     }
 
     override fun onDestroyView() {
