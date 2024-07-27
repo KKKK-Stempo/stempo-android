@@ -21,8 +21,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentRecordBinding
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 @AndroidEntryPoint
 class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_record) {
@@ -48,7 +46,6 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
                 6 -> stringOf(R.string.report_tv_month_6)
                 else -> return@observe
             }
-            viewModel.setGraphValue()
         }
     }
 
@@ -57,12 +54,7 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
             when (state) {
                 is UiState.Success -> {
                     binding.chartReport.apply {
-                        data = LineData(
-                            LineDataSet(
-                                state.data,
-                                CHART_REPORT
-                            ).setDataSettings()
-                        )
+                        data = LineData(LineDataSet(state.data, CHART_RECORD).setDataSettings())
                         invalidate()
                     }
                     setGraphSettings()
@@ -104,8 +96,7 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
             valueFormatter = object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String? {
                     return if (value.toInt() in viewModel.dateList.indices) {
-                        DATE_FORMAT.parse(viewModel.dateList[value.toInt()])
-                            ?.let { DISPLAY_DATE_FORMAT.format(it) }
+                        viewModel.dateList[value.toInt()]
                     } else {
                         ""
                     }
@@ -141,8 +132,6 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
     }
 
     companion object {
-        private const val CHART_REPORT = "CHART_REPORT"
-        val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val DISPLAY_DATE_FORMAT = SimpleDateFormat("MM/dd", Locale.getDefault())
+        private const val CHART_RECORD = "CHART_RECORD"
     }
 }

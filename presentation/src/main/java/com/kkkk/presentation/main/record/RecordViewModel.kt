@@ -10,6 +10,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,6 +31,13 @@ constructor(
 
     var dateList = listOf<String>()
 
+    var startDate = ""
+    var endDate = ""
+
+    init {
+        setGraphWithDate()
+    }
+
     fun setIsChangingMonth() {
         isChangingMonth.value = isChangingMonth.value?.not() ?: false
     }
@@ -34,23 +45,35 @@ constructor(
     fun setReportMonth(month: Int) {
         reportMonth.value = month
         isChangingMonth.value = false
+        setGraphWithDate()
     }
 
-    fun setGraphValue() {
-        // TODO
-        val startDate = "2024-04-27"
-        val endDate = "2024-07-27"
+    private fun setGraphWithDate() {
+        endDate = DATE_FORMAT.format(Date())
+        DATE_FORMAT.parse(endDate)?.let { date ->
+            val postCalendar = Calendar.getInstance().apply {
+                time = date
+                add(Calendar.MONTH, -(reportMonth.value ?: 3))
+            }
+            startDate = DATE_FORMAT.format(postCalendar.time)
+        }
+        setGraphValue()
+    }
+
+    private fun setGraphValue() {
         _chartEntry.value = UiState.Loading
         viewModelScope.launch {
             recordRepository.getRecordList(startDate, endDate)
-                .onSuccess {
-                    if (it.isEmpty()) {
+                .onSuccess { recordList ->
+                    if (recordList.isEmpty()) {
                         _chartEntry.value = UiState.Empty
                         return@launch
                     }
-                    dateList = it.map { record -> record.date }
+                    dateList = recordList.map { record ->
+                        DATE_FORMAT.parse(record.date)?.let { DISPLAY_DATE_FORMAT.format(it) } ?: ""
+                    }
                     _chartEntry.value = UiState.Success(
-                        it.mapIndexed { index, record ->
+                        recordList.mapIndexed { index, record ->
                             Entry(index.toFloat(), record.accuracy.toFloat())
                         }.toMutableList()
                     )
@@ -59,5 +82,10 @@ constructor(
                     _chartEntry.value = UiState.Failure(it.message.toString())
                 }
         }
+    }
+
+    companion object {
+        private val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd", Locale.KOREA)
+        private val DISPLAY_DATE_FORMAT = SimpleDateFormat("MM/dd", Locale.KOREA)
     }
 }
