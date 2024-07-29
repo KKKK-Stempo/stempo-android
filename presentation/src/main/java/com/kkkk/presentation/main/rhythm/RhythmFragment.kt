@@ -148,11 +148,16 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun setMediaPlayer() {
-//        if (::mediaPlayer.isInitialized) mediaPlayer.release()
-//        mediaPlayer = MediaPlayer().apply {
-//            setDataSource(viewModel.currentMedia)
-//            prepare()
-//        }
+        if (::mediaPlayer.isInitialized) mediaPlayer.release()
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(
+                File(
+                    requireContext().filesDir,
+                    viewModel.filename
+                ).absolutePath
+            )
+            prepare()
+        }
     }
 
     override fun onDestroyView() {
