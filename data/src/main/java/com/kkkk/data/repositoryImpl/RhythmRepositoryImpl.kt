@@ -2,7 +2,6 @@ package com.kkkk.data.repositoryImpl
 
 import com.kkkk.data.dataSource.RhythmDataSource
 import com.kkkk.domain.repository.RhythmRepository
-import java.io.File
 import javax.inject.Inject
 
 class RhythmRepositoryImpl
@@ -16,8 +15,8 @@ constructor(
             rhythmDataSource.postToGetRhythmUrl(bpm).data
         }
 
-    override suspend fun getRhythmWav(url: String): Result<File> =
+    override suspend fun getRhythmWav(url: String): Result<ByteArray> =
         runCatching {
-            rhythmDataSource.getRhythmWav(url).data
+            rhythmDataSource.getRhythmWav(url).data.bytes()
         }
 }

@@ -2,6 +2,7 @@ package com.kkkk.presentation.main.rhythm
 
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentRhythmBinding
+import java.io.File
 
 @AndroidEntryPoint
 class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhythm) {
@@ -39,6 +41,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         initStopBtnListener()
         observeRhythmLevel()
         observeRhythmState()
+        observeDownloadState()
     }
 
     private fun initChangeLevelBtnListener() {
@@ -50,7 +53,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun initPlayBtnListener() {
         binding.btnRhythmPlay.setOnSingleClickListener {
-            if (::mediaPlayer.isInitialized && viewModel.currentMedia.isNotBlank()) {
+            if (::mediaPlayer.isInitialized) {
                 mediaPlayer.start()
                 switchPlayingState(true)
             } else {
@@ -61,7 +64,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun initStopBtnListener() {
         binding.btnRhythmStop.setOnSingleClickListener {
-            if (::mediaPlayer.isInitialized && viewModel.currentMedia.isNotBlank()) {
+            if (::mediaPlayer.isInitialized ) {
                 mediaPlayer.pause()
                 switchPlayingState(false)
             }
@@ -92,7 +95,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             tvRhythmStep.background =
                 ContextCompat.getDrawable(requireContext(), background)
         }
-        viewModel.postToGetRhythmFromServer()
+        viewModel.postToGetRhythmUrlFromServer()
     }
 
     private fun observeRhythmLevel() {
@@ -105,17 +108,45 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         viewModel.rhythmState.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { state ->
             when (state) {
                 is UiState.Success -> {
-                    if (::mediaPlayer.isInitialized) mediaPlayer.release()
-                    mediaPlayer = MediaPlayer().apply {
-                        setDataSource(viewModel.currentMedia)
-                        prepare()
-                    }
+                        if (File(requireContext().filesDir, viewModel.filename).exists()) {
+                            setMediaPlayer()
+                        } else {
+                            viewModel.getRhythmWavFile()
+                        }
                 }
 
                 is UiState.Failure -> toast(stringOf(R.string.error_msg))
                 else -> return@onEach
             }
         }.launchIn(lifecycleScope)
+    }
+
+    private fun observeDownloadState() {
+        viewModel.downloadWavState.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { state ->
+            when (state) {
+                is UiState.Success -> {
+                    val file = File(requireContext().filesDir, viewModel.filename)
+//                    val inputStream = body.byteStream()
+//                    val outputStream = FileOutputStream(file)
+//                    inputStream.use { input ->
+//                        outputStream.use { output ->
+//                            input.copyTo(output)
+//                        }
+//                    }
+                }
+
+                is UiState.Failure -> toast(stringOf(R.string.error_msg))
+                else -> return@onEach
+            }
+        }.launchIn(lifecycleScope)
+    }
+
+    private fun setMediaPlayer() {
+//        if (::mediaPlayer.isInitialized) mediaPlayer.release()
+//        mediaPlayer = MediaPlayer().apply {
+//            setDataSource(viewModel.currentMedia)
+//            prepare()
+//        }
     }
 
     override fun onDestroyView() {

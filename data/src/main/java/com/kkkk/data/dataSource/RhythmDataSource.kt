@@ -1,6 +1,7 @@
 package com.kkkk.data.dataSource
 
 import com.kkkk.data.dto.BaseResponse
+import okhttp3.ResponseBody
 import java.io.File
 
 interface RhythmDataSource {
@@ -10,5 +11,5 @@ interface RhythmDataSource {
 
     suspend fun getRhythmWav(
         url: String
-    ): BaseResponse<File>
+    ): BaseResponse<ResponseBody>
 }

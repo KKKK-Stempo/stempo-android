@@ -9,5 +9,5 @@ interface RhythmRepository {
 
     suspend fun getRhythmWav(
         url: String
-    ): Result<File>
+    ): Result<ByteArray>
 }

@@ -1,6 +1,7 @@
 package com.kkkk.data.service
 
 import com.kkkk.data.dto.BaseResponse
+import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -15,5 +16,5 @@ interface RhythmService {
     @GET("{url}")
     suspend fun getRhythmWav(
         @Path("url") url: String
-    ): BaseResponse<File>
+    ): BaseResponse<ResponseBody>
 }
