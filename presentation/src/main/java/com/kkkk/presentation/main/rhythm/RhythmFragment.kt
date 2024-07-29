@@ -40,7 +40,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         initPlayBtnListener()
         initStopBtnListener()
         observeRhythmLevel()
-        observeRhythmState()
+        observeRhythmUrlState()
         observeDownloadState()
     }
 
@@ -78,7 +78,15 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
     }
 
-    private fun setCurrentLevel() {
+    private fun observeRhythmLevel() {
+        viewModel.rhythmLevel.observe(viewLifecycleOwner) {
+            setUiWithCurrentLevel()
+            viewModel.postToGetRhythmUrlFromServer()
+        }
+    }
+
+
+    private fun setUiWithCurrentLevel() {
         binding.tvRhythmLevel.text =
             getString(R.string.rhythm_tv_level, viewModel.rhythmLevel.value)
         val (textColor, background) = when (viewModel.rhythmLevel.value?.rem(3)) {
@@ -95,30 +103,24 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             tvRhythmStep.background =
                 ContextCompat.getDrawable(requireContext(), background)
         }
-        viewModel.postToGetRhythmUrlFromServer()
     }
 
-    private fun observeRhythmLevel() {
-        viewModel.rhythmLevel.observe(viewLifecycleOwner) {
-            setCurrentLevel()
-        }
-    }
-
-    private fun observeRhythmState() {
-        viewModel.rhythmState.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { state ->
-            when (state) {
-                is UiState.Success -> {
-                    if (File(requireContext().filesDir, viewModel.filename).exists()) {
-                        setMediaPlayer()
-                    } else {
-                        viewModel.getRhythmWavFile()
+    private fun observeRhythmUrlState() {
+        viewModel.rhythmUrlState.flowWithLifecycle(lifecycle).distinctUntilChanged()
+            .onEach { state ->
+                when (state) {
+                    is UiState.Success -> {
+                        if (File(requireContext().filesDir, viewModel.filename).exists()) {
+                            setMediaPlayer()
+                        } else {
+                            viewModel.getRhythmWavFile(state.data)
+                        }
                     }
-                }
 
-                is UiState.Failure -> toast(stringOf(R.string.error_msg))
-                else -> return@onEach
-            }
-        }.launchIn(lifecycleScope)
+                    is UiState.Failure -> toast(stringOf(R.string.error_msg))
+                    else -> return@onEach
+                }
+            }.launchIn(lifecycleScope)
     }
 
     private fun observeDownloadState() {
@@ -145,6 +147,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 outputStream.flush()
             }
         }
+            .onSuccess {
+                setMediaPlayer()
+            }
+            .onFailure {
+                toast(stringOf(R.string.error_msg))
+            }
     }
 
     private fun setMediaPlayer() {
