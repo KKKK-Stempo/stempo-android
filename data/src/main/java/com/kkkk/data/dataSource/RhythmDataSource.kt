@@ -11,5 +11,5 @@ interface RhythmDataSource {
 
     suspend fun getRhythmWav(
         url: String
-    ): BaseResponse<ResponseBody>
+    ): ResponseBody
 }

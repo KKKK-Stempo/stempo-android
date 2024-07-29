@@ -5,7 +5,7 @@ import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
-import java.io.File
+import retrofit2.http.Url
 
 interface RhythmService {
     @POST("/api/v1/rhythm/{bpm}")
@@ -13,8 +13,8 @@ interface RhythmService {
         @Path("bpm") bpm: Int,
     ): BaseResponse<String>
 
-    @GET("{url}")
+    @GET
     suspend fun getRhythmWav(
-        @Path("url") url: String
-    ): BaseResponse<ResponseBody>
+        @Url url: String
+    ): ResponseBody
 }

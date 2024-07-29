@@ -17,6 +17,6 @@ constructor(
 
     override suspend fun getRhythmWav(url: String): Result<ByteArray> =
         runCatching {
-            rhythmDataSource.getRhythmWav(url).data.bytes()
+            rhythmDataSource.getRhythmWav(url).bytes()
         }
 }

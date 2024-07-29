@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentRhythmBinding
 import java.io.File
+import java.nio.file.Files
 
 @AndroidEntryPoint
 class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhythm) {
@@ -125,14 +126,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         viewModel.downloadWavState.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { state ->
             when (state) {
                 is UiState.Success -> {
-                    val file = File(requireContext().filesDir, viewModel.filename)
-//                    val inputStream = body.byteStream()
-//                    val outputStream = FileOutputStream(file)
-//                    inputStream.use { input ->
-//                        outputStream.use { output ->
-//                            input.copyTo(output)
-//                        }
-//                    }
+                    runCatching {
+                        Files.newOutputStream(File(requireContext().filesDir, viewModel.filename).toPath()).use { outputStream ->
+                            outputStream.write(state.data)
+                            outputStream.flush()
+                        }
+                    }
                 }
 
                 is UiState.Failure -> toast(stringOf(R.string.error_msg))
