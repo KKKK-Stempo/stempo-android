@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.colorOf
 import com.kkkk.core.extension.setOnSingleClickListener
+import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.core.state.UiState
@@ -79,17 +80,16 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun observeRhythmLevel() {
-        viewModel.rhythmLevel.observe(viewLifecycleOwner) {
-            binding.viewLoading.isVisible = true
+        viewModel.rhythmLevel.observe(viewLifecycleOwner) { level ->
+            setLoadingView(true)
             if (::mediaPlayer.isInitialized) {
                 mediaPlayer.pause()
                 switchPlayingState(false)
             }
             setUiWithCurrentLevel()
-            viewModel.postToGetRhythmUrlFromServer()
+            viewModel.postToGetRhythmUrlFromServer(level)
         }
     }
-
 
     private fun setUiWithCurrentLevel() {
         binding.tvRhythmLevel.text =
@@ -161,7 +161,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun setMediaPlayer() {
-        binding.viewLoading.isVisible = false
         if (::mediaPlayer.isInitialized) mediaPlayer.release()
         mediaPlayer = MediaPlayer().apply {
             setDataSource(
@@ -171,6 +170,16 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 ).absolutePath
             )
             prepare()
+        }
+        setLoadingView(false)
+    }
+
+    private fun setLoadingView(isLoading: Boolean) {
+        binding.viewLoading.isVisible = isLoading
+        if (isLoading) {
+            setStatusBarColor(R.color.transparent_50)
+        } else {
+            setStatusBarColor(R.color.white)
         }
     }
 

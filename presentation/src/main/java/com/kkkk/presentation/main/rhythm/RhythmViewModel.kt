@@ -18,8 +18,7 @@ constructor(
     private val rhythmRepository: RhythmRepository
 ) : ViewModel() {
     var rhythmLevel = MutableLiveData<Int>(1)
-    var bpm: Int = 50
-    var filename: String = "stempo_level_" + rhythmLevel.value.toString()
+    var filename: String = "stempo_level_1"
 
     private val _rhythmUrlState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val rhythmUrlState: StateFlow<UiState<String>> = _rhythmUrlState
@@ -28,15 +27,14 @@ constructor(
     val downloadWavState: StateFlow<UiState<ByteArray>> = _downloadWavState
 
     fun changeRhythmLevel(level: Int) {
-        rhythmLevel.value = level
-        bpm = 40 + level * 10
         filename = "stempo_level_$level"
+        rhythmLevel.value = level
     }
 
-    fun postToGetRhythmUrlFromServer() {
+    fun postToGetRhythmUrlFromServer(level: Int) {
         _rhythmUrlState.value = UiState.Loading
         viewModelScope.launch {
-            rhythmRepository.postToGetRhythmUrl(bpm)
+            rhythmRepository.postToGetRhythmUrl(40 + level * 10)
                 .onSuccess {
                     _rhythmUrlState.value = UiState.Success(it)
                 }
