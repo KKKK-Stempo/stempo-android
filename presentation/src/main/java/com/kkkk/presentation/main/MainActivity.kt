@@ -6,7 +6,7 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.kkkk.core.base.BaseActivity
 import com.kkkk.presentation.main.profile.ProfileFragment
-import com.kkkk.presentation.main.report.ReportFragment
+import com.kkkk.presentation.main.record.RecordFragment
 import com.kkkk.presentation.main.rhythm.RhythmFragment
 import com.kkkk.presentation.main.study.StudyFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,7 +39,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
             when (menu.itemId) {
                 R.id.menu_rhythm -> navigateTo<RhythmFragment>()
 
-                R.id.menu_report -> navigateTo<ReportFragment>()
+                R.id.menu_report -> navigateTo<RecordFragment>()
 
                 R.id.menu_study -> navigateTo<StudyFragment>()
 

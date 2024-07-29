@@ -1,7 +1,11 @@
 package com.kkkk.stempo.di
 
 import com.kkkk.data.dataSource.AuthDataSource
+import com.kkkk.data.dataSource.RecordDataSource
+import com.kkkk.data.dataSource.RhythmDataSource
 import com.kkkk.data.dataSourceImpl.AuthDataSourceImpl
+import com.kkkk.data.dataSourceImpl.RecordDataSourceImpl
+import com.kkkk.data.dataSourceImpl.RhythmDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,4 +19,14 @@ object DataSourceModule {
     @Singleton
     fun provideAuthDataSource(authDataSourceImpl: AuthDataSourceImpl): AuthDataSource =
         authDataSourceImpl
+
+    @Provides
+    @Singleton
+    fun provideRecordDataSource(recordDataSourceImpl: RecordDataSourceImpl): RecordDataSource =
+        recordDataSourceImpl
+
+    @Provides
+    @Singleton
+    fun provideRhythmDataSource(rhythmDataSourceImpl: RhythmDataSourceImpl): RhythmDataSource =
+        rhythmDataSourceImpl
 }
