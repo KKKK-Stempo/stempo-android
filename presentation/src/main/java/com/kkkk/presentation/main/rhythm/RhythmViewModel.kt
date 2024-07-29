@@ -21,7 +21,7 @@ constructor(
     var bpm: Int = 50
 
     var currentRhythmUrl: String = ""
-    var filename: String = "stempo_level_" + rhythmLevel.toString()
+    var filename: String = "stempo_level_" + rhythmLevel.value.toString()
 
     private val _rhythmUrlState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val rhythmState: StateFlow<UiState<String>> = _rhythmUrlState

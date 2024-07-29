@@ -2,7 +2,6 @@ package com.kkkk.presentation.main.rhythm
 
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -65,7 +64,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun initStopBtnListener() {
         binding.btnRhythmStop.setOnSingleClickListener {
-            if (::mediaPlayer.isInitialized ) {
+            if (::mediaPlayer.isInitialized) {
                 mediaPlayer.pause()
                 switchPlayingState(false)
             }
@@ -109,11 +108,11 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         viewModel.rhythmState.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { state ->
             when (state) {
                 is UiState.Success -> {
-                        if (File(requireContext().filesDir, viewModel.filename).exists()) {
-                            setMediaPlayer()
-                        } else {
-                            viewModel.getRhythmWavFile()
-                        }
+                    if (File(requireContext().filesDir, viewModel.filename).exists()) {
+                        setMediaPlayer()
+                    } else {
+                        viewModel.getRhythmWavFile()
+                    }
                 }
 
                 is UiState.Failure -> toast(stringOf(R.string.error_msg))
@@ -123,21 +122,29 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun observeDownloadState() {
-        viewModel.downloadWavState.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { state ->
-            when (state) {
-                is UiState.Success -> {
-                    runCatching {
-                        Files.newOutputStream(File(requireContext().filesDir, viewModel.filename).toPath()).use { outputStream ->
-                            outputStream.write(state.data)
-                            outputStream.flush()
-                        }
-                    }
-                }
+        viewModel.downloadWavState.flowWithLifecycle(lifecycle).distinctUntilChanged()
+            .onEach { state ->
+                when (state) {
+                    is UiState.Success -> saveWavFile(state.data)
 
-                is UiState.Failure -> toast(stringOf(R.string.error_msg))
-                else -> return@onEach
+                    is UiState.Failure -> toast(stringOf(R.string.error_msg))
+                    else -> return@onEach
+                }
+            }.launchIn(lifecycleScope)
+    }
+
+    private fun saveWavFile(byteArray: ByteArray) {
+        runCatching {
+            Files.newOutputStream(
+                File(
+                    requireContext().filesDir,
+                    viewModel.filename
+                ).toPath()
+            ).use { outputStream ->
+                outputStream.write(byteArray)
+                outputStream.flush()
             }
-        }.launchIn(lifecycleScope)
+        }
     }
 
     private fun setMediaPlayer() {
