@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentRhythmBinding
+import timber.log.Timber
 import java.io.File
 import java.nio.file.Files
 
@@ -80,6 +81,10 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun observeRhythmLevel() {
         viewModel.rhythmLevel.observe(viewLifecycleOwner) {
+            if (::mediaPlayer.isInitialized) {
+                mediaPlayer.pause()
+                switchPlayingState(false)
+            }
             setUiWithCurrentLevel()
             viewModel.postToGetRhythmUrlFromServer()
         }
