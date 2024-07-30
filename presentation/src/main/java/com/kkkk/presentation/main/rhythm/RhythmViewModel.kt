@@ -21,6 +21,7 @@ constructor(
 ) : ViewModel() {
     var tempRhythmLevel = MutableLiveData<Int>(1)
     var filename: String = "stempo_level_1"
+    var isSubmitted: Boolean = true
 
     private val _rhythmLevel = MutableStateFlow<Int>(LEVEL_UNDEFINED)
     val rhythmLevel: StateFlow<Int> = _rhythmLevel
@@ -36,15 +37,26 @@ constructor(
     }
 
     private fun initRhythmLevelFromDataStore() {
-        filename = "stempo_level_" + userRepository.getBpmLevel().toString()
-        _rhythmLevel.value = userRepository.getBpmLevel()
+        val currentLevel = userRepository.getBpmLevel()
+        filename = "stempo_level_$currentLevel"
+        _rhythmLevel.value = currentLevel
+        tempRhythmLevel.value = currentLevel
     }
 
     fun setTempRhythmLevel(level: Int) {
+        isSubmitted = false
         tempRhythmLevel.value = level
     }
 
+    fun resetTempRhythmLevel() {
+        if (!isSubmitted) {
+            isSubmitted = true
+            tempRhythmLevel.value = rhythmLevel.value
+        }
+    }
+
     fun setRhythmLevel() {
+        isSubmitted = true
         filename = "stempo_level_" + tempRhythmLevel.value.toString()
         _rhythmLevel.value = tempRhythmLevel.value ?: -1
         userRepository.setBpmLevel(rhythmLevel.value)

@@ -83,7 +83,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     private fun observeRhythmLevel() {
         viewModel.rhythmLevel.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { level ->
             if (level == LEVEL_UNDEFINED) return@onEach
-            setLoadingView(true)
             if (::mediaPlayer.isInitialized) {
                 mediaPlayer.pause()
                 switchPlayingState(false)
@@ -120,6 +119,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                         if (File(requireContext().filesDir, viewModel.filename).exists()) {
                             setMediaPlayer()
                         } else {
+                            setLoadingView(true)
                             viewModel.getRhythmWavFile(state.data)
                         }
                     }
