@@ -7,4 +7,8 @@ interface AuthDataSource {
     suspend fun postReissueTokens(
         authorization: String,
     ): BaseResponse<AuthTokenDto>
+
+    suspend fun postLogin(
+        deviceTag: String,
+    ): BaseResponse<AuthTokenDto>
 }
