@@ -14,7 +14,5 @@ interface UserRepository {
 
     fun setDeviceToken(deviceToken: String)
 
-    fun setUserId(userId: Long)
-
     fun clearInfo()
 }

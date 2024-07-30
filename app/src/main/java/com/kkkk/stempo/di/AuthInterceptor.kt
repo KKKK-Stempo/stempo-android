@@ -5,7 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import com.kkkk.core.extension.toast
 import com.kkkk.data.local.UserSharedPref
-import com.kkkk.domain.entity.request.TokenRequestModel
 import com.kkkk.domain.repository.AuthRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.runBlocking
@@ -40,15 +39,13 @@ constructor(
             CODE_TOKEN_EXPIRED -> {
                 try {
                     runBlocking {
-                        authRepository.postReissueTokens(
-                            sharedPref.refreshToken,
-                            TokenRequestModel(sharedPref.userId),
+                        authRepository.reissueTokens(
+                            sharedPref.refreshToken
                         )
                     }.onSuccess { data ->
                         sharedPref.apply {
                             accessToken = data.accessToken
                             refreshToken = data.refreshToken
-                            userId = data.userId
                         }
 
                         response.close()

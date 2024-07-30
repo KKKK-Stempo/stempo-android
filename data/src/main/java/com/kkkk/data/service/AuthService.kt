@@ -8,10 +8,13 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface AuthService {
-    // TODO: 서버 나오면 수정
-    @POST("api/users/reissue")
+    @POST("api/v1/reissue")
     suspend fun postReissueTokens(
-        @Header("Authorization") authorization: String,
-        @Body request: TokenRequestDto,
+        @Header("Authorization") authorization: String
+    ): BaseResponse<AuthTokenDto>
+
+    @POST("api/v1/login")
+    suspend fun postLogin(
+        @Header("Authorization") deviceTag: String,
     ): BaseResponse<AuthTokenDto>
 }
