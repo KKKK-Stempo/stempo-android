@@ -208,6 +208,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 when (state) {
                     is UiState.Success -> {
                         // TODO : 여기에서 기존 걸음 0으로 만드는 로직 필요
+                        toast(stringOf(R.string.rhythm_toast_save_success))
                     }
 
                     is UiState.Failure -> toast(stringOf(R.string.error_msg))

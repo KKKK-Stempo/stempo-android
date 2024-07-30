@@ -24,6 +24,7 @@
     <string name="rhythm_tv_title">리듬에 맞춰 걸어주세요!</string>
     <string name="rhythm_btn_change_level">단계 변경하기</string>
     <string name="rhythm_btn_submit_level">완료하기</string>
+    <string name="rhythm_toast_save_success">기록 저장이 완료되었어요!</string>
 
     <string name="rhythm_stop_tv_title">종료하기를 누르면\n지금까지의 걸음이 기록돼요.\n잠시 멈추시는거라면\n정지하기를 눌러주세요.</string>
     <string name="rhythm_stop_btn_save">종료하기</string>
