@@ -30,6 +30,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private val viewModel by activityViewModels<RhythmViewModel>()
     private var rhythmBottomSheet: RhythmBottomSheet? = null
+    private var rhythmSaveDialog: RhythmSaveDialog? = null
     private lateinit var mediaPlayer: MediaPlayer
 
     override fun onViewCreated(
@@ -70,6 +71,8 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 mediaPlayer.pause()
                 switchPlayingState(false)
             }
+            rhythmSaveDialog = RhythmSaveDialog()
+            rhythmSaveDialog?.show(parentFragmentManager, DIALOG_RHYTHM_SAVE)
         }
     }
 
@@ -201,6 +204,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     override fun onDestroyView() {
         super.onDestroyView()
         rhythmBottomSheet = null
+        rhythmSaveDialog = null
         if (::mediaPlayer.isInitialized) {
             mediaPlayer.release()
         }
@@ -208,6 +212,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     companion object {
         private const val BOTTOM_SHEET_CHANGE_LEVEL = "BOTTOM_SHEET_CHANGE_LEVEL"
+        private const val DIALOG_RHYTHM_SAVE = "DIALOG_RHYTHM_SAVE"
 
         private const val COLOR_PURPLE = "purple"
         private const val COLOR_SKY = "sky"
