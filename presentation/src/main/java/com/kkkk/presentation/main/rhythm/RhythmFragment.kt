@@ -3,13 +3,13 @@ package com.kkkk.presentation.main.rhythm
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.colorOf
+import com.kkkk.core.extension.drawableOf
 import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
@@ -77,6 +77,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         with(binding) {
             btnRhythmPlay.isVisible = !start
             btnRhythmStop.isVisible = start
+            lottieRhythmBg.isVisible = start
         }
     }
 
@@ -93,23 +94,31 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun setUiWithCurrentLevel() {
-        binding.tvRhythmLevel.text =
-            getString(R.string.rhythm_tv_level, viewModel.rhythmLevel.value)
-        val (textColor, background) = when (viewModel.rhythmLevel.value.rem(3)) {
-            1 -> Pair(R.color.purple_50, R.drawable.shape_purple50_line_17_rect)
-            2 -> Pair(R.color.sky_50, R.drawable.shape_sky50_line_17_rect)
-            0 -> Pair(R.color.green_50, R.drawable.shape_green50_line_17_rect)
+        val color = when (viewModel.rhythmLevel.value.rem(3)) {
+            1 -> COLOR_PURPLE
+            2 -> COLOR_SKY
+            0 -> COLOR_GREEN
             else -> return
         }
         with(binding) {
-            tvRhythmLevel.setTextColor(colorOf(textColor))
-            tvRhythmLevel.background =
-                ContextCompat.getDrawable(requireContext(), background)
-            tvRhythmStep.setTextColor(colorOf(textColor))
-            tvRhythmStep.background =
-                ContextCompat.getDrawable(requireContext(), background)
+            tvRhythmLevel.apply {
+                text = getString(R.string.rhythm_tv_level, viewModel.rhythmLevel.value)
+                setTextColor(colorOf(getResource("${color}_50", COLOR)))
+                background =
+                    drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
+            }
+            tvRhythmStep.apply {
+                setTextColor(colorOf(getResource("${color}_50", COLOR)))
+                background =
+                    drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
+            }
+            ivRhythmBg.setImageResource(getResource("img_rhythm_bg_$color", DRAWABLE))
+            lottieRhythmBg.setAnimation(getResource("stempo_rhythm_$color", RAW))
         }
     }
+
+    private fun getResource(name: String, defType: String) =
+        resources.getIdentifier(name, defType, requireContext().packageName)
 
     private fun observeRhythmUrlState() {
         viewModel.rhythmUrlState.flowWithLifecycle(lifecycle).distinctUntilChanged()
@@ -195,5 +204,13 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     companion object {
         private const val BOTTOM_SHEET_CHANGE_LEVEL = "BOTTOM_SHEET_CHANGE_LEVEL"
+
+        private const val COLOR_PURPLE = "purple"
+        private const val COLOR_SKY = "sky"
+        private const val COLOR_GREEN = "green"
+
+        private const val COLOR = "color"
+        private const val DRAWABLE = "drawable"
+        private const val RAW = "raw"
     }
 }
