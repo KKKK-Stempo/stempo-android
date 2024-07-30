@@ -11,11 +11,13 @@ import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.presentation.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.ActivityOnboardingBinding
 
+@AndroidEntryPoint
 class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.activity_onboarding) {
     private lateinit var timer: CountDownTimer
     private val viewModel by viewModels<OnboardingViewModel>()
@@ -49,11 +51,14 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
     }
 
     private fun startTimer() {
-        timer = object : CountDownTimer(60000, 1000) {
+        timer = object : CountDownTimer(TIME, INTERVAL) {
             override fun onTick(millisUntilFinished: Long) {}
 
             override fun onFinish() {
-                viewModel.setState(OnboardingState.END)
+                with(viewModel) {
+                    setBpmLevel()
+                    setState(OnboardingState.END)
+                }
             }
         }.start()
     }
@@ -69,5 +74,10 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
         supportFragmentManager.commit {
             replace<T>(R.id.fcv_onboarding, T::class.java.canonicalName)
         }
+    }
+
+    companion object {
+        private const val TIME = 6000L
+        private const val INTERVAL = 1000L
     }
 }
