@@ -1,6 +1,9 @@
 package com.kkkk.presentation.main.onboarding.splash
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,12 +22,17 @@ import kr.genti.presentation.databinding.ActivitySplashBinding
 class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_splash) {
     private val viewModel by viewModels<SplashViewModel>()
 
+    @SuppressLint("HardwareIds")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setStatusBarColor()
         setNavigationBarColor()
         observeUserState()
+
+        val androidId: String = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+
+        println("Android ID: $androidId")
     }
 
     private fun setStatusBarColor() = setStatusBarColorFromResource(R.color.purple_50)

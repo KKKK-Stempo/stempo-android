@@ -13,7 +13,6 @@ constructor(
     private val authService: AuthService,
 ) : AuthDataSource {
     override suspend fun postReissueTokens(
-        authorization: String,
-        request: TokenRequestDto,
-    ): BaseResponse<AuthTokenDto> = authService.postReissueTokens(authorization, request)
+        authorization: String
+    ): BaseResponse<AuthTokenDto> = authService.postReissueTokens(authorization)
 }

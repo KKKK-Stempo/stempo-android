@@ -9,10 +9,8 @@ data class AuthTokenDto(
     @SerialName("accessToken")
     val accessToken: String,
     @SerialName("refreshToken")
-    val refreshToken: String,
-    @SerialName("userId")
-    val userId: Long,
+    val refreshToken: String
 ) {
     fun toModel() =
-        AuthTokenModel(accessToken = accessToken, refreshToken = refreshToken, userId = userId)
+        AuthTokenModel(accessToken = accessToken, refreshToken = refreshToken)
 }

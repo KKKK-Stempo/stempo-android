@@ -21,10 +21,6 @@ class UserSharedPrefImpl
             get() = dataStore.getString(DEVICE_TOKEN, "").orEmpty()
             set(value) = dataStore.edit { putString(DEVICE_TOKEN, value) }
 
-        override var userId: Long
-            get() = dataStore.getLong(USER_ID, 0L)
-            set(value) = dataStore.edit { putLong(USER_ID, value) }
-
         override fun clearInfo() {
             dataStore.edit().clear().apply()
         }

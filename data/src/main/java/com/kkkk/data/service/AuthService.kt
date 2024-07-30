@@ -11,7 +11,11 @@ interface AuthService {
     // TODO: 서버 나오면 수정
     @POST("api/users/reissue")
     suspend fun postReissueTokens(
-        @Header("Authorization") authorization: String,
-        @Body request: TokenRequestDto,
+        @Header("Authorization") authorization: String
+    ): BaseResponse<AuthTokenDto>
+
+    @POST("api/v1/login")
+    suspend fun postLogin(
+        @Header("") deviceTag: String,
     ): BaseResponse<AuthTokenDto>
 }
