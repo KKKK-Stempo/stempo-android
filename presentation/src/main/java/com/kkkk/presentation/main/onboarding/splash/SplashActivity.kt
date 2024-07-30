@@ -1,5 +1,6 @@
 package com.kkkk.presentation.main.onboarding.splash
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.viewModels
@@ -10,6 +11,7 @@ import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.core.extension.setNavigationBarColorFromResource
 import com.kkkk.core.extension.setStatusBarColorFromResource
 import com.kkkk.core.extension.toast
+import com.kkkk.presentation.main.MainActivity
 import com.kkkk.presentation.main.onboarding.onbarding.OnboardingActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -26,12 +28,28 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
         setStatusBarColor()
         setNavigationBarColor()
-        observeUserState()
-        login()
+        observeStates()
+
+        viewModel.checkTokenState()
     }
 
     private fun setStatusBarColor() = setStatusBarColorFromResource(R.color.purple_50)
     private fun setNavigationBarColor() = setNavigationBarColorFromResource(R.color.purple_50)
+
+    private fun observeStates() {
+        observeTokenState()
+        observeUserState()
+    }
+
+    private fun observeTokenState() {
+        viewModel.tokenState.flowWithLifecycle(lifecycle).onEach { state ->
+            if (state) {
+                navigateToScreenClear<MainActivity>()
+            } else {
+                login()
+            }
+        }.launchIn(lifecycleScope)
+    }
 
     private fun observeUserState() {
         viewModel.userState.flowWithLifecycle(lifecycle).onEach { state ->
@@ -47,6 +65,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
         viewModel.setAndroidId(getDeviceTag())
     }
 
+    @SuppressLint("HardwareIds")
     private fun getDeviceTag(): String =
         Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 }
