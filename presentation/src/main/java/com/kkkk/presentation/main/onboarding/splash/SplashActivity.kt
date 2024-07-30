@@ -52,8 +52,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
     }
 
     private fun observeUserState() {
-        viewModel.userState.flowWithLifecycle(lifecycle).onEach { state ->
-            if (state) {
+        viewModel.userState.flowWithLifecycle(lifecycle).onEach { isSuccess ->
+            if (isSuccess) {
                 navigateToScreenClear<OnboardingActivity>()
             } else {
                 toast(getString(R.string.error_msg))
