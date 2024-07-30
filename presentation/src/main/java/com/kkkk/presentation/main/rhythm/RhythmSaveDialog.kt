@@ -40,7 +40,8 @@ class RhythmSaveDialog :
 
     private fun initSaveBtnListener() {
         binding.btnSave.setOnSingleClickListener {
-
+            viewModel.posRhythmRecordToSave()
+            dismiss()
         }
     }
 }

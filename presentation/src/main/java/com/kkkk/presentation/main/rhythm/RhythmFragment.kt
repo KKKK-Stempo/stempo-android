@@ -45,6 +45,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         observeRhythmLevel()
         observeRhythmUrlState()
         observeDownloadState()
+        observeRecordSaveState()
     }
 
     private fun initChangeLevelBtnListener() {
@@ -199,6 +200,20 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         } else {
             setStatusBarColor(R.color.white)
         }
+    }
+
+    private fun observeRecordSaveState() {
+        viewModel.recordSaveState.flowWithLifecycle(lifecycle).distinctUntilChanged()
+            .onEach { state ->
+                when (state) {
+                    is UiState.Success -> {
+                        // TODO : 여기에서 기존 걸음 0으로 만드는 로직 필요
+                    }
+
+                    is UiState.Failure -> toast(stringOf(R.string.error_msg))
+                    else -> return@onEach
+                }
+            }.launchIn(lifecycleScope)
     }
 
     override fun onDestroyView() {
