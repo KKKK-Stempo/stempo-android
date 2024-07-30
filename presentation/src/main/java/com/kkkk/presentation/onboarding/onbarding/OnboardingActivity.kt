@@ -77,7 +77,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
     }
 
     companion object {
-        private const val TIME = 6000L
+        private const val TIME = 60000L
         private const val INTERVAL = 1000L
     }
 }
