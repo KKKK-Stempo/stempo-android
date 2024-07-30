@@ -17,8 +17,11 @@ class RhythmViewModel
 constructor(
     private val rhythmRepository: RhythmRepository
 ) : ViewModel() {
-    var rhythmLevel = MutableLiveData<Int>(1)
+    var tempRhythmLevel = MutableLiveData<Int>(1)
     var filename: String = "stempo_level_1"
+
+    private val _rhythmLevel = MutableStateFlow<Int>(LEVEL_UNDEFINED)
+    val rhythmLevel: StateFlow<Int> = _rhythmLevel
 
     private val _rhythmUrlState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val rhythmUrlState: StateFlow<UiState<String>> = _rhythmUrlState
@@ -26,9 +29,13 @@ constructor(
     private val _downloadWavState = MutableStateFlow<UiState<ByteArray>>(UiState.Empty)
     val downloadWavState: StateFlow<UiState<ByteArray>> = _downloadWavState
 
-    fun changeRhythmLevel(level: Int) {
-        filename = "stempo_level_$level"
-        rhythmLevel.value = level
+    fun setTempRhythmLevel(level: Int) {
+        tempRhythmLevel.value = level
+    }
+
+    fun setRhythmLevel() {
+        filename = "stempo_level_" + tempRhythmLevel.value.toString()
+        _rhythmLevel.value = tempRhythmLevel.value ?: -1
     }
 
     fun postToGetRhythmUrlFromServer(level: Int) {
@@ -55,5 +62,9 @@ constructor(
                     _downloadWavState.value = UiState.Failure(it.message.toString())
                 }
         }
+    }
+
+    companion object {
+        const val LEVEL_UNDEFINED = -1
     }
 }

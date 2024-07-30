@@ -29,6 +29,9 @@ class RhythmBottomSheet :
     }
 
     private fun initSubmitBtnListener() {
-        binding.btnSubmitLevel.setOnSingleClickListener { dismiss() }
+        binding.btnSubmitLevel.setOnSingleClickListener {
+            viewModel.setRhythmLevel()
+            dismiss()
+        }
     }
 }

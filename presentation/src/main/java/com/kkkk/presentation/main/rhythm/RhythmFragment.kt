@@ -15,6 +15,7 @@ import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.core.state.UiState
+import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.LEVEL_UNDEFINED
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -80,7 +81,8 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun observeRhythmLevel() {
-        viewModel.rhythmLevel.observe(viewLifecycleOwner) { level ->
+        viewModel.rhythmLevel.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { level ->
+            if (level == LEVEL_UNDEFINED) return@onEach
             setLoadingView(true)
             if (::mediaPlayer.isInitialized) {
                 mediaPlayer.pause()
@@ -88,13 +90,13 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             }
             setUiWithCurrentLevel()
             viewModel.postToGetRhythmUrlFromServer(level)
-        }
+        }.launchIn(lifecycleScope)
     }
 
     private fun setUiWithCurrentLevel() {
         binding.tvRhythmLevel.text =
             getString(R.string.rhythm_tv_level, viewModel.rhythmLevel.value)
-        val (textColor, background) = when (viewModel.rhythmLevel.value?.rem(3)) {
+        val (textColor, background) = when (viewModel.rhythmLevel.value.rem(3)) {
             1 -> Pair(R.color.purple_50, R.drawable.shape_purple50_line_17_rect)
             2 -> Pair(R.color.sky_50, R.drawable.shape_sky50_line_17_rect)
             0 -> Pair(R.color.green_50, R.drawable.shape_green50_line_17_rect)
