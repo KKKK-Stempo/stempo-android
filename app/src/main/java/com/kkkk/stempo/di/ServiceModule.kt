@@ -3,6 +3,7 @@ package com.kkkk.stempo.di
 import com.kkkk.data.service.AuthService
 import com.kkkk.data.service.RecordService
 import com.kkkk.data.service.RhythmService
+import com.kkkk.data.service.StudyService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,4 +31,10 @@ object ServiceModule {
     fun provideRhythmService(
         @RetrofitQualifier.JWT retrofit: Retrofit,
     ): RhythmService = retrofit.create(RhythmService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideStudyService(
+        @RetrofitQualifier.JWT retrofit: Retrofit,
+    ): StudyService = retrofit.create(StudyService::class.java)
 }
