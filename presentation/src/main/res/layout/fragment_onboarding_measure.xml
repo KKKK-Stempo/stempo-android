@@ -10,18 +10,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--Lottie로 변경 예정-->
-        <ImageView
-            android:id="@+id/iv_onboarding_measure_progressbar"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_onboarding_measure_progressbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="24dp"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_progrssbar_full"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false"
+            app:lottie_rawRes="@raw/stempo_progressbar" />
+<!--        &lt;!&ndash;Lottie로 변경 예정&ndash;&gt;-->
+<!--        <ImageView-->
+<!--            android:id="@+id/iv_onboarding_measure_progressbar"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginHorizontal="16dp"-->
+<!--            android:layout_marginTop="24dp"-->
+<!--            android:scaleType="fitXY"-->
+<!--            android:src="@drawable/ic_progrssbar_full"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
 
         <TextView
             android:id="@+id/tv_onboarding_measure_title"
@@ -34,7 +47,7 @@
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_onboarding_measure_progressbar" />
+            app:layout_constraintTop_toBottomOf="@id/lottie_onboarding_measure_progressbar" />
 
         <TextView
             android:id="@+id/tv_onboarding_measure_subtitle"
@@ -49,16 +62,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_onboarding_measure_title" />
 
-        <!--Lottie로 변경 예정-->
-        <ImageView
-            android:id="@+id/iv_onboarding_end_logo"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_onboarding_measure_stemp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="78dp"
-            android:src="@drawable/ic_logo_illustration_end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_onboarding_measure_subtitle" />
+            app:layout_constraintTop_toBottomOf="@id/tv_onboarding_measure_subtitle"
+            app:layout_constraintBottom_toTopOf="@id/btn_onboarding_measure_later"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false"
+            app:lottie_rawRes="@raw/stempo_walk" />
 
         <TextView
             android:id="@+id/btn_onboarding_measure_later"

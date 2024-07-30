@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.onboarding.splash
+package com.kkkk.presentation.onboarding.splash
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -8,7 +8,7 @@ import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.core.extension.setNavigationBarColorFromResource
 import com.kkkk.core.extension.setStatusBarColorFromResource
-import com.kkkk.presentation.main.onboarding.onbarding.OnboardingActivity
+import com.kkkk.presentation.onboarding.onbarding.OnboardingActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

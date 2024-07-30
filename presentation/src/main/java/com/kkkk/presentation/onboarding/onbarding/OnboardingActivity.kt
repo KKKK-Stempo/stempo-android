@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.onboarding.onbarding
+package com.kkkk.presentation.onboarding.onbarding
 
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -37,7 +37,11 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
             .onEach { state ->
                 when (state) {
                     OnboardingState.START -> navigateTo<OnboardingStartFragment>()
-                    OnboardingState.MEASURE -> navigateTo<OnboardingMeasureFragment>()
+                    OnboardingState.MEASURE -> {
+                        navigateTo<OnboardingMeasureFragment>()
+                        startTimer()
+                    }
+
                     OnboardingState.END -> navigateTo<OnboardingEndFragment>()
                     OnboardingState.DONE -> navigateToScreenClear<MainActivity>()
                 }
