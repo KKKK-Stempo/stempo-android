@@ -17,9 +17,9 @@ class SplashViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
 ) : ViewModel() {
-    private val _tokenState = MutableSharedFlow<Boolean>(replay = 1)
-    val tokenState: SharedFlow<Boolean>
-        get() = _tokenState
+    private val _isValidToken = MutableSharedFlow<Boolean>(replay = 1)
+    val isValidToken: SharedFlow<Boolean>
+        get() = _isValidToken
 
     private val _userState = MutableSharedFlow<Boolean>()
     val userState: SharedFlow<Boolean>
@@ -28,7 +28,7 @@ class SplashViewModel @Inject constructor(
     fun checkTokenState() {
         viewModelScope.launch {
             delay(DELAY_TIME)
-            _tokenState.emit(userRepository.getAccessToken().isNotBlank())
+            _isValidToken.emit(userRepository.getAccessToken().isNotBlank())
         }
     }
 

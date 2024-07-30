@@ -42,8 +42,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
     }
 
     private fun observeTokenState() {
-        viewModel.tokenState.flowWithLifecycle(lifecycle).onEach { state ->
-            if (state) {
+        viewModel.isValidToken.flowWithLifecycle(lifecycle).onEach { isValidToken ->
+            if (isValidToken) {
                 navigateToScreenClear<MainActivity>()
             } else {
                 login()
