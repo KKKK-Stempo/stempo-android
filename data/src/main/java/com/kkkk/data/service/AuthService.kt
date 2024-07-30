@@ -15,6 +15,6 @@ interface AuthService {
 
     @POST("api/v1/login")
     suspend fun postLogin(
-        @Header("") deviceTag: String,
+        @Header("Authorization") deviceTag: String,
     ): BaseResponse<AuthTokenDto>
 }

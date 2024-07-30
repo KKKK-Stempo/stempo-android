@@ -1,7 +1,5 @@
 package com.kkkk.presentation.main.onboarding.splash
 
-import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.viewModels
@@ -11,6 +9,7 @@ import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.core.extension.setNavigationBarColorFromResource
 import com.kkkk.core.extension.setStatusBarColorFromResource
+import com.kkkk.core.extension.toast
 import com.kkkk.presentation.main.onboarding.onbarding.OnboardingActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
@@ -22,17 +21,13 @@ import kr.genti.presentation.databinding.ActivitySplashBinding
 class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_splash) {
     private val viewModel by viewModels<SplashViewModel>()
 
-    @SuppressLint("HardwareIds")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setStatusBarColor()
         setNavigationBarColor()
         observeUserState()
-
-        val androidId: String = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-
-        println("Android ID: $androidId")
+        login()
     }
 
     private fun setStatusBarColor() = setStatusBarColorFromResource(R.color.purple_50)
@@ -40,7 +35,18 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
     private fun observeUserState() {
         viewModel.userState.flowWithLifecycle(lifecycle).onEach { state ->
-            navigateToScreenClear<OnboardingActivity>()
+            if (state) {
+                navigateToScreenClear<OnboardingActivity>()
+            } else {
+                toast(getString(R.string.error_msg))
+            }
         }.launchIn(lifecycleScope)
     }
+
+    private fun login() {
+        viewModel.setAndroidId(getDeviceTag())
+    }
+
+    private fun getDeviceTag(): String =
+        Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 }
