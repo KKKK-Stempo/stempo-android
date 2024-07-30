@@ -5,6 +5,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
 import com.kkkk.core.base.BaseDialog
+import com.kkkk.core.extension.setOnSingleClickListener
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.DialogRhythmSaveBinding
 
@@ -29,5 +30,17 @@ class RhythmSaveDialog :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
+        initPauseBtnListener()
+        initSaveBtnListener()
+    }
+
+    private fun initPauseBtnListener() {
+        binding.btnPause.setOnSingleClickListener { dismiss() }
+    }
+
+    private fun initSaveBtnListener() {
+        binding.btnSave.setOnSingleClickListener {
+
+        }
     }
 }
