@@ -9,12 +9,12 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.kkkk.core.base.BaseFragment
+import com.kkkk.presentation.onboarding.onbarding.OnboardingViewModel.Companion.SPEED_CALC_INTERVAL
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentOnboardingMeasureBinding
 
@@ -23,9 +23,6 @@ class OnboardingMeasureFragment :
     SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private var stepDetectorSensor: Sensor? = null
-    private var stepCount = 0
-    private var lastStepTime: Long = 0
-    private val SPEED_CALC_INTERVAL = 2 // 걸음 수 마다 속도 계산
 
     private val viewModel by activityViewModels<OnboardingViewModel>()
 
@@ -102,11 +99,9 @@ class OnboardingMeasureFragment :
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
-            stepCount++
-            Log.e("TAG", "걸음 수: $stepCount")
-            // tvStepCount.text = "걸음 수: $stepCount"
+            viewModel.addStepCount(1)
 
-            if (stepCount % SPEED_CALC_INTERVAL == 0) {
+            if (viewModel.stepCount.value % SPEED_CALC_INTERVAL == 0) {
                 calculateSpeed()
             }
         }
@@ -114,13 +109,14 @@ class OnboardingMeasureFragment :
 
     private fun calculateSpeed() {
         val currentTime = System.currentTimeMillis()
+        val lastStepTime = viewModel.lastStepTime.value
         if (lastStepTime != 0L) {
             val timeDiff = currentTime - lastStepTime
             val speed = (SPEED_CALC_INTERVAL / (timeDiff / 1000f)) * 60 // 분당 걸음 수
-            Log.e("TAG", "속도 : $speed 걸음/분")
-            // tvSpeed.text = String.format("속도: %.2f 걸음/분", speed)
+
+            viewModel.setSpeed(speed)
         }
-        lastStepTime = currentTime
+        viewModel.setLastStepTime(currentTime)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
