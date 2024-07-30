@@ -39,7 +39,7 @@ constructor(
             CODE_TOKEN_EXPIRED -> {
                 try {
                     runBlocking {
-                        authRepository.postReissueTokens(
+                        authRepository.reissueTokens(
                             sharedPref.refreshToken
                         )
                     }.onSuccess { data ->
