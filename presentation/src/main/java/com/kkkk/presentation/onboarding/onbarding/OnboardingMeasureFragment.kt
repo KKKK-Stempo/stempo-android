@@ -30,10 +30,21 @@ class OnboardingMeasureFragment :
         super.onViewCreated(view, savedInstanceState)
 
         initButtonListener()
+        initializeSensor()
+        checkAndRequestPermission()
+    }
+
+    private fun initButtonListener() {
+        with(binding) {
+            btnOnboardingMeasureLater.setOnClickListener {
+                viewModel.setState(OnboardingState.DONE)
+            }
+        }
+    }
+
+    private fun initializeSensor() {
         sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
         stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
-
-        checkAndRequestPermission()
     }
 
     private fun checkAndRequestPermission() { // 권한 요청은 미리 하기!! 허용 되기 전 측정하니까 측정 안댐
@@ -46,7 +57,7 @@ class OnboardingMeasureFragment :
                 ActivityCompat.requestPermissions(
                     requireActivity(),
                     arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                    200
+                    SUCCESS_CODE
                 )
             } else {
                 initializeSensor()
@@ -56,18 +67,13 @@ class OnboardingMeasureFragment :
         }
     }
 
-    private fun initializeSensor() {
-        sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 200) {
+        if (requestCode == SUCCESS_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 initializeSensor()
             } else {
@@ -87,14 +93,6 @@ class OnboardingMeasureFragment :
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(this)
-    }
-
-    private fun initButtonListener() {
-        with(binding) {
-            btnOnboardingMeasureLater.setOnClickListener {
-                viewModel.setState(OnboardingState.DONE)
-            }
-        }
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -120,4 +118,8 @@ class OnboardingMeasureFragment :
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+
+    companion object {
+        private const val SUCCESS_CODE = 200
+    }
 }
