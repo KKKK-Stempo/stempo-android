@@ -12,7 +12,7 @@ import com.kkkk.core.extension.setNavigationBarColorFromResource
 import com.kkkk.core.extension.setStatusBarColorFromResource
 import com.kkkk.core.extension.toast
 import com.kkkk.presentation.main.MainActivity
-import com.kkkk.presentation.main.onboarding.onbarding.OnboardingActivity
+import com.kkkk.presentation.onboarding.onbarding.OnboardingActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

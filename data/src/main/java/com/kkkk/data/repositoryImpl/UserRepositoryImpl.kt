@@ -13,6 +13,10 @@ constructor(
 
     override fun getRefreshToken(): String = userSharedPref.refreshToken
 
+    override fun getBpmLevel(): Int = userSharedPref.bpmLevel
+
+    override fun getDeviceToken(): String = userSharedPref.deviceToken
+
     override fun setTokens(
         accessToken: String,
         refreshToken: String,
@@ -21,7 +25,9 @@ constructor(
         userSharedPref.refreshToken = refreshToken
     }
 
-    override fun getDeviceToken(): String = userSharedPref.deviceToken
+    override fun setBpmLevel(bpmLevel: Int) {
+        userSharedPref.bpmLevel = bpmLevel
+    }
 
     override fun setDeviceToken(deviceToken: String) {
         userSharedPref.deviceToken = deviceToken

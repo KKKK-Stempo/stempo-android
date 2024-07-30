@@ -5,10 +5,14 @@ interface UserRepository {
 
     fun getRefreshToken(): String
 
+    fun getBpmLevel(): Int
+
     fun setTokens(
         accessToken: String,
         refreshToken: String,
     )
+
+    fun setBpmLevel(bpmLevel: Int)
 
     fun getDeviceToken(): String
 
