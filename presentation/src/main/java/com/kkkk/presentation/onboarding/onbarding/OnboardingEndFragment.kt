@@ -1,14 +1,17 @@
-package com.kkkk.presentation.main.onboarding.onbarding
+package com.kkkk.presentation.onboarding.onbarding
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.kkkk.core.base.BaseFragment
 import kr.genti.presentation.R
-import kr.genti.presentation.databinding.FragmentOnboardingMeasureBinding
+import kr.genti.presentation.databinding.FragmentOnboardingEndBinding
+import kr.genti.presentation.databinding.FragmentOnboardingStartBinding
 
-class OnboardingMeasureFragment :
-    BaseFragment<FragmentOnboardingMeasureBinding>(R.layout.fragment_onboarding_measure) {
+class OnboardingEndFragment :
+    BaseFragment<FragmentOnboardingEndBinding>(R.layout.fragment_onboarding_end) {
     private val viewModel by activityViewModels<OnboardingViewModel>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -19,7 +22,7 @@ class OnboardingMeasureFragment :
 
     private fun initButtonListener() {
         with(binding) {
-            btnOnboardingMeasureLater.setOnClickListener {
+            btnOnboardingEndStart.setOnClickListener {
                 viewModel.setState(OnboardingState.DONE)
             }
         }
