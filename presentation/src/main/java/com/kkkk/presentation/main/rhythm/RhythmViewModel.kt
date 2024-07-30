@@ -20,6 +20,7 @@ constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
     var tempRhythmLevel = MutableLiveData<Int>(1)
+    var bpm = 50
     var filename: String = "stempo_level_1"
     var isSubmitted: Boolean = true
 
@@ -39,6 +40,7 @@ constructor(
     private fun initRhythmLevelFromDataStore() {
         val currentLevel = userRepository.getBpmLevel()
         filename = "stempo_level_$currentLevel"
+        bpm = 40 + currentLevel * 10
         _rhythmLevel.value = currentLevel
         tempRhythmLevel.value = currentLevel
     }
@@ -58,6 +60,7 @@ constructor(
     fun setRhythmLevel() {
         isSubmitted = true
         filename = "stempo_level_" + tempRhythmLevel.value.toString()
+        bpm = 40 + (tempRhythmLevel.value?.times(10) ?: 10)
         _rhythmLevel.value = tempRhythmLevel.value ?: -1
         userRepository.setBpmLevel(rhythmLevel.value)
     }
@@ -65,7 +68,7 @@ constructor(
     fun postToGetRhythmUrlFromServer(level: Int) {
         _rhythmUrlState.value = UiState.Loading
         viewModelScope.launch {
-            rhythmRepository.postToGetRhythmUrl(40 + level * 10)
+            rhythmRepository.postToGetRhythmUrl(bpm)
                 .onSuccess {
                     _rhythmUrlState.value = UiState.Success(it)
                 }

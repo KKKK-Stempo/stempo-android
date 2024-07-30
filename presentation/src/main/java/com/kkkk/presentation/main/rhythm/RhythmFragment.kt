@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentRhythmBinding
+import timber.log.Timber
 import java.io.File
 import java.nio.file.Files
 
@@ -113,7 +114,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                     drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
             }
             ivRhythmBg.setImageResource(getResource("img_rhythm_bg_$color", DRAWABLE))
-            lottieRhythmBg.setAnimation(getResource("stempo_rhythm_$color", RAW))
+            lottieRhythmBg.apply {
+                setAnimation(getResource("stempo_rhythm_$color", RAW))
+                Timber.tag("qqqq").d("${viewModel.bpm}, ${(viewModel.bpm / 120).toFloat()}")
+                speed = viewModel.bpm / 120.00000000000F
+                playAnimation()
+            }
         }
     }
 
