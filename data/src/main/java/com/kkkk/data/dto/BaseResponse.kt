@@ -5,14 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BaseResponse<T>(
-    @SerialName("status")
-    val status: Int,
-    @SerialName("message")
-    val message: String,
-    @SerialName("timestamp")
-    val timestamp: String,
-    @SerialName("path")
-    val path: String,
+    @SerialName("success")
+    val success: Boolean,
     @SerialName("data")
     val data: T,
 )

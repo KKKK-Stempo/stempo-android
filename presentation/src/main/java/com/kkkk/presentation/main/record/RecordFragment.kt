@@ -1,7 +1,8 @@
-package com.kkkk.presentation.main.report
+package com.kkkk.presentation.main.record
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -13,19 +14,19 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.colorOf
 import com.kkkk.core.extension.stringOf
+import com.kkkk.core.extension.toast
+import com.kkkk.core.state.UiState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
-import kr.genti.presentation.databinding.FragmentReportBinding
-import java.text.SimpleDateFormat
-import java.util.Locale
+import kr.genti.presentation.databinding.FragmentRecordBinding
 
 @AndroidEntryPoint
-class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_report) {
+class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_record) {
 
-    private val viewModel by activityViewModels<ReportViewModel>()
+    private val viewModel by activityViewModels<RecordViewModel>()
 
     override fun onViewCreated(
         view: View,
@@ -46,23 +47,30 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
                 6 -> stringOf(R.string.report_tv_month_6)
                 else -> return@observe
             }
-            viewModel.setGraphValue()
         }
     }
 
     private fun observeChartEntry() {
-        viewModel.chartEntry.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach {
-            if (it.isNotEmpty()) {
-                binding.chartReport.apply {
-                    data = LineData(
-                        LineDataSet(
-                            viewModel.chartEntry.value,
-                            CHART_REPORT
-                        ).setDataSettings()
-                    )
-                    invalidate()
+        viewModel.chartEntry.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { state ->
+            when (state) {
+                is UiState.Success -> {
+                    binding.ivChartLoading.isVisible = false
+                    binding.layoutChart.isVisible = true
+                    binding.chartReport.apply {
+                        data = LineData(LineDataSet(state.data, CHART_RECORD).setDataSettings())
+                        invalidate()
+                    }
+                    setGraphSettings()
                 }
-                setGraphSettings()
+
+                is UiState.Failure -> {
+                    binding.ivChartLoading.isVisible = true
+                    toast(stringOf(R.string.error_msg))
+                }
+
+                is UiState.Loading -> binding.ivChartLoading.isVisible = false
+
+                is UiState.Empty -> binding.ivChartLoading.isVisible = true
             }
         }.launchIn(lifecycleScope)
     }
@@ -96,9 +104,8 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
         chart.xAxis.apply {
             valueFormatter = object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String? {
-                    return if (value.toInt() in viewModel.nowList.indices) {
-                        DATE_FORMAT.parse(viewModel.nowList[value.toInt()].second)
-                            ?.let { DISPLAY_DATE_FORMAT.format(it) }
+                    return if (value.toInt() in viewModel.dateList.indices) {
+                        viewModel.dateList[value.toInt()]
                     } else {
                         ""
                     }
@@ -107,7 +114,7 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
             position = XAxis.XAxisPosition.BOTTOM
             granularity = 1f
             axisMinimum = 0.7f
-            axisMaximum = viewModel.chartEntry.value.size - 0.8f
+            axisMaximum = viewModel.dateList.size - 0.8f
             setDrawGridLines(false)
             setDrawAxisLine(false)
             textSize = 15f
@@ -134,8 +141,6 @@ class ReportFragment : BaseFragment<FragmentReportBinding>(R.layout.fragment_rep
     }
 
     companion object {
-        private const val CHART_REPORT = "CHART_REPORT"
-        val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val DISPLAY_DATE_FORMAT = SimpleDateFormat("MM/dd", Locale.getDefault())
+        private const val CHART_RECORD = "CHART_RECORD"
     }
 }
