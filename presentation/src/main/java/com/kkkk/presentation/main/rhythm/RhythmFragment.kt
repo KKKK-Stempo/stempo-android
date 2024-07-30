@@ -177,7 +177,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun setLoadingView(isLoading: Boolean) {
-        binding.viewLoading.isVisible = isLoading
+        binding.layoutLoading.isVisible = isLoading
         if (isLoading) {
             setStatusBarColor(R.color.transparent_50)
         } else {
