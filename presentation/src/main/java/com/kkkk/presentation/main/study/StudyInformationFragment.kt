@@ -2,11 +2,13 @@ package com.kkkk.presentation.main.study
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.kkkk.core.base.BaseFragment
+import com.kkkk.domain.entity.response.StudyModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -27,50 +29,41 @@ class StudyInformationFragment :
         setObserver()
     }
 
+    private val items by lazy {
+        listOf(
+            binding.itemStudyInformation1,
+            binding.itemStudyInformation2,
+            binding.itemStudyInformation3
+        )
+    }
+
     private fun setObserver() {
         viewModel.articleState.flowWithLifecycle(lifecycle).onEach { state ->
             with(binding) {
-                if (state.hasPrevious) {
-                    btnStudyInformationBefore.visibility = View.VISIBLE
-                } else {
-                    btnStudyInformationBefore.visibility = View.INVISIBLE
-                }
+                btnStudyInformationBefore.visibility =
+                    if (state.hasPrevious) View.VISIBLE else View.INVISIBLE
 
-                if (state.hasNext) {
-                    btnStudyInformationNext.visibility = View.VISIBLE
-                } else {
-                    btnStudyInformationNext.visibility = View.INVISIBLE
-                }
+                btnStudyInformationNext.visibility =
+                    if (state.hasNext) View.VISIBLE else View.INVISIBLE
 
-                invisibleItems(state.items.size)
-
-                val items = listOf(
-                    itemStudyInformation1,
-                    itemStudyInformation2,
-                    itemStudyInformation3
-                )
-
-                state.items.take(3).forEachIndexed { index, item ->
-                    with(items[index]) {
-                        tvStudyInformationTitle.text = item.title
-                        tvStudyExerciseContent.text = item.content
-                        ivStudyInformationThumbnail.load(item.thumbnailUrl ?: R.drawable.img_default_content)
-                    }
-                }
+                updateItems(state.items)
             }
         }.launchIn(lifecycleScope)
     }
 
-    private fun invisibleItems(size: Int) {
-        with(binding) {
-            val items = listOf(
-                itemStudyInformation1,
-                itemStudyInformation2,
-                itemStudyInformation3
-            )
-
-            items.forEachIndexed { index, item ->
-                item.root.visibility = if (index < size) View.VISIBLE else View.INVISIBLE
+    private fun updateItems(stateItems: List<StudyModel.StudyItemModel>) {
+        items.forEachIndexed { index, item ->
+            if (index < stateItems.size) {
+                item.root.isVisible = true
+                with(item) {
+                    tvStudyInformationTitle.text = stateItems[index].title
+                    tvStudyExerciseContent.text = stateItems[index].content
+                    ivStudyInformationThumbnail.load(
+                        stateItems[index].thumbnailUrl ?: R.drawable.img_default_content
+                    )
+                }
+            } else {
+                item.root.isVisible = false
             }
         }
     }
