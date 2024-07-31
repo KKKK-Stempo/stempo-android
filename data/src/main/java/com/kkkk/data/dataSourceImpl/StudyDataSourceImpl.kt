@@ -11,13 +11,9 @@ data class StudyDataSourceImpl @Inject constructor(
 ) : StudyDataSource {
     override suspend fun getVideos(
         page: Int,
-        size: Int,
-        sortBy: String,
-        sortDirection: String
+        size: Int
     ): BaseResponse<VideoDto> = studyService.getVideos(
         page = page,
-        size = size,
-        sortBy = sortBy,
-        sortDirection = sortDirection
+        size = size
     )
 }

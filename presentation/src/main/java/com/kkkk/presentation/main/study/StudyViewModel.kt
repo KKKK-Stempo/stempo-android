@@ -17,9 +17,7 @@ class StudyViewModel @Inject constructor(
         viewModelScope.launch {
             studyRepository.getVideos(
                 page = 0,
-                size = 2,
-                sortBy = "createdAt",
-                sortDirection = "desc"
+                size = 2
             ).onSuccess {
                 // TODO: DATA 연결
             }.onFailure(Timber::e)

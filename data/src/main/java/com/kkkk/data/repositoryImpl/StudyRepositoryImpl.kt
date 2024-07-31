@@ -12,15 +12,11 @@ constructor(
 ) : StudyRepository {
     override suspend fun getVideos(
         page: Int,
-        size: Int,
-        sortBy: String,
-        sortDirection: String
+        size: Int
     ): Result<VideoModel> = runCatching {
         studyDataSource.getVideos(
             page = page,
-            size = size,
-            sortBy = sortBy,
-            sortDirection = sortDirection
+            size = size
         ).data.toModel()
     }
 }

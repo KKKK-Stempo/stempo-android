@@ -6,8 +6,6 @@ import com.kkkk.data.dto.response.VideoDto
 interface StudyDataSource {
     suspend fun getVideos(
         page: Int,
-        size: Int,
-        sortBy: String,
-        sortDirection: String,
+        size: Int
     ): BaseResponse<VideoDto>
 }

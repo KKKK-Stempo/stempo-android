@@ -12,10 +12,6 @@ interface StudyService {
         @Query("page")
         page: Int,
         @Query("size")
-        size: Int,
-        @Query("sortBy")
-        sortBy: String,
-        @Query("sortDirection")
-        sortDirection: String,
+        size: Int
     ): BaseResponse<VideoDto>
 }
