@@ -1,5 +1,6 @@
 package com.kkkk.data.dto.response
 
+import com.kkkk.data.R
 import com.kkkk.domain.entity.response.StudyModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -30,7 +31,7 @@ data class StudyDto(
         @SerialName("content")
         val content: String,
         @SerialName("thumbnailUrl")
-        val thumbnailUrl: String,
+        val thumbnailUrl: String?,
         @SerialName("createdAt")
         val createdAt: String,
     ){
