@@ -1,5 +1,6 @@
 package com.kkkk.presentation.main.rhythm
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -29,6 +30,14 @@ class RhythmBottomSheet :
     }
 
     private fun initSubmitBtnListener() {
-        binding.btnSubmitLevel.setOnSingleClickListener { dismiss() }
+        binding.btnSubmitLevel.setOnSingleClickListener {
+            viewModel.setRhythmLevel()
+            dismiss()
+        }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        viewModel.resetTempRhythmLevel()
     }
 }
