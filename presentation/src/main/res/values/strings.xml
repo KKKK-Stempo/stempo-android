@@ -47,4 +47,10 @@
     <string name="onboarding_end_tv_title">측정이 완료되었습니다</string>
     <string name="onboarding_end_tv_subtitle">스템포를 시작해볼까요?</string>
 
+    <string name="profile_tv_title">마이스템포</string>
+    <string name="profile_btn_announce">공지사항</string>
+    <string name="profile_btn_faq">FAQ</string>
+    <string name="profile_btn_voice">불편한 점 얘기하기 (음성)</string>
+    <string name="profile_btn_suggest">건의하기</string>
+
 </resources>
