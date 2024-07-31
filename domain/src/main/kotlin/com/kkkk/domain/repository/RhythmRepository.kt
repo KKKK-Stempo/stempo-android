@@ -1,6 +1,6 @@
 package com.kkkk.domain.repository
 
-import java.io.File
+import com.kkkk.domain.entity.request.RecordRequestModel
 
 interface RhythmRepository {
     suspend fun postToGetRhythmUrl(
@@ -10,4 +10,8 @@ interface RhythmRepository {
     suspend fun getRhythmWav(
         url: String
     ): Result<ByteArray>
+
+    suspend fun postRhythmRecord(
+        request: RecordRequestModel
+    ): Result<String>
 }

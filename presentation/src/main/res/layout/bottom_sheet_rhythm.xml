@@ -61,11 +61,11 @@
                 android:layout_column="0"
                 android:layout_columnWeight="1"
                 android:layout_margin="16dp"
-                android:background="@{vm.rhythmLevel == 1 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:background="@{vm.tempRhythmLevel == 1 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.changeRhythmLevel(1)}"
+                android:onClick="@{() -> vm.setTempRhythmLevel(1)}"
                 android:text="1"
-                android:textColor="@{vm.rhythmLevel == 1 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempRhythmLevel == 1 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -74,11 +74,11 @@
                 android:layout_column="1"
                 android:layout_columnWeight="1"
                 android:layout_margin="16dp"
-                android:background="@{vm.rhythmLevel == 2 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:background="@{vm.tempRhythmLevel == 2 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.changeRhythmLevel(2)}"
+                android:onClick="@{() -> vm.setTempRhythmLevel(2)}"
                 android:text="2"
-                android:textColor="@{vm.rhythmLevel == 2 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempRhythmLevel == 2 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -87,11 +87,11 @@
                 android:layout_column="2"
                 android:layout_columnWeight="1"
                 android:layout_margin="16dp"
-                android:background="@{vm.rhythmLevel == 3 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:background="@{vm.tempRhythmLevel == 3 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.changeRhythmLevel(3)}"
+                android:onClick="@{() -> vm.setTempRhythmLevel(3)}"
                 android:text="3"
-                android:textColor="@{vm.rhythmLevel == 3 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempRhythmLevel == 3 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -100,11 +100,11 @@
                 android:layout_column="0"
                 android:layout_columnWeight="1"
                 android:layout_margin="16dp"
-                android:background="@{vm.rhythmLevel == 4 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:background="@{vm.tempRhythmLevel == 4 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.changeRhythmLevel(4)}"
+                android:onClick="@{() -> vm.setTempRhythmLevel(4)}"
                 android:text="4"
-                android:textColor="@{vm.rhythmLevel == 4 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempRhythmLevel == 4 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -113,11 +113,11 @@
                 android:layout_column="1"
                 android:layout_columnWeight="1"
                 android:layout_margin="16dp"
-                android:background="@{vm.rhythmLevel == 5 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:background="@{vm.tempRhythmLevel == 5 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.changeRhythmLevel(5)}"
+                android:onClick="@{() -> vm.setTempRhythmLevel(5)}"
                 android:text="5"
-                android:textColor="@{vm.rhythmLevel == 5 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempRhythmLevel == 5 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -126,11 +126,11 @@
                 android:layout_column="2"
                 android:layout_columnWeight="1"
                 android:layout_margin="16dp"
-                android:background="@{vm.rhythmLevel == 6 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:background="@{vm.tempRhythmLevel == 6 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.changeRhythmLevel(6)}"
+                android:onClick="@{() -> vm.setTempRhythmLevel(6)}"
                 android:text="6"
-                android:textColor="@{vm.rhythmLevel == 6 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempRhythmLevel == 6 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -139,11 +139,11 @@
                 android:layout_column="0"
                 android:layout_columnWeight="1"
                 android:layout_margin="16dp"
-                android:background="@{vm.rhythmLevel == 7 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:background="@{vm.tempRhythmLevel == 7 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.changeRhythmLevel(7)}"
+                android:onClick="@{() -> vm.setTempRhythmLevel(7)}"
                 android:text="7"
-                android:textColor="@{vm.rhythmLevel == 7 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempRhythmLevel == 7 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -152,11 +152,11 @@
                 android:layout_column="1"
                 android:layout_columnWeight="1"
                 android:layout_margin="16dp"
-                android:background="@{vm.rhythmLevel == 8 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:background="@{vm.tempRhythmLevel == 8 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.changeRhythmLevel(8)}"
+                android:onClick="@{() -> vm.setTempRhythmLevel(8)}"
                 android:text="8"
-                android:textColor="@{vm.rhythmLevel == 8 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempRhythmLevel == 8 ? @color/white : @color/gray_700}" />
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head1"
@@ -165,11 +165,11 @@
                 android:layout_column="2"
                 android:layout_columnWeight="1"
                 android:layout_margin="16dp"
-                android:background="@{vm.rhythmLevel == 9 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:background="@{vm.tempRhythmLevel == 9 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.changeRhythmLevel(9)}"
+                android:onClick="@{() -> vm.setTempRhythmLevel(9)}"
                 android:text="9"
-                android:textColor="@{vm.rhythmLevel == 9 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempRhythmLevel == 9 ? @color/white : @color/gray_700}" />
 
         </GridLayout>
 

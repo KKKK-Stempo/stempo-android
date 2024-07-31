@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
-            android:background="@drawable/shape_purple50_line_17_rect"
+            android:background="@drawable/shape_white_fill_purple50_line_17_rect"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
             android:textColor="@color/purple_50"
@@ -39,28 +39,52 @@
             app:layout_constraintTop_toBottomOf="@id/tv_rhythm_level" />
 
         <ImageView
-            android:id="@+id/btn_rhythm_play"
-            android:layout_width="0dp"
+            android:id="@+id/iv_rhythm_bg"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:src="@drawable/img_rhythm_purple"
+            android:src="@drawable/img_rhythm_bg_purple"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/btn_rhythm_play"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="90dp"
+            android:src="@drawable/ic_play"
+            app:layout_constraintBottom_toBottomOf="@id/iv_rhythm_bg"
+            app:layout_constraintEnd_toEndOf="@id/iv_rhythm_bg"
+            app:layout_constraintStart_toStartOf="@id/iv_rhythm_bg"
+            app:layout_constraintTop_toTopOf="@id/iv_rhythm_bg" />
+
+        <ImageView
             android:id="@+id/btn_rhythm_stop"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="80dp"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/mock_rhythm_stop"
+            android:layout_height="0dp"
+            android:padding="90dp"
+            android:src="@drawable/ic_stop"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/iv_rhythm_bg"
+            app:layout_constraintEnd_toEndOf="@id/iv_rhythm_bg"
+            app:layout_constraintStart_toStartOf="@id/iv_rhythm_bg"
+            app:layout_constraintTop_toTopOf="@id/iv_rhythm_bg" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_rhythm_bg"
+            android:layout_width="520dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="15dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/stempo_rhythm_purple" />
 
         <TextView
             android:id="@+id/tv_rhythm_step"
@@ -68,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="34dp"
-            android:background="@drawable/shape_purple50_line_17_rect"
+            android:background="@drawable/shape_white_fill_purple50_line_17_rect"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
             android:text="000 걸음"
@@ -107,8 +131,8 @@
 
         </LinearLayout>
 
-        <View
-            android:id="@+id/view_loading"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_loading"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@color/transparent_50"
@@ -116,7 +140,22 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_loading"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="50dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/stempo_loading" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
