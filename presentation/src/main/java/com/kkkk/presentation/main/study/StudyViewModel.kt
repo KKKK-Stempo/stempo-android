@@ -12,7 +12,6 @@ import javax.inject.Inject
 class StudyViewModel @Inject constructor(
     private val studyRepository: StudyRepository,
 ) : ViewModel() {
-
     fun getVideos() {
         viewModelScope.launch {
             studyRepository.getVideos(
@@ -21,6 +20,19 @@ class StudyViewModel @Inject constructor(
             ).onSuccess {
                 // TODO: DATA 연결
             }.onFailure(Timber::e)
+        }
+    }
+
+    fun getArticles() {
+        viewModelScope.launch {
+            studyRepository.getArticles(
+                page = 0,
+                size = 2
+            ).onSuccess {
+
+            }.onFailure {
+
+            }
         }
     }
 }

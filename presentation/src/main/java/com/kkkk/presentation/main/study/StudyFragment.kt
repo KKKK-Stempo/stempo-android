@@ -23,6 +23,7 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
         setTabLayout()
         setViewPager()
         viewModel.getVideos()
+        viewModel.getArticles()
     }
 
     private fun setTabLayout() {
