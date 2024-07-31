@@ -2,6 +2,7 @@ package com.kkkk.presentation.main.study
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kkkk.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
