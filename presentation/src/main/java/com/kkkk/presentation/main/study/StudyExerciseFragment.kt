@@ -18,6 +18,6 @@ class StudyExerciseFragment: BaseFragment<FragmentStudyExerciseBinding>(R.layout
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getVideos()
+        // viewModel.getVideos()
     }
 }

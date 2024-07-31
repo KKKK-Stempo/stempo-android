@@ -2,8 +2,11 @@ package com.kkkk.presentation.main.study
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kkkk.domain.entity.response.StudyModel
 import com.kkkk.domain.repository.StudyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -12,29 +15,37 @@ import javax.inject.Inject
 class StudyViewModel @Inject constructor(
     private val studyRepository: StudyRepository,
 ) : ViewModel() {
-    private var videoPage = 0
-    private var articlePage = 0
+    private val _videoState = MutableStateFlow(StudyModel())
+    val videoState: StateFlow<StudyModel>
+        get() = _videoState
 
-    fun getVideos() {
+    private val _articleState = MutableStateFlow(StudyModel())
+    val articleState: StateFlow<StudyModel>
+        get() = _articleState
+
+    init {
+        getVideos()
+        getArticles()
+    }
+
+    private fun getVideos() {
         viewModelScope.launch {
             studyRepository.getVideos(
-                page = videoPage,
+                page = _videoState.value.currentPage,
                 size = 2
             ).onSuccess {
-                videoPage = it.currentPage
-                // TODO: DATA 연결
+                _videoState.value = it
             }.onFailure(Timber::e)
         }
     }
 
-    fun getArticles() {
+    private fun getArticles() {
         viewModelScope.launch {
             studyRepository.getArticles(
-                page = articlePage,
-                size = 2
+                page = _articleState.value.currentPage,
+                size = 3
             ).onSuccess {
-                articlePage = it.currentPage
-                // TODO: DATA 연결
+                _articleState.value = it
             }.onFailure(Timber::e)
         }
     }
