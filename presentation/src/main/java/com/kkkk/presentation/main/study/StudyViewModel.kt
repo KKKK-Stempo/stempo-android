@@ -28,10 +28,10 @@ class StudyViewModel @Inject constructor(
         getArticles()
     }
 
-    private fun getVideos() {
+    fun getVideos(value: Int = 0) {
         viewModelScope.launch {
             studyRepository.getVideos(
-                page = _videoState.value.currentPage,
+                page = _videoState.value.currentPage + value,
                 size = 2
             ).onSuccess {
                 _videoState.value = it
@@ -39,10 +39,10 @@ class StudyViewModel @Inject constructor(
         }
     }
 
-    private fun getArticles() {
+    fun getArticles(value: Int = 0) {
         viewModelScope.launch {
             studyRepository.getArticles(
-                page = _articleState.value.currentPage,
+                page = _articleState.value.currentPage + value,
                 size = 3
             ).onSuccess {
                 _articleState.value = it

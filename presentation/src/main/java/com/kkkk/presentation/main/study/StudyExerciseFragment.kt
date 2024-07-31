@@ -20,6 +20,13 @@ class StudyExerciseFragment :
     BaseFragment<FragmentStudyExerciseBinding>(R.layout.fragment_study_exercise) {
     private val viewModel by viewModels<StudyViewModel>()
 
+    private val items by lazy {
+        listOf(
+            binding.itemStudyExercise1,
+            binding.itemStudyExercise2
+        )
+    }
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -27,13 +34,7 @@ class StudyExerciseFragment :
         super.onViewCreated(view, savedInstanceState)
 
         setObserver()
-    }
-
-    private val items by lazy {
-        listOf(
-            binding.itemStudyExercise1,
-            binding.itemStudyExercise2
-        )
+        setButtonClickListeners()
     }
 
     private fun setObserver() {
@@ -62,8 +63,17 @@ class StudyExerciseFragment :
                     )
                 }
             } else {
-                item.root.isVisible = false
+                item.root.visibility = View.INVISIBLE
             }
+        }
+    }
+
+    private fun setButtonClickListeners() {
+        binding.btnStudyExerciseBefore.setOnClickListener {
+            viewModel.getVideos(-1)
+        }
+        binding.btnStudyExerciseNext.setOnClickListener {
+            viewModel.getVideos(1)
         }
     }
 }

@@ -20,6 +20,14 @@ class StudyInformationFragment :
     BaseFragment<FragmentStudyInformationBinding>(R.layout.fragment_study_information) {
     private val viewModel by viewModels<StudyViewModel>()
 
+    private val items by lazy {
+        listOf(
+            binding.itemStudyInformation1,
+            binding.itemStudyInformation2,
+            binding.itemStudyInformation3
+        )
+    }
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -27,14 +35,7 @@ class StudyInformationFragment :
         super.onViewCreated(view, savedInstanceState)
 
         setObserver()
-    }
-
-    private val items by lazy {
-        listOf(
-            binding.itemStudyInformation1,
-            binding.itemStudyInformation2,
-            binding.itemStudyInformation3
-        )
+        setButtonClickListeners()
     }
 
     private fun setObserver() {
@@ -63,8 +64,17 @@ class StudyInformationFragment :
                     )
                 }
             } else {
-                item.root.isVisible = false
+                item.root.visibility = View.INVISIBLE
             }
+        }
+    }
+
+    private fun setButtonClickListeners() {
+        binding.btnStudyInformationBefore.setOnClickListener {
+            viewModel.getArticles(-1)
+        }
+        binding.btnStudyInformationNext.setOnClickListener {
+            viewModel.getArticles(1)
         }
     }
 }
