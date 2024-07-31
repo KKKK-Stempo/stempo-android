@@ -10,7 +10,17 @@ class StudyRepositoryImpl
 constructor(
     private val studyDataSource: StudyDataSource,
 ) : StudyRepository {
-    override suspend fun getVideos(): Result<VideoModel> = runCatching {
-        studyDataSource.getVideos().data.toModel()
+    override suspend fun getVideos(
+        page: Int,
+        size: Int,
+        sortBy: String,
+        sortDirection: String
+    ): Result<VideoModel> = runCatching {
+        studyDataSource.getVideos(
+            page = page,
+            size = size,
+            sortBy = sortBy,
+            sortDirection = sortDirection
+        ).data.toModel()
     }
 }
