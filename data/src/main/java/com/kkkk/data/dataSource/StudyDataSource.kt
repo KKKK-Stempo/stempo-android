@@ -8,4 +8,9 @@ interface StudyDataSource {
         page: Int,
         size: Int
     ): BaseResponse<StudyDto>
+
+    suspend fun getArticles(
+        page: Int,
+        size: Int
+    ): BaseResponse<StudyDto>
 }

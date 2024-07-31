@@ -11,9 +11,15 @@ data class StudyDataSourceImpl @Inject constructor(
 ) : StudyDataSource {
     override suspend fun getVideos(
         page: Int,
-        size: Int
+        size: Int,
     ): BaseResponse<StudyDto> = studyService.getVideos(
         page = page,
         size = size
     )
+
+    override suspend fun getArticles(page: Int, size: Int): BaseResponse<StudyDto> =
+        studyService.getArticles(
+            page = page,
+            size = size
+        )
 }
