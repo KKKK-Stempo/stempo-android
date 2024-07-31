@@ -12,7 +12,6 @@ import kr.genti.presentation.databinding.FragmentStudyBinding
 @AndroidEntryPoint
 class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study) {
     private val tabTextList = listOf("재활운동", "정보")
-    private val viewModel by viewModels<StudyViewModel>()
 
     override fun onViewCreated(
         view: View,
@@ -22,8 +21,6 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
 
         setTabLayout()
         setViewPager()
-        viewModel.getVideos()
-        viewModel.getArticles()
     }
 
     private fun setTabLayout() {

@@ -12,12 +12,16 @@ import javax.inject.Inject
 class StudyViewModel @Inject constructor(
     private val studyRepository: StudyRepository,
 ) : ViewModel() {
+    private var videoPage = 0
+    private var articlePage = 0
+
     fun getVideos() {
         viewModelScope.launch {
             studyRepository.getVideos(
-                page = 0,
+                page = videoPage,
                 size = 2
             ).onSuccess {
+                videoPage = it.currentPage
                 // TODO: DATA 연결
             }.onFailure(Timber::e)
         }
@@ -26,13 +30,12 @@ class StudyViewModel @Inject constructor(
     fun getArticles() {
         viewModelScope.launch {
             studyRepository.getArticles(
-                page = 0,
+                page = articlePage,
                 size = 2
             ).onSuccess {
-
-            }.onFailure {
-
-            }
+                articlePage = it.currentPage
+                // TODO: DATA 연결
+            }.onFailure(Timber::e)
         }
     }
 }
