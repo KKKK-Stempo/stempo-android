@@ -119,7 +119,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             ivRhythmBg.setImageResource(getResource("img_rhythm_bg_$color", DRAWABLE))
             lottieRhythmBg.apply {
                 setAnimation(getResource("stempo_rhythm_$color", RAW))
-                speed = viewModel.bpm / 120.00000000000F
+                speed = viewModel.bpm / FLOAT_120
                 playAnimation()
             }
         }
@@ -237,5 +237,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         private const val COLOR = "color"
         private const val DRAWABLE = "drawable"
         private const val RAW = "raw"
+
+        private const val FLOAT_120 =  120.00000000000000000000F
     }
 }

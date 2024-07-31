@@ -47,7 +47,7 @@ constructor(
     private fun initRhythmLevelFromDataStore() {
         val currentLevel = userRepository.getBpmLevel()
         filename = "stempo_level_$currentLevel"
-        bpm = 40 + currentLevel * 10
+        bpm = setBpm(currentLevel)
         _rhythmLevel.value = currentLevel
         tempRhythmLevel.value = currentLevel
     }
@@ -67,8 +67,8 @@ constructor(
     fun setRhythmLevel() {
         isSubmitted = true
         filename = "stempo_level_" + tempRhythmLevel.value.toString()
-        bpm = 40 + (tempRhythmLevel.value?.times(10) ?: 10)
-        _rhythmLevel.value = tempRhythmLevel.value ?: -1
+        bpm = setBpm(tempRhythmLevel.value ?: 1)
+        _rhythmLevel.value = tempRhythmLevel.value ?: 1
         userRepository.setBpmLevel(rhythmLevel.value)
     }
 
@@ -110,6 +110,8 @@ constructor(
             }
         }
     }
+
+    fun setBpm(level: Int) = 40 + level * 10
 
     companion object {
         const val LEVEL_UNDEFINED = -1
