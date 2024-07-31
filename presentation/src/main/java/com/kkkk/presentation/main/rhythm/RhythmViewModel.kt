@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkkk.core.state.UiState
+import com.kkkk.domain.entity.request.RecordRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,9 @@ constructor(
     var filename: String = "stempo_level_1"
     var isSubmitted: Boolean = true
 
+    // TODO : 정확도 만져주세용 ㅎㅎ
+    var accuracy: Double = 1.0
+
     private val _rhythmLevel = MutableStateFlow<Int>(LEVEL_UNDEFINED)
     val rhythmLevel: StateFlow<Int> = _rhythmLevel
 
@@ -32,6 +36,9 @@ constructor(
 
     private val _downloadWavState = MutableStateFlow<UiState<ByteArray>>(UiState.Empty)
     val downloadWavState: StateFlow<UiState<ByteArray>> = _downloadWavState
+
+    private val _recordSaveState = MutableStateFlow<UiState<String>>(UiState.Empty)
+    val recordSaveState: StateFlow<UiState<String>> = _recordSaveState
 
     init {
         initRhythmLevelFromDataStore()
@@ -88,6 +95,19 @@ constructor(
                 .onFailure {
                     _downloadWavState.value = UiState.Failure(it.message.toString())
                 }
+        }
+    }
+
+    fun posRhythmRecordToSave() {
+        _recordSaveState.value = UiState.Loading
+        viewModelScope.launch {
+            rhythmRepository.postRhythmRecord(
+                RecordRequestModel(accuracy, 0, 0)
+            ).onSuccess {
+                _recordSaveState.value = UiState.Success(it)
+            }.onFailure {
+                _recordSaveState.value = UiState.Failure(it.message.toString())
+            }
         }
     }
 

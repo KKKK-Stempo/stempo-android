@@ -30,6 +30,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private val viewModel by activityViewModels<RhythmViewModel>()
     private var rhythmBottomSheet: RhythmBottomSheet? = null
+    private var rhythmSaveDialog: RhythmSaveDialog? = null
     private lateinit var mediaPlayer: MediaPlayer
 
     override fun onViewCreated(
@@ -44,6 +45,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         observeRhythmLevel()
         observeRhythmUrlState()
         observeDownloadState()
+        observeRecordSaveState()
     }
 
     private fun initChangeLevelBtnListener() {
@@ -70,6 +72,8 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 mediaPlayer.pause()
                 switchPlayingState(false)
             }
+            rhythmSaveDialog = RhythmSaveDialog()
+            rhythmSaveDialog?.show(parentFragmentManager, DIALOG_RHYTHM_SAVE)
         }
     }
 
@@ -198,9 +202,25 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
     }
 
+    private fun observeRecordSaveState() {
+        viewModel.recordSaveState.flowWithLifecycle(lifecycle).distinctUntilChanged()
+            .onEach { state ->
+                when (state) {
+                    is UiState.Success -> {
+                        // TODO : 여기에서 기존 걸음 0으로 만드는 로직 필요
+                        toast(stringOf(R.string.rhythm_toast_save_success))
+                    }
+
+                    is UiState.Failure -> toast(stringOf(R.string.error_msg))
+                    else -> return@onEach
+                }
+            }.launchIn(lifecycleScope)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         rhythmBottomSheet = null
+        rhythmSaveDialog = null
         if (::mediaPlayer.isInitialized) {
             mediaPlayer.release()
         }
@@ -208,6 +228,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     companion object {
         private const val BOTTOM_SHEET_CHANGE_LEVEL = "BOTTOM_SHEET_CHANGE_LEVEL"
+        private const val DIALOG_RHYTHM_SAVE = "DIALOG_RHYTHM_SAVE"
 
         private const val COLOR_PURPLE = "purple"
         private const val COLOR_SKY = "sky"
