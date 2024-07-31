@@ -1,11 +1,11 @@
 package com.kkkk.data.dto.response
 
-import com.kkkk.domain.entity.response.VideoModel
+import com.kkkk.domain.entity.response.StudyModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class VideoDto(
+data class StudyDto(
     @SerialName("currentPage")
     val currentPage: Int,
     @SerialName("hasPrevious")
@@ -19,10 +19,10 @@ data class VideoDto(
     @SerialName("take")
     val take: Int,
     @SerialName("items")
-    val items: List<VideoItemDto>,
+    val items: List<StudyItemDto>,
 ) {
     @Serializable
-    data class VideoItemDto(
+    data class StudyItemDto(
         @SerialName("id")
         val id: Int,
         @SerialName("title")
@@ -34,7 +34,7 @@ data class VideoDto(
         @SerialName("createdAt")
         val createdAt: String,
     ){
-        fun toModel() = VideoModel.VideoItemModel(
+        fun toModel() = StudyModel.StudyItemModel(
             id = id,
             title = title,
             content = content,
@@ -43,7 +43,7 @@ data class VideoDto(
         )
     }
 
-    fun toModel() = VideoModel(
+    fun toModel() = StudyModel(
         currentPage = currentPage,
         hasPrevious = hasPrevious,
         hasNext = hasNext,

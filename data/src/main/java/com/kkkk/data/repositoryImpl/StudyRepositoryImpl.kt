@@ -1,7 +1,7 @@
 package com.kkkk.data.repositoryImpl
 
 import com.kkkk.data.dataSource.StudyDataSource
-import com.kkkk.domain.entity.response.VideoModel
+import com.kkkk.domain.entity.response.StudyModel
 import com.kkkk.domain.repository.StudyRepository
 import javax.inject.Inject
 
@@ -13,7 +13,7 @@ constructor(
     override suspend fun getVideos(
         page: Int,
         size: Int
-    ): Result<VideoModel> = runCatching {
+    ): Result<StudyModel> = runCatching {
         studyDataSource.getVideos(
             page = page,
             size = size

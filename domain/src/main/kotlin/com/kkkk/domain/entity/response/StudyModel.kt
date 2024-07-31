@@ -1,12 +1,12 @@
 package com.kkkk.domain.entity.response
 
-data class VideoModel(
+data class StudyModel(
     val currentPage: Int,
     val hasPrevious: Boolean,
     val hasNext: Boolean,
-    val items: List<VideoItemModel>
+    val items: List<StudyItemModel>
 ) {
-    data class VideoItemModel(
+    data class StudyItemModel(
         val id: Int,
         val title: String,
         val content: String,

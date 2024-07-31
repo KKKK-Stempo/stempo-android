@@ -2,7 +2,7 @@ package com.kkkk.data.dataSourceImpl
 
 import com.kkkk.data.dataSource.StudyDataSource
 import com.kkkk.data.dto.BaseResponse
-import com.kkkk.data.dto.response.VideoDto
+import com.kkkk.data.dto.response.StudyDto
 import com.kkkk.data.service.StudyService
 import javax.inject.Inject
 
@@ -12,7 +12,7 @@ data class StudyDataSourceImpl @Inject constructor(
     override suspend fun getVideos(
         page: Int,
         size: Int
-    ): BaseResponse<VideoDto> = studyService.getVideos(
+    ): BaseResponse<StudyDto> = studyService.getVideos(
         page = page,
         size = size
     )
