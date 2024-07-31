@@ -12,9 +12,16 @@ constructor(
 ) : StudyRepository {
     override suspend fun getVideos(
         page: Int,
-        size: Int
+        size: Int,
     ): Result<StudyModel> = runCatching {
         studyDataSource.getVideos(
+            page = page,
+            size = size
+        ).data.toModel()
+    }
+
+    override suspend fun getArticles(page: Int, size: Int): Result<StudyModel> = runCatching {
+        studyDataSource.getArticles(
             page = page,
             size = size
         ).data.toModel()
