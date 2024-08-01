@@ -1,5 +1,11 @@
 package com.kkkk.presentation.main.rhythm
 
+import android.content.Context
+import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
@@ -16,6 +22,7 @@ import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.core.state.UiState
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.LEVEL_UNDEFINED
+import com.kkkk.presentation.onboarding.onbarding.OnboardingViewModel.Companion.SPEED_CALC_INTERVAL
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -26,7 +33,10 @@ import java.io.File
 import java.nio.file.Files
 
 @AndroidEntryPoint
-class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhythm) {
+class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhythm),
+    SensorEventListener {
+    private lateinit var sensorManager: SensorManager
+    private var stepDetectorSensor: Sensor? = null
 
     private val viewModel by activityViewModels<RhythmViewModel>()
     private var rhythmBottomSheet: RhythmBottomSheet? = null
@@ -207,7 +217,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             .onEach { state ->
                 when (state) {
                     is UiState.Success -> {
-                        // TODO : 여기에서 기존 걸음 0으로 만드는 로직 필요
                         toast(stringOf(R.string.rhythm_toast_save_success))
                     }
 
@@ -226,6 +235,65 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == SUCCESS_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                initializeSensor()
+            } else {
+                // 사용자가 권한을 거부한 경우 처리
+                // 예: 사용자에게 권한의 필요성을 설명하는 다이얼로그 표시
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        stepDetectorSensor?.let {
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (::sensorManager.isInitialized) {
+            sensorManager.unregisterListener(this)
+        }
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
+            viewModel.addStepCount(1)
+
+            if (viewModel.stepCount.value % SPEED_CALC_INTERVAL == 0) {
+                calculateSpeed()
+            }
+        }
+    }
+
+    private fun initializeSensor() {
+        sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+    }
+
+    private fun calculateSpeed() {
+        val currentTime = System.currentTimeMillis()
+        val lastStepTime = viewModel.lastStepTime.value
+        if (lastStepTime != 0L) {
+            val timeDiff = currentTime - lastStepTime
+            val speed = (SPEED_CALC_INTERVAL / (timeDiff / 1000.0)) * 60 // 분당 걸음 수
+
+            viewModel.setSpeed(speed)
+        }
+        viewModel.setLastStepTime(currentTime)
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+
     companion object {
         private const val BOTTOM_SHEET_CHANGE_LEVEL = "BOTTOM_SHEET_CHANGE_LEVEL"
         private const val DIALOG_RHYTHM_SAVE = "DIALOG_RHYTHM_SAVE"
@@ -238,6 +306,8 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         private const val DRAWABLE = "drawable"
         private const val RAW = "raw"
 
-        private const val FLOAT_120 =  120.00000000000000000000F
+        private const val FLOAT_120 = 120.00000000000000000000F
+
+        private const val SUCCESS_CODE = 200
     }
 }
