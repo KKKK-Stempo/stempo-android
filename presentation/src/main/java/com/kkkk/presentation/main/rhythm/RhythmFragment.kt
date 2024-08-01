@@ -9,6 +9,7 @@ import android.hardware.SensorManager
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
@@ -70,6 +71,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             if (::mediaPlayer.isInitialized) {
                 mediaPlayer.start()
                 switchPlayingState(true)
+                requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             } else {
                 toast(stringOf(R.string.error_msg))
             }
@@ -81,6 +83,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             if (::mediaPlayer.isInitialized) {
                 mediaPlayer.pause()
                 switchPlayingState(false)
+                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             }
             rhythmSaveDialog = RhythmSaveDialog()
             rhythmSaveDialog?.show(parentFragmentManager, DIALOG_RHYTHM_SAVE)
