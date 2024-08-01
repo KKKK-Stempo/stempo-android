@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/shape_gray200_line_8_rect"
+    android:background="@drawable/shape_white_fill_gray200_line_8_rect"
     android:paddingHorizontal="18dp"
     android:paddingVertical="20dp">
 
@@ -16,28 +16,28 @@
         android:ellipsize="end"
         android:gravity="start"
         android:maxLines="2"
-        tools:text="뇌성마비 아동의 인지 기능 향상을 위한 양극 경두개직류 경두개직류류류류류률류류류류률률류류류류류"
         android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@id/tv_study_exercise_content"
         app:layout_constraintEnd_toStartOf="@id/iv_study_information_thumbnail"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="뇌성마비 아동의 인지 기능 향상을 위한 양극 경두개직류 경두개직류류류류류률류류류류률률류류류류류" />
 
     <TextView
         android:id="@+id/tv_study_exercise_content"
-        style="@style/TextAppearance.Stempo.Head4"
+        style="@style/TextAppearance.Stempo.Body2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ellipsize="end"
         android:gravity="start"
         android:maxLines="2"
-        tools:text="서울아산병원 재활의학과 고은재 교수는 올해 열린 대한재활의학대회에서 수상을 할뻔 했지만 미끄러졌어요"
         android:textColor="@color/gray_600"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/tv_study_information_title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_study_information_title" />
+        app:layout_constraintTop_toBottomOf="@id/tv_study_information_title"
+        tools:text="서울아산병원 재활의학과 고은재 교수는 올해 열린 대한재활의학대회에서 수상을 할뻔 했지만 미끄러졌어요" />
 
     <ImageView
         android:id="@+id/iv_study_information_thumbnail"
@@ -46,10 +46,10 @@
         android:layout_marginStart="18dp"
         android:background="@drawable/shape_gray200_line_8_rect"
         android:scaleType="fitCenter"
-        tools:src="@drawable/img_default_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_study_information_title"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/img_default_content" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
