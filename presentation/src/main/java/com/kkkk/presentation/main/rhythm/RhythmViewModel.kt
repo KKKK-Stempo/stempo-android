@@ -9,7 +9,9 @@ import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
 import com.kkkk.presentation.onboarding.onbarding.OnboardingViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,9 +37,9 @@ constructor(
     private val _downloadWavState = MutableStateFlow<UiState<ByteArray>>(UiState.Empty)
     val downloadWavState: StateFlow<UiState<ByteArray>> = _downloadWavState
 
-    // TODO: shardFlow로 변경
-    private val _recordSaveState = MutableStateFlow<UiState<String>>(UiState.Empty)
-    val recordSaveState: StateFlow<UiState<String>> = _recordSaveState
+    private val _isRecordSaved = MutableSharedFlow<Boolean>()
+    val isRecordSaved: SharedFlow<Boolean>
+        get() = _isRecordSaved
 
     private val _stepCount = MutableStateFlow(0)
     val stepCount: StateFlow<Int> = _stepCount
@@ -118,7 +120,6 @@ constructor(
     }
 
     fun posRhythmRecordToSave() {
-        _recordSaveState.value = UiState.Loading
         viewModelScope.launch {
             rhythmRepository.postRhythmRecord(
                 RecordRequestModel(
@@ -128,9 +129,9 @@ constructor(
                 )
             ).onSuccess {
                 resetStepInfo()
-                _recordSaveState.value = UiState.Success(it)
+                _isRecordSaved.emit(true)
             }.onFailure {
-                _recordSaveState.value = UiState.Failure(it.message.toString())
+                _isRecordSaved.emit(false)
             }
         }
     }

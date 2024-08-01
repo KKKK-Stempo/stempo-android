@@ -213,15 +213,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun observeRecordSaveState() {
-        viewModel.recordSaveState.flowWithLifecycle(lifecycle).distinctUntilChanged()
-            .onEach { state ->
-                when (state) {
-                    is UiState.Success -> {
-                        toast(stringOf(R.string.rhythm_toast_save_success))
-                    }
-
-                    is UiState.Failure -> toast(stringOf(R.string.error_msg))
-                    else -> return@onEach
+        viewModel.isRecordSaved.flowWithLifecycle(lifecycle).distinctUntilChanged()
+            .onEach { isSuccess ->
+                if (isSuccess) {
+                    toast(stringOf(R.string.rhythm_toast_save_success))
+                } else {
+                    toast(stringOf(R.string.error_msg))
                 }
             }.launchIn(lifecycleScope)
     }
