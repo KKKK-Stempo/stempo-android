@@ -45,6 +45,7 @@ constructor(
                             userRepository.getRefreshToken()
                         )
                     }.onSuccess { data ->
+                        Timber.d("REISSUE ACCESS TOKEN : ${data.accessToken}")
                         userRepository.setTokens(
                             data.accessToken,
                             data.refreshToken
