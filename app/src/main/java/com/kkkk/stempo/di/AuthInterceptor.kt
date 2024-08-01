@@ -1,11 +1,13 @@
 package com.kkkk.stempo.di
 
 import android.content.Context
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import com.kkkk.core.extension.toast
-import com.kkkk.data.local.UserSharedPref
 import com.kkkk.domain.repository.AuthRepository
+import com.kkkk.domain.repository.UserRepository
+import com.kkkk.presentation.onboarding.splash.SplashActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -18,16 +20,16 @@ class AuthInterceptor
 @Inject
 constructor(
     private val authRepository: AuthRepository,
-    private val sharedPref: UserSharedPref,
+    private val userRepository: UserRepository,
     @ApplicationContext private val context: Context,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
-        Timber.d("GET ACCESS TOKEN : ${sharedPref.accessToken}")
+        Timber.d("GET ACCESS TOKEN : ${userRepository.getAccessToken()}")
 
         val authRequest =
-            if (sharedPref.accessToken.isNotBlank()) {
+            if (userRepository.getAccessToken().isNotBlank()) {
                 originalRequest.newBuilder().newAuthBuilder().build()
             } else {
                 originalRequest
@@ -40,13 +42,14 @@ constructor(
                 try {
                     runBlocking {
                         authRepository.reissueTokens(
-                            sharedPref.refreshToken
+                            BEARER + " " + userRepository.getRefreshToken()
                         )
                     }.onSuccess { data ->
-                        sharedPref.apply {
-                            accessToken = data.accessToken
-                            refreshToken = data.refreshToken
-                        }
+                        Timber.d("REISSUE ACCESS TOKEN : ${data.accessToken}")
+                        userRepository.setTokens(
+                            data.accessToken,
+                            data.refreshToken
+                        )
 
                         response.close()
 
@@ -60,14 +63,14 @@ constructor(
                     Timber.d(t.message)
                 }
 
-                sharedPref.clearInfo()
+                userRepository.clearInfo()
 
                 Handler(Looper.getMainLooper()).post {
                     context.toast(TOKEN_EXPIRED_ERROR)
-//                        Intent(context, LoginActivity::class.java).apply {
-//                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//                            context.startActivity(this)
-//                        }
+                    Intent(context, SplashActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        context.startActivity(this)
+                    }
                 }
             }
         }
@@ -75,7 +78,7 @@ constructor(
     }
 
     private fun Request.Builder.newAuthBuilder() =
-        this.addHeader(AUTHORIZATION, "$BEARER ${sharedPref.accessToken}")
+        this.addHeader(AUTHORIZATION, "$BEARER ${userRepository.getAccessToken()}")
 
     companion object {
         private const val CODE_TOKEN_EXPIRED = 401
