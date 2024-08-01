@@ -57,6 +57,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         observeRhythmUrlState()
         observeDownloadState()
         observeRecordSaveState()
+        setStatusBarColor(R.color.white)
     }
 
     private fun initChangeLevelBtnListener() {
