@@ -37,10 +37,8 @@ constructor(
 
         val response = chain.proceed(authRequest)
 
-        Timber.d("response : $response")
         when (response.code) {
             CODE_TOKEN_EXPIRED -> {
-                Timber.d("REISSUE ACCESS TOKEN : START")
                 try {
                     runBlocking {
                         authRepository.reissueTokens(
