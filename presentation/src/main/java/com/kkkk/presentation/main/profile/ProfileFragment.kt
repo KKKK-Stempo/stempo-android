@@ -5,7 +5,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import com.kkkk.core.base.BaseFragment
+import com.kkkk.core.extension.colorOf
 import com.kkkk.core.extension.setOnSingleClickListener
+import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kr.genti.presentation.R
@@ -21,6 +23,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_p
 
         initWebBtnListener()
         initReportBtnListener()
+        setStatusBarColor(R.color.gray_100)
     }
 
     private fun initWebBtnListener() {

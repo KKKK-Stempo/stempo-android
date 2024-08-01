@@ -19,7 +19,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_gray200_line_8_rect">
+            android:background="@drawable/shape_white_fill_gray200_line_8_rect">
 
             <ImageView
                 android:id="@+id/iv_study_exercise_thumbnail"
@@ -34,7 +34,7 @@
 
             <TextView
                 android:id="@+id/tv_study_exercise_title"
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head4"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="18dp"
@@ -50,7 +50,7 @@
 
             <TextView
                 android:id="@+id/tv_study_exercise_content"
-                style="@style/TextAppearance.Stempo.Head4"
+                style="@style/TextAppearance.Stempo.Body2"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="18dp"
@@ -65,6 +65,7 @@
                 tools:text="보조설명 보조설명 보조설명 보조설명 보조설명" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

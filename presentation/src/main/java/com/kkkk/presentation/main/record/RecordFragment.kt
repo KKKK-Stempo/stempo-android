@@ -13,6 +13,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.colorOf
+import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.core.state.UiState
@@ -37,6 +38,7 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
         binding.vm = viewModel
         observeReportMonth()
         observeChartEntry()
+        setStatusBarColor(R.color.white)
     }
 
     private fun observeReportMonth() {
