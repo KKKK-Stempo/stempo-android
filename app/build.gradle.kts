@@ -50,10 +50,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core-ui"))
     implementation(project(":core-di"))
-    implementation(project(":data"))
-    implementation(project(":domain"))
     implementation(project(":presentation"))
 
     KotlinDependencies.run {

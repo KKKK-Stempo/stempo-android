@@ -47,6 +47,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core-di"))
     implementation(project(":domain"))
 
     implementation(libs.play.services.wearable)
