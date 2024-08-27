@@ -10,6 +10,7 @@ buildscript {
         classpath(ClassPathPlugins.kotlinGradle)
         classpath(ClassPathPlugins.hilt)
         classpath(ClassPathPlugins.oss)
+        classpath(libs.kotlin.gradle.plugin)
     }
 }
 
