@@ -1,9 +1,9 @@
-package com.kkkk.stempo.di
+package com.kkkk.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.kkkk.core.extension.isJsonArray
 import com.kkkk.core.extension.isJsonObject
-import com.kkkk.stempo.BuildConfig.BASE_URL
+import com.kkkk.di.BuildConfig.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

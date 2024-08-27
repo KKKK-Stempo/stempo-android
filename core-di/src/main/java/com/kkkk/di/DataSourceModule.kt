@@ -1,4 +1,4 @@
-package com.kkkk.stempo.di
+package com.kkkk.di
 
 import com.kkkk.data.dataSource.AuthDataSource
 import com.kkkk.data.dataSource.RecordDataSource

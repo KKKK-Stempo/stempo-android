@@ -1,4 +1,4 @@
-package com.kkkk.stempo.di
+package com.kkkk.di
 
 import javax.inject.Qualifier
 

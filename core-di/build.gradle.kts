@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -13,6 +15,12 @@ android {
         minSdk = Constants.minSdk
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "BASE_URL",
+            gradleLocalProperties(rootDir).getProperty("base.url"),
+        )
     }
     compileOptions {
         sourceCompatibility = Versions.javaVersion
@@ -22,6 +30,7 @@ android {
         jvmTarget = Versions.jvmVersion
     }
     buildFeatures {
+        buildConfig = true
         dataBinding = true
         viewBinding = true
     }
@@ -29,7 +38,6 @@ android {
 
 dependencies {
     implementation(project(":core-ui"))
-    implementation(project(":core-di"))
     implementation(project(":data"))
     implementation(project(":domain"))
     implementation(project(":presentation"))

@@ -21,12 +21,6 @@ android {
         versionName = Constants.versionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField(
-            "String",
-            "BASE_URL",
-            gradleLocalProperties(rootDir).getProperty("base.url"),
-        )
     }
 
     buildTypes {
