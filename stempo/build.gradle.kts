@@ -4,15 +4,15 @@ plugins {
 }
 
 android {
-    namespace = "com.kkkk.stempo"
-    compileSdk = 34
+    namespace = Constants.packageName
+    compileSdk = Constants.compileSdk
 
     defaultConfig {
-        applicationId = "com.kkkk.stempo"
-        minSdk = 26
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        applicationId = Constants.packageName
+        minSdk = Constants.minSdk
+        targetSdk = Constants.targetSdk
+        versionCode = Constants.versionCode
+        versionName = Constants.versionName
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -25,11 +25,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = Versions.javaVersion
+        targetCompatibility = Versions.javaVersion
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = Versions.jvmVersion
     }
     buildFeatures {
         compose = true
