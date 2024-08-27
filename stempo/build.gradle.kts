@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -45,7 +47,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain"))
 
+    // compose default
     implementation(libs.play.services.wearable)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -58,4 +62,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    AndroidXDependencies.run {
+        implementation(hilt)
+        implementation(hiltWorkManager)
+    }
+
+    KaptDependencies.run {
+        kapt(hiltCompiler)
+        kapt(hiltWorkManagerCompiler)
+    }
 }
