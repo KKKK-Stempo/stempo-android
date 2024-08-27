@@ -1,7 +1,10 @@
 package com.kkkk.stempo.presentation.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kkkk.domain.repository.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -11,8 +14,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HomeViewModel : ViewModel() {
+@HiltViewModel
+class HomeViewModel
+@Inject
+constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
+
     private val _state: MutableStateFlow<HomeState> = MutableStateFlow(HomeState())
     val state: StateFlow<HomeState>
         get() = _state.asStateFlow()

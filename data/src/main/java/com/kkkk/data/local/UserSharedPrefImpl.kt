@@ -21,8 +21,8 @@ constructor(
         get() = dataStore.getString(DEVICE_TOKEN, "").orEmpty()
         set(value) = dataStore.edit { putString(DEVICE_TOKEN, value) }
 
-    override var bpmLevel: Int
-        get() = dataStore.getInt(BPM_LEVEL, 1)
+    override var bpm: Int
+        get() = dataStore.getInt(BPM_LEVEL, 50)
         set(value) = dataStore.edit { putInt(BPM_LEVEL, value) }
 
     override fun clearInfo() {

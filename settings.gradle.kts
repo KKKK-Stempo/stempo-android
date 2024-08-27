@@ -19,8 +19,9 @@ dependencyResolutionManagement {
 rootProject.name = "stempo-android"
 
 include(":app")
-include(":core")
+include(":core-ui")
 include(":domain")
 include(":data")
 include(":presentation")
 include(":stempo")
+include(":core-di")

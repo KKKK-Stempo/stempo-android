@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -45,6 +47,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core-di"))
+    implementation(project(":domain"))
 
     implementation(libs.play.services.wearable)
     implementation(platform(libs.androidx.compose.bom))
@@ -56,8 +60,19 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewModelCompose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.hilt.navigation.compose)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    AndroidXDependencies.run {
+        implementation(hilt)
+        implementation(hiltWorkManager)
+    }
+
+    KaptDependencies.run {
+        kapt(hiltCompiler)
+        kapt(hiltWorkManagerCompiler)
+    }
 }
