@@ -47,8 +47,6 @@ constructor(
     private fun startVibration() {
         if (vibrationJob?.isActive == true) return
 
-        Log.d("qqqq", "${userRepository.getBpmLevel()} & ${userRepository.getDeviceToken()}")
-
         vibrationJob = viewModelScope.launch {
             while (true) {
                 _sideEffect.emit(HomeSideEffect.Vibrate)
