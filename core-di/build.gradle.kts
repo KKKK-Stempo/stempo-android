@@ -1,55 +1,27 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     kotlin("android")
     kotlin("kapt")
-    id("kotlin-parcelize")
     id("dagger.hilt.android.plugin")
-    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 android {
-    namespace = Constants.packageName
+    namespace = "com.kkkk.di"
     compileSdk = Constants.compileSdk
 
     defaultConfig {
-        applicationId = Constants.packageName
         minSdk = Constants.minSdk
-        targetSdk = Constants.targetSdk
-        versionCode = Constants.versionCode
-        versionName = Constants.versionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        buildConfigField(
-            "String",
-            "BASE_URL",
-            gradleLocalProperties(rootDir).getProperty("base.url"),
-        )
     }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
-        }
-    }
-
     compileOptions {
         sourceCompatibility = Versions.javaVersion
         targetCompatibility = Versions.javaVersion
     }
-
     kotlinOptions {
         jvmTarget = Versions.jvmVersion
     }
-
     buildFeatures {
-        buildConfig = true
         dataBinding = true
         viewBinding = true
     }
