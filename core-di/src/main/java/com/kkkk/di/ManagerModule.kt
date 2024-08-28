@@ -3,7 +3,7 @@ package com.kkkk.di
 import android.content.Context
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.Wearable
-import com.kkkk.presentation.manager.WearableDataManager
+import com.kkkk.presentation.manager.PhoneDataManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +23,7 @@ object ManagerModule{
 
     @Provides
     @Singleton
-    fun provideWearableDataManager(dataClient: DataClient): WearableDataManager {
-        return WearableDataManager(dataClient)
+    fun providePhoneDataManager(dataClient: DataClient): PhoneDataManager {
+        return PhoneDataManager(dataClient)
     }
 }

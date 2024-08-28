@@ -16,6 +16,9 @@ import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.kkkk.stempo.presentation.home.HomeScreen
+import com.kkkk.stempo.presentation.manager.WearableDataManager
+import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.KEY_RECORD
+import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.PATH_RECORD
 import com.kkkk.stempo.presentation.theme.StempoandroidTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -34,6 +37,13 @@ class WatchActivity : ComponentActivity(), DataClient.OnDataChangedListener {
                 HomeScreen()
             }
         }
+
+        // TODO 이 함수로 정지 시 결과값 전송
+        WearableDataManager(Wearable.getDataClient(this)).sendIntToPhone(
+            PATH_RECORD,
+            KEY_RECORD,
+            50
+        )
     }
 
     override fun onResume() {
@@ -57,6 +67,7 @@ class WatchActivity : ComponentActivity(), DataClient.OnDataChangedListener {
                         DataMapItem.fromDataItem(item).dataMap.apply {
                             val bpm = getInt(KEY_BPM)
                             Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $bpm")
+                            // TODO 여기서 bpm 받아서 초기값으로 설정
                         }
                     }
                 }
