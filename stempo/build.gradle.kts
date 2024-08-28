@@ -69,10 +69,15 @@ dependencies {
     AndroidXDependencies.run {
         implementation(hilt)
         implementation(hiltWorkManager)
+        implementation(wearable)
     }
 
     KaptDependencies.run {
         kapt(hiltCompiler)
         kapt(hiltWorkManagerCompiler)
+    }
+
+    ThirdPartyDependencies.run {
+        implementation(timber)
     }
 }

@@ -60,6 +60,7 @@ dependencies {
         implementation(splashScreen)
         implementation(workManager)
         implementation(hiltWorkManager)
+        implementation(wearable)
     }
 
     KaptDependencies.run {

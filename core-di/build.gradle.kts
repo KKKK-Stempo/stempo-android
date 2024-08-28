@@ -54,6 +54,7 @@ dependencies {
         implementation(hilt)
         implementation(workManager)
         implementation(hiltWorkManager)
+        implementation(wearable)
     }
 
     KaptDependencies.run {
