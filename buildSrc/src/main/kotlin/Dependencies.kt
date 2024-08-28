@@ -32,6 +32,7 @@ object AndroidXDependencies {
     const val hilt = "com.google.dagger:hilt-android:${Versions.hiltVersion}"
     const val ossLicense =
         "com.google.android.gms:play-services-oss-licenses:${Versions.ossVersion}"
+    const val wearable = "com.google.android.gms:play-services-wearable:${Versions.wearableVersion}"
 }
 
 object TestDependencies {

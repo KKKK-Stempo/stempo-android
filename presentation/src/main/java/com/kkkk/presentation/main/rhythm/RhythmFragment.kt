@@ -23,6 +23,9 @@ import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.core.state.UiState
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.LEVEL_UNDEFINED
+import com.kkkk.presentation.manager.WearableDataManager
+import com.kkkk.presentation.manager.WearableDataManager.Companion.KEY_BPM
+import com.kkkk.presentation.manager.WearableDataManager.Companion.PATH_BPM
 import com.kkkk.presentation.onboarding.onbarding.OnboardingViewModel.Companion.SPEED_CALC_INTERVAL
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -32,6 +35,7 @@ import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentRhythmBinding
 import java.io.File
 import java.nio.file.Files
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhythm),
@@ -44,6 +48,9 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     private var rhythmSaveDialog: RhythmSaveDialog? = null
     private lateinit var mediaPlayer: MediaPlayer
 
+    @Inject
+    lateinit var wearableDataManager: WearableDataManager
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -53,6 +60,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         initChangeLevelBtnListener()
         initPlayBtnListener()
         initStopBtnListener()
+        initWearableSyncBtnListener()
         observeRhythmLevel()
         observeRhythmUrlState()
         observeDownloadState()
@@ -99,6 +107,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
     }
 
+    private fun initWearableSyncBtnListener() {
+        binding.tvRhythmTitle.setOnSingleClickListener {
+            wearableDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.getBpmFromDataStore())
+        }
+    }
+
     private fun observeRhythmLevel() {
         viewModel.rhythmLevel.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { level ->
             if (level == LEVEL_UNDEFINED) return@onEach
@@ -107,7 +121,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 switchPlayingState(false)
             }
             setUiWithCurrentLevel()
-            viewModel.postToGetRhythmUrlFromServer(level)
+            viewModel.postToGetRhythmUrlFromServer()
         }.launchIn(lifecycleScope)
     }
 

@@ -3,7 +3,7 @@ import org.gradle.api.JavaVersion
 object Versions {
     const val gradleVersion = "8.0.2"
 
-    const val kotlinVersion = "1.8.20"
+    const val kotlinVersion = "1.9.0"
     const val kotlinSerializationJsonVersion = "1.5.1"
     const val kotlinDateTimeVersion = "0.4.0"
     const val coreKtxVersion = "1.10.1"
@@ -20,6 +20,7 @@ object Versions {
     const val lifecycleVersion = "2.6.1"
     const val ossPluginVersion = "0.10.4"
     const val ossVersion = "17.0.0"
+    const val wearableVersion = "18.2.0"
     const val splashVersion = "1.0.1"
     const val workManagerVersion = "2.8.1"
     const val coilVersion = "2.4.0"
