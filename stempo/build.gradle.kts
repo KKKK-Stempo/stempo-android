@@ -76,4 +76,8 @@ dependencies {
         kapt(hiltCompiler)
         kapt(hiltWorkManagerCompiler)
     }
+
+    ThirdPartyDependencies.run {
+        implementation(timber)
+    }
 }

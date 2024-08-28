@@ -1,10 +1,10 @@
 package com.kkkk.stempo.presentation
 
-import android.util.Log
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.WearableListenerService
+import timber.log.Timber
 
 class WearableListenerService : WearableListenerService() {
 
@@ -14,9 +14,8 @@ class WearableListenerService : WearableListenerService() {
                 val dataItem = event.dataItem
                 if (dataItem.uri.path == PATH_BPM) {
                     val dataMap = DataMapItem.fromDataItem(dataItem).dataMap
-                    val sharedPrefValue = dataMap.getString(KEY_BPM)
-                    sharedPrefValue?.let {
-                        Log.d("WearableListener", "Received shared pref value: $it")
+                    dataMap.getString(KEY_BPM)?.let {
+                        Timber.tag("okhttp").d("SERVICE DATA RECEIVED : $it")
                     }
                 }
             }
