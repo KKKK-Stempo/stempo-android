@@ -60,7 +60,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         initChangeLevelBtnListener()
         initPlayBtnListener()
         initStopBtnListener()
-        sendBpmToWearable()
+        initWearableSyncBtnListener()
         observeRhythmLevel()
         observeRhythmUrlState()
         observeDownloadState()
@@ -107,8 +107,10 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
     }
 
-    private fun sendBpmToWearable() {
-        wearableDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.getBpmFromDataStore())
+    private fun initWearableSyncBtnListener() {
+        binding.tvRhythmTitle.setOnSingleClickListener {
+            wearableDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.getBpmFromDataStore())
+        }
     }
 
     private fun observeRhythmLevel() {
