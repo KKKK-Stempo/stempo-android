@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataItem
 import com.google.android.gms.wearable.PutDataMapRequest
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,9 +13,10 @@ class WearableDataManager @Inject constructor(
     private val dataClient: DataClient
 ) {
 
-    fun sendIntToWearable(key: String, value: Int): Task<DataItem> {
+    fun sendIntToWearable(key: String, value: Int, path: String): Task<DataItem> {
+        Timber.tag("okhttp").d("START SENDING DATA TO WEARABLE")
         // DataMapRequest 생성
-        val putDataMapReq = PutDataMapRequest.create("/int_data").apply {
+        val putDataMapReq = PutDataMapRequest.create(path).apply {
             dataMap.putInt(key, value)
         }
 
@@ -23,11 +25,9 @@ class WearableDataManager @Inject constructor(
 
         // DataClient를 통해 데이터 전송
         return dataClient.putDataItem(putDataReq).addOnSuccessListener { dataItem ->
-            // 데이터 전송 성공
-            println("Data sent successfully, uri: ${dataItem.uri}")
+            Timber.tag("okhttp").d("SEND DATA TO WEARABLE SUCCESS : ${dataItem.uri}")
         }.addOnFailureListener { exception ->
-            // 데이터 전송 실패
-            println("Failed to send data: ${exception.message}")
+            Timber.tag("okhttp").d("SEND DATA TO WEARABLE FAIL : ${exception.message}")
         }
     }
 }

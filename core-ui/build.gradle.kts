@@ -48,6 +48,10 @@ dependencies {
         kapt(hiltAndroidCompiler)
     }
 
+    ThirdPartyDependencies.run {
+        implementation(timber)
+    }
+
     // Test Dependency
     testImplementation(TestDependencies.jUnit)
     androidTestImplementation(TestDependencies.androidTest)
