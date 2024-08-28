@@ -1,10 +1,5 @@
 package com.kkkk.stempo.presentation.home
 
-import android.content.Context
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.repository.UserRepository
@@ -25,7 +20,7 @@ class HomeViewModel
 @Inject
 constructor(
     private val userRepository: UserRepository,
-) : ViewModel(), SensorEventListener {
+) : ViewModel() {
 
     private val _state: MutableStateFlow<HomeState> = MutableStateFlow(HomeState())
     val state: StateFlow<HomeState>
@@ -36,9 +31,6 @@ constructor(
         get() = _sideEffect.asSharedFlow()
 
     private var vibrationJob: Job? = null
-
-    private var sensorManager: SensorManager? = null
-    private var stepSensor: Sensor? = null
 
 
     fun controlMusic() {
@@ -60,41 +52,18 @@ constructor(
                 delay(VIBRATION_INTERVAL)
             }
         }
-
-        viewModelScope.launch {
-            _sideEffect.emit(HomeSideEffect.CountStep)
-        }
     }
 
     private fun stopVibration() {
         vibrationJob?.cancel()
         vibrationJob = null
-        stopCounting()
+
+        _state.value = _state.value.copy(stepCount = 0)
     }
 
-    fun startCounting(context: Context) {
-        sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        stepSensor = sensorManager?.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-        stepSensor?.let {
-            sensorManager?.registerListener(this, it, SensorManager.SENSOR_DELAY_UI)
-        }
+    fun addStep() {
+        _state.value = _state.value.copy(stepCount = _state.value.stepCount + 1)
     }
-
-    private fun stopCounting() {
-        sensorManager?.unregisterListener(this)
-    }
-
-    override fun onSensorChanged(event: SensorEvent?) {
-        event?.let {
-            if (it.sensor.type == Sensor.TYPE_STEP_COUNTER) {
-                _state.value = _state.value.copy(
-                    stepCount = it.values[0].toInt()
-                )
-            }
-        }
-    }
-
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 
     companion object {
         const val VIBRATION_INTERVAL = 500L // TODO: Server에서 받아올 예정

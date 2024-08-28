@@ -2,10 +2,17 @@ package com.kkkk.stempo.presentation.home
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Build
+import android.os.PowerManager
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +21,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,10 +47,44 @@ import com.kkkk.stempo.presentation.home.HomeViewModel.Companion.VIBRATION_DURAT
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    lateinit var sensorManager: SensorManager
+    lateinit var sensorEventListener: SensorEventListener
+
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val vibrator = LocalContext.current.getSystemService(Vibrator::class.java)
+
+    val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+    val wakeLock =
+        powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "WearOS:KeepScreenOnWakeLock")
+
+    sensorEventListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            Log.e("TAG", "onSensorChanged: ")
+            if (event.sensor.type == Sensor.TYPE_STEP_DETECTOR) {
+                if (!state.isPlayingMusic) return
+                viewModel.addStep()
+            }
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
+            // 정확도 변경 처리 (필요한 경우)
+        }
+    }
+    sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    val stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+
+    sensorManager.registerListener(
+        sensorEventListener,
+        stepDetectorSensor,
+        SensorManager.SENSOR_DELAY_NORMAL
+    )
+
+
+    LaunchedEffect(Unit) { // 화면 꺼짐 방지
+        wakeLock.acquire()
+    }
 
     LaunchedEffect(key1 = Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -69,10 +113,6 @@ fun HomeScreen(
                             VibrationEffect.DEFAULT_AMPLITUDE
                         )
                     )
-                }
-
-                HomeSideEffect.CountStep -> {
-                    viewModel.startCounting(context)
                 }
             }
         }
