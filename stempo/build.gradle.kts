@@ -69,6 +69,7 @@ dependencies {
     AndroidXDependencies.run {
         implementation(hilt)
         implementation(hiltWorkManager)
+        implementation(wearable)
     }
 
     KaptDependencies.run {

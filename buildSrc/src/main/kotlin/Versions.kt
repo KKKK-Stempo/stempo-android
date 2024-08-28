@@ -20,6 +20,7 @@ object Versions {
     const val lifecycleVersion = "2.6.1"
     const val ossPluginVersion = "0.10.4"
     const val ossVersion = "17.0.0"
+    const val wearableVersion = "18.1.0"
     const val splashVersion = "1.0.1"
     const val workManagerVersion = "2.8.1"
     const val coilVersion = "2.4.0"
