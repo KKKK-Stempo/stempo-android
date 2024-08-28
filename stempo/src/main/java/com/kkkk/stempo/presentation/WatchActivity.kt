@@ -38,6 +38,7 @@ class WatchActivity : ComponentActivity(), DataClient.OnDataChangedListener {
             }
         }
 
+        // TODO 이 함수로 정지 시 결과값 전송
         WearableDataManager(Wearable.getDataClient(this)).sendIntToPhone(
             PATH_RECORD,
             KEY_RECORD,
@@ -66,6 +67,7 @@ class WatchActivity : ComponentActivity(), DataClient.OnDataChangedListener {
                         DataMapItem.fromDataItem(item).dataMap.apply {
                             val bpm = getInt(KEY_BPM)
                             Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $bpm")
+                            // TODO 여기서 bpm 받아서 초기값으로 설정
                         }
                     }
                 }
