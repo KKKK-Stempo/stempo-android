@@ -37,7 +37,6 @@ dependencies {
     AndroidXDependencies.run {
         implementation(lifeCycleKtx)
         implementation(hilt)
-        implementation(wearable)
     }
 
     MaterialDesignDependencies.run {
@@ -46,10 +45,6 @@ dependencies {
 
     KaptDependencies.run {
         kapt(hiltAndroidCompiler)
-    }
-
-    ThirdPartyDependencies.run {
-        implementation(timber)
     }
 
     // Test Dependency

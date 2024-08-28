@@ -1,4 +1,4 @@
-package com.kkkk.core.manager
+package com.kkkk.presentation.manager
 
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.wearable.DataClient
