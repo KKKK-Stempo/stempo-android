@@ -10,12 +10,15 @@ class WearableListenerService : WearableListenerService() {
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         Timber.tag("okhttp").d("SERVICE ON DATA CHANGED")
-        for (event in dataEvents) {
+
+        dataEvents.forEach { event ->
             if (event.type == DataEvent.TYPE_CHANGED) {
-                val dataItem = event.dataItem
-                if (dataItem.uri.path == PATH_BPM) {
-                    DataMapItem.fromDataItem(dataItem).dataMap.getString(KEY_BPM)?.let {
-                        Timber.tag("okhttp").d("SERVICE DATA RECEIVED : $it")
+                event.dataItem.also { item ->
+                    if (item.uri.path?.compareTo(PATH_BPM) == 0) {
+                        DataMapItem.fromDataItem(item).dataMap.apply {
+                            val bpm = getInt(KEY_BPM)
+                            Timber.tag("okhttp").d("SERVICE DATA RECEIVED : $bpm")
+                        }
                     }
                 }
             }
