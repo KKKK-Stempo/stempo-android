@@ -13,7 +13,7 @@ class WearableDataManager @Inject constructor(
     private val dataClient: DataClient
 ) {
 
-    fun sendIntToWearable(key: String, value: Int, path: String): Task<DataItem> {
+    fun sendIntToWearable(path: String, key: String, value: Int): Task<DataItem> {
         Timber.tag("okhttp").d("START SENDING DATA TO WEARABLE")
         // DataMapRequest 생성
         val putDataMapReq = PutDataMapRequest.create(path).apply {
@@ -29,5 +29,11 @@ class WearableDataManager @Inject constructor(
         }.addOnFailureListener { exception ->
             Timber.tag("okhttp").d("SEND DATA TO WEARABLE FAIL : ${exception.message}")
         }
+    }
+
+    companion object {
+        const val KEY_BPM = "KEY_BPM"
+
+        const val PATH_BPM = "/bpm"
     }
 }

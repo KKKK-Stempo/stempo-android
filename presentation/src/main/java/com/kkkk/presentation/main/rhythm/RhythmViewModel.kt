@@ -142,6 +142,8 @@ constructor(
         _lastStepTime.value = 0L
     }
 
+    fun getBpm() = userRepository.getBpm()
+
     private fun setBpm(level: Int) = 40 + level * 10
 
     private fun setBpmLevel(bpm: Int) =

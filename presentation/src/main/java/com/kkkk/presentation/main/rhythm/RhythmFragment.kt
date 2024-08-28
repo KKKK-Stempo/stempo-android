@@ -14,7 +14,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.wearable.PutDataMapRequest
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.colorOf
 import com.kkkk.core.extension.drawableOf
@@ -22,6 +21,9 @@ import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
+import com.kkkk.core.manager.WearableDataManager
+import com.kkkk.core.manager.WearableDataManager.Companion.KEY_BPM
+import com.kkkk.core.manager.WearableDataManager.Companion.PATH_BPM
 import com.kkkk.core.state.UiState
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.LEVEL_UNDEFINED
 import com.kkkk.presentation.onboarding.onbarding.OnboardingViewModel.Companion.SPEED_CALC_INTERVAL
@@ -33,6 +35,7 @@ import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentRhythmBinding
 import java.io.File
 import java.nio.file.Files
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhythm),
@@ -45,6 +48,9 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     private var rhythmSaveDialog: RhythmSaveDialog? = null
     private lateinit var mediaPlayer: MediaPlayer
 
+    @Inject
+    lateinit var wearableDataManager: WearableDataManager
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -54,6 +60,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         initChangeLevelBtnListener()
         initPlayBtnListener()
         initStopBtnListener()
+        sendBpmToWearable()
         observeRhythmLevel()
         observeRhythmUrlState()
         observeDownloadState()
@@ -98,6 +105,10 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             btnRhythmStop.isVisible = start
             lottieRhythmBg.isVisible = start
         }
+    }
+
+    private fun sendBpmToWearable() {
+        wearableDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.getBpm())
     }
 
     private fun observeRhythmLevel() {
