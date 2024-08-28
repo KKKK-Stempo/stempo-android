@@ -26,7 +26,7 @@ constructor(
     var tempRhythmLevel = MutableLiveData<Int>(1)
     var bpm = 50
     var filename: String = "stempo_level_1"
-    var isSubmitted: Boolean = true
+    private var isSubmitted: Boolean = true
 
     private val _rhythmLevel = MutableStateFlow<Int>(LEVEL_UNDEFINED)
     val rhythmLevel: StateFlow<Int> = _rhythmLevel
@@ -93,7 +93,7 @@ constructor(
         _rhythmLevel.value = tempRhythmLevel.value ?: 1
     }
 
-    fun postToGetRhythmUrlFromServer(level: Int) {
+    fun postToGetRhythmUrlFromServer() {
         _rhythmUrlState.value = UiState.Loading
         viewModelScope.launch {
             rhythmRepository.postToGetRhythmUrl(bpm)
@@ -142,7 +142,7 @@ constructor(
         _lastStepTime.value = 0L
     }
 
-    fun getBpm() = userRepository.getBpm()
+    fun getBpmFromDataStore() = userRepository.getBpm()
 
     private fun setBpm(level: Int) = 40 + level * 10
 

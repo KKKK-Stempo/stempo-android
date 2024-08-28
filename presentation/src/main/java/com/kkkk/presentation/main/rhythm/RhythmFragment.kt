@@ -21,11 +21,11 @@ import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
+import com.kkkk.core.state.UiState
+import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.LEVEL_UNDEFINED
 import com.kkkk.presentation.manager.WearableDataManager
 import com.kkkk.presentation.manager.WearableDataManager.Companion.KEY_BPM
 import com.kkkk.presentation.manager.WearableDataManager.Companion.PATH_BPM
-import com.kkkk.core.state.UiState
-import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.LEVEL_UNDEFINED
 import com.kkkk.presentation.onboarding.onbarding.OnboardingViewModel.Companion.SPEED_CALC_INTERVAL
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -108,7 +108,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun sendBpmToWearable() {
-        wearableDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.getBpm())
+        wearableDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.getBpmFromDataStore())
     }
 
     private fun observeRhythmLevel() {
@@ -119,7 +119,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 switchPlayingState(false)
             }
             setUiWithCurrentLevel()
-            viewModel.postToGetRhythmUrlFromServer(level)
+            viewModel.postToGetRhythmUrlFromServer()
         }.launchIn(lifecycleScope)
     }
 

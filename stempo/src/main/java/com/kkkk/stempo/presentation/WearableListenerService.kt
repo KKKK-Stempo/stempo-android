@@ -9,12 +9,12 @@ import timber.log.Timber
 class WearableListenerService : WearableListenerService() {
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {
+        Timber.tag("okhttp").d("SERVICE ON DATA CHANGED")
         for (event in dataEvents) {
             if (event.type == DataEvent.TYPE_CHANGED) {
                 val dataItem = event.dataItem
                 if (dataItem.uri.path == PATH_BPM) {
-                    val dataMap = DataMapItem.fromDataItem(dataItem).dataMap
-                    dataMap.getString(KEY_BPM)?.let {
+                    DataMapItem.fromDataItem(dataItem).dataMap.getString(KEY_BPM)?.let {
                         Timber.tag("okhttp").d("SERVICE DATA RECEIVED : $it")
                     }
                 }

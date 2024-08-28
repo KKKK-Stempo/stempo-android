@@ -39,12 +39,11 @@
 
         <service
             android:name=".presentation.WearableListenerService"
-            android:exported="true">
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_DATA_LAYER_LISTENER">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
-                <data
-                    android:host="*"
-                    android:scheme="wear" />
+                <data android:scheme="wear" android:host="*" android:pathPrefix="/bpm" />
             </intent-filter>
         </service>
 
