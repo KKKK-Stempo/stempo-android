@@ -14,6 +14,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.wearable.DataClient
+import com.google.android.gms.wearable.DataEvent
+import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.DataMapItem
+import com.google.android.gms.wearable.Wearable
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.colorOf
 import com.kkkk.core.extension.drawableOf
@@ -33,13 +38,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentRhythmBinding
+import timber.log.Timber
 import java.io.File
 import java.nio.file.Files
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhythm),
-    SensorEventListener {
+    SensorEventListener, DataClient.OnDataChangedListener {
     private lateinit var sensorManager: SensorManager
     private var stepDetectorSensor: Sensor? = null
 
@@ -271,6 +277,8 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         stepDetectorSensor?.let {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
         }
+        Timber.tag("okhttp").d("LISTENER : ADDED")
+        Wearable.getDataClient(requireActivity()).addListener(this)
     }
 
     override fun onPause() {
@@ -278,6 +286,8 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         if (::sensorManager.isInitialized) {
             sensorManager.unregisterListener(this)
         }
+        Timber.tag("okhttp").d("LISTENER : REMOVED")
+        Wearable.getDataClient(requireActivity()).removeListener(this)
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
@@ -293,6 +303,23 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     private fun initializeSensor() {
         sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
         stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+    }
+
+    override fun onDataChanged(dataEvents: DataEventBuffer) {
+        Timber.tag("okhttp").d("LISTENER : ON DATA CHANGED")
+
+        dataEvents.forEach { event ->
+            if (event.type == DataEvent.TYPE_CHANGED) {
+                event.dataItem.also { item ->
+                    if (item.uri.path?.compareTo(PATH_RECORD) == 0) {
+                        DataMapItem.fromDataItem(item).dataMap.apply {
+                            val record = getInt(KEY_RECORD)
+                            Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $record")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun calculateSpeed() {
@@ -320,6 +347,9 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         private const val COLOR = "color"
         private const val DRAWABLE = "drawable"
         private const val RAW = "raw"
+
+        const val KEY_RECORD = "KEY_RECORD"
+        const val PATH_RECORD = "/record"
 
         private const val FLOAT_120 = 120.00000000000000000000F
 
