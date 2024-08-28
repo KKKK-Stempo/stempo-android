@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.wearable.PutDataMapRequest
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.colorOf
 import com.kkkk.core.extension.drawableOf
