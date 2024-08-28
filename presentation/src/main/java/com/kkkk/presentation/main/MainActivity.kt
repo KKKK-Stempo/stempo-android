@@ -22,7 +22,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         initBnvItemSelectedListener()
     }
 
-    fun initBnvItemIconTintList() {
+    private fun initBnvItemIconTintList() {
         with(binding.bnvMain) {
             itemIconTintList = null
             selectedItemId = R.id.menu_rhythm

@@ -16,6 +16,9 @@ import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.kkkk.stempo.presentation.home.HomeScreen
+import com.kkkk.stempo.presentation.manager.WearableDataManager
+import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.KEY_RECORD
+import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.PATH_RECORD
 import com.kkkk.stempo.presentation.theme.StempoandroidTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -34,6 +37,12 @@ class WatchActivity : ComponentActivity(), DataClient.OnDataChangedListener {
                 HomeScreen()
             }
         }
+
+        WearableDataManager(Wearable.getDataClient(this)).sendIntToPhone(
+            PATH_RECORD,
+            KEY_RECORD,
+            50
+        )
     }
 
     override fun onResume() {
