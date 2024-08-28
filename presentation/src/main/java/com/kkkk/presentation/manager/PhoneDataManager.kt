@@ -10,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class WearableDataManager @Inject constructor(
+class PhoneDataManager @Inject constructor(
     private val dataClient: DataClient
 ) {
 

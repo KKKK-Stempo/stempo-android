@@ -23,9 +23,9 @@ import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.core.state.UiState
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.LEVEL_UNDEFINED
-import com.kkkk.presentation.manager.WearableDataManager
-import com.kkkk.presentation.manager.WearableDataManager.Companion.KEY_BPM
-import com.kkkk.presentation.manager.WearableDataManager.Companion.PATH_BPM
+import com.kkkk.presentation.manager.PhoneDataManager
+import com.kkkk.presentation.manager.PhoneDataManager.Companion.KEY_BPM
+import com.kkkk.presentation.manager.PhoneDataManager.Companion.PATH_BPM
 import com.kkkk.presentation.onboarding.onbarding.OnboardingViewModel.Companion.SPEED_CALC_INTERVAL
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -49,7 +49,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     private lateinit var mediaPlayer: MediaPlayer
 
     @Inject
-    lateinit var wearableDataManager: WearableDataManager
+    lateinit var phoneDataManager: PhoneDataManager
 
     override fun onViewCreated(
         view: View,
@@ -109,7 +109,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun initWearableSyncBtnListener() {
         binding.tvRhythmTitle.setOnSingleClickListener {
-            wearableDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.getBpmFromDataStore())
+            phoneDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.getBpmFromDataStore())
         }
     }
 
