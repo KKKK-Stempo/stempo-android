@@ -1,5 +1,9 @@
 package com.kkkk.stempo.presentation.home
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.compose.foundation.Image
@@ -19,10 +23,13 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.Text
 import com.kkkk.stempo.R
 import com.kkkk.stempo.presentation.home.HomeViewModel.Companion.VIBRATION_DURATION
 
@@ -30,9 +37,26 @@ import com.kkkk.stempo.presentation.home.HomeViewModel.Companion.VIBRATION_DURAT
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val vibrator = LocalContext.current.getSystemService(Vibrator::class.java)
+
+    LaunchedEffect(key1 = Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACTIVITY_RECOGNITION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    context as Activity,
+                    arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                    200
+                )
+            }
+        }
+    }
 
     LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
         viewModel.sideEffect.flowWithLifecycle(lifecycleOwner.lifecycle).collect { sideEffect ->
@@ -46,6 +70,10 @@ fun HomeScreen(
                         )
                     )
                 }
+
+                HomeSideEffect.CountStep -> {
+                    viewModel.startCounting(context)
+                }
             }
         }
     }
@@ -54,11 +82,15 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background),
-        contentAlignment = Alignment.Center
     ) {
         MusicButton(isPlayingMusic = state.isPlayingMusic) {
             viewModel.controlMusic()
         }
+
+        Text(
+            text = state.stepCount.toString(),
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
     }
 
 }
