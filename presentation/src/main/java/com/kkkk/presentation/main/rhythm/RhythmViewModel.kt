@@ -136,6 +136,25 @@ constructor(
         }
     }
 
+    fun posRhythmRecordToSaveWatch(
+        accuracy: Double,
+    ) {
+        viewModelScope.launch {
+            rhythmRepository.postRhythmRecord(
+                RecordRequestModel(
+                    accuracy,
+                    0,
+                    stepCount.value
+                )
+            ).onSuccess {
+                resetStepInfo()
+                _isRecordSaved.emit(true)
+            }.onFailure {
+                _isRecordSaved.emit(false)
+            }
+        }
+    }
+
     private fun resetStepInfo() {
         _stepCount.value = 0
         _speed.value = 0.0

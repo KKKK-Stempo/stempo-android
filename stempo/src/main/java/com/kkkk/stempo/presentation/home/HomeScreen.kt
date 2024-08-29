@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.PowerManager
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,9 +20,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,12 +37,16 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.kkkk.stempo.R
+import com.kkkk.stempo.presentation.LocalWearableDataManager
 import com.kkkk.stempo.presentation.home.HomeViewModel.Companion.VIBRATION_DURATION
+import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.KEY_RECORD
+import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.PATH_RECORD
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val wearableDataManager = LocalWearableDataManager.current
     lateinit var sensorManager: SensorManager
     lateinit var sensorEventListener: SensorEventListener
 
@@ -61,9 +61,9 @@ fun HomeScreen(
 
     sensorEventListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
-            Log.e("TAG", "onSensorChanged: ")
             if (event.sensor.type == Sensor.TYPE_STEP_DETECTOR) {
                 if (!state.isPlayingMusic) return
+
                 viewModel.addStep()
             }
         }
@@ -72,14 +72,17 @@ fun HomeScreen(
             // 정확도 변경 처리 (필요한 경우)
         }
     }
-    sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    val stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
 
-    sensorManager.registerListener(
-        sensorEventListener,
-        stepDetectorSensor,
-        SensorManager.SENSOR_DELAY_NORMAL
-    )
+    LaunchedEffect(key1 = Unit) {
+        sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+
+        sensorManager.registerListener(
+            sensorEventListener,
+            stepDetectorSensor,
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
+    }
 
 
     LaunchedEffect(Unit) { // 화면 꺼짐 방지
@@ -114,6 +117,16 @@ fun HomeScreen(
                         )
                     )
                 }
+
+                is HomeSideEffect.EndCount -> {
+                    wearableDataManager.sendDoubleToPhone(
+                        PATH_RECORD,
+                        KEY_RECORD,
+                        sideEffect.accuracy
+                    )
+
+                    viewModel.resetStepInfo()
+                }
             }
         }
     }
@@ -127,10 +140,12 @@ fun HomeScreen(
             viewModel.controlMusic()
         }
 
-        Text(
-            text = state.stepCount.toString(),
-            modifier = Modifier.align(Alignment.TopCenter)
-        )
+        if (state.isPlayingMusic) {
+            Text(
+                text = state.stepCount.toString(),
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+        }
     }
 
 }

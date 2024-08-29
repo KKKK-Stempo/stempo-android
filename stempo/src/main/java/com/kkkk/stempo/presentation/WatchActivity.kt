@@ -9,6 +9,8 @@ package com.kkkk.stempo.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
@@ -17,11 +19,14 @@ import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.kkkk.stempo.presentation.home.HomeScreen
 import com.kkkk.stempo.presentation.manager.WearableDataManager
-import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.KEY_RECORD
-import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.PATH_RECORD
 import com.kkkk.stempo.presentation.theme.StempoandroidTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+
+val LocalWearableDataManager =
+    staticCompositionLocalOf<WearableDataManager> {
+        error("No DataClient provided")
+    }
 
 @AndroidEntryPoint
 class WatchActivity : ComponentActivity(), DataClient.OnDataChangedListener {
@@ -33,17 +38,18 @@ class WatchActivity : ComponentActivity(), DataClient.OnDataChangedListener {
         setTheme(android.R.style.Theme_DeviceDefault)
 
         setContent {
-            StempoandroidTheme {
-                HomeScreen()
+            CompositionLocalProvider(
+                LocalWearableDataManager provides WearableDataManager(
+                    Wearable.getDataClient(
+                        this
+                    )
+                )
+            ) {
+                StempoandroidTheme {
+                    HomeScreen()
+                }
             }
         }
-
-        // TODO 이 함수로 정지 시 결과값 전송
-        WearableDataManager(Wearable.getDataClient(this)).sendIntToPhone(
-            PATH_RECORD,
-            KEY_RECORD,
-            50
-        )
     }
 
     override fun onResume() {
@@ -67,7 +73,7 @@ class WatchActivity : ComponentActivity(), DataClient.OnDataChangedListener {
                         DataMapItem.fromDataItem(item).dataMap.apply {
                             val bpm = getInt(KEY_BPM)
                             Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $bpm")
-                            // TODO 여기서 bpm 받아서 초기값으로 설정
+                            VIBRATION_INTERVAL = (bpm/60.0).toLong()
                         }
                     }
                 }
@@ -77,7 +83,8 @@ class WatchActivity : ComponentActivity(), DataClient.OnDataChangedListener {
 
     companion object {
         const val KEY_BPM = "KEY_BPM"
-
         const val PATH_BPM = "/bpm"
+
+        var VIBRATION_INTERVAL = 500L
     }
 }

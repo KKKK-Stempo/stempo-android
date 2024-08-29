@@ -313,9 +313,9 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 event.dataItem.also { item ->
                     if (item.uri.path?.compareTo(PATH_RECORD) == 0) {
                         DataMapItem.fromDataItem(item).dataMap.apply {
-                            val record = getInt(KEY_RECORD)
+                            val record = getDouble(KEY_RECORD)
                             Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $record")
-                            // TODO 여기서 기록 받아서 서버통신으로 기록
+                            viewModel.posRhythmRecordToSaveWatch(record)
                         }
                     }
                 }
