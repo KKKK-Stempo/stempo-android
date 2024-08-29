@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.max
 
 @HiltViewModel
 class RhythmViewModel
@@ -44,10 +45,7 @@ constructor(
     private val _stepCount = MutableStateFlow(0)
     val stepCount: StateFlow<Int> = _stepCount
 
-    private val _speed = MutableStateFlow(0.0)
-
-    private val _lastStepTime = MutableStateFlow(0L)
-    val lastStepTime: StateFlow<Long> = _lastStepTime
+    private val _firstStepTime = MutableStateFlow(0L)
 
     init {
         initRhythmLevelFromDataStore()
@@ -63,14 +61,6 @@ constructor(
 
     fun addStepCount(newStepCount: Int) {
         _stepCount.value += newStepCount
-    }
-
-    fun setSpeed(newSpeed: Double) {
-        _speed.value = newSpeed
-    }
-
-    fun setLastStepTime(newLastStepTime: Long) {
-        _lastStepTime.value = newLastStepTime
     }
 
     fun setTempRhythmLevel(level: Int) {
@@ -112,6 +102,7 @@ constructor(
             rhythmRepository.getRhythmWav(url)
                 .onSuccess {
                     _downloadWavState.value = UiState.Success(it)
+                    _firstStepTime.value = System.currentTimeMillis()
                 }
                 .onFailure {
                     _downloadWavState.value = UiState.Failure(it.message.toString())
@@ -120,10 +111,16 @@ constructor(
     }
 
     fun posRhythmRecordToSave() {
+        var accuracy =
+            (stepCount.value.toDouble() / (bpm / 60 * ((System.currentTimeMillis() - _firstStepTime.value) / 10000)))
+        if (accuracy > 1) {
+            accuracy = max(2 - accuracy, 0.0)
+        }
+
         viewModelScope.launch {
             rhythmRepository.postRhythmRecord(
                 RecordRequestModel(
-                    _speed.value / (_stepCount.value / OnboardingViewModel.SPEED_CALC_INTERVAL + 1),
+                    accuracy,
                     0,
                     stepCount.value
                 )
@@ -157,8 +154,7 @@ constructor(
 
     private fun resetStepInfo() {
         _stepCount.value = 0
-        _speed.value = 0.0
-        _lastStepTime.value = 0L
+        _firstStepTime.value = 0L
     }
 
     fun getBpmFromDataStore() = userRepository.getBpm()

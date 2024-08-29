@@ -124,8 +124,6 @@ fun HomeScreen(
                         KEY_RECORD,
                         sideEffect.accuracy
                     )
-
-                    viewModel.resetStepInfo()
                 }
             }
         }

@@ -293,10 +293,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
             viewModel.addStepCount(1)
-
-            if (viewModel.stepCount.value % SPEED_CALC_INTERVAL == 0) {
-                calculateSpeed()
-            }
         }
     }
 
@@ -321,18 +317,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 }
             }
         }
-    }
-
-    private fun calculateSpeed() {
-        val currentTime = System.currentTimeMillis()
-        val lastStepTime = viewModel.lastStepTime.value
-        if (lastStepTime != 0L) {
-            val timeDiff = currentTime - lastStepTime
-            val speed = (SPEED_CALC_INTERVAL / (timeDiff / 1000.0)) * 60 // 분당 걸음 수
-
-            viewModel.setSpeed(speed)
-        }
-        viewModel.setLastStepTime(currentTime)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}

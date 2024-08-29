@@ -31,8 +31,6 @@ class HomeViewModel @Inject constructor(
 
     private var vibrationJob: Job? = null
 
-    private val _speed = MutableStateFlow(0.0)
-
     private val _firstStepTime = MutableStateFlow(0L)
 
     fun controlMusic() {
@@ -56,10 +54,6 @@ class HomeViewModel @Inject constructor(
             }
         }
         _firstStepTime.value = System.currentTimeMillis()
-    }
-
-    fun resetStepInfo() {
-        _speed.value = 0.0
     }
 
     private fun stopVibration() {
