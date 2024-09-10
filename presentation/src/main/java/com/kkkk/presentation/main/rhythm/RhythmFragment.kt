@@ -67,6 +67,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         initPlayBtnListener()
         initStopBtnListener()
         initWearableSyncBtnListener()
+        observeStepCount()
         observeRhythmLevel()
         observeRhythmUrlState()
         observeDownloadState()
@@ -117,6 +118,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         binding.tvRhythmTitle.setOnSingleClickListener {
             phoneDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.getBpmFromDataStore())
         }
+    }
+
+    private fun observeStepCount() {
+        viewModel.stepCount.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { level ->
+            binding.tvRhythmStep.text = viewModel.stepCount.value.toString()
+        }.launchIn(lifecycleScope)
     }
 
     private fun observeRhythmLevel() {
@@ -237,8 +244,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun observeRecordSaveState() {
-        viewModel.isRecordSaved.flowWithLifecycle(lifecycle).distinctUntilChanged()
-            .onEach { isSuccess ->
+        viewModel.isRecordSaved.flowWithLifecycle(lifecycle).onEach { isSuccess ->
                 if (isSuccess) {
                     toast(stringOf(R.string.rhythm_toast_save_success))
                 } else {
@@ -293,10 +299,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
             viewModel.addStepCount(1)
-
-            if (viewModel.stepCount.value % SPEED_CALC_INTERVAL == 0) {
-                calculateSpeed()
-            }
         }
     }
 
@@ -313,26 +315,14 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 event.dataItem.also { item ->
                     if (item.uri.path?.compareTo(PATH_RECORD) == 0) {
                         DataMapItem.fromDataItem(item).dataMap.apply {
-                            val record = getInt(KEY_RECORD)
+                            val record = getDouble(KEY_RECORD)
                             Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $record")
-                            // TODO 여기서 기록 받아서 서버통신으로 기록
+                            viewModel.posRhythmRecordToSaveWatch(record)
                         }
                     }
                 }
             }
         }
-    }
-
-    private fun calculateSpeed() {
-        val currentTime = System.currentTimeMillis()
-        val lastStepTime = viewModel.lastStepTime.value
-        if (lastStepTime != 0L) {
-            val timeDiff = currentTime - lastStepTime
-            val speed = (SPEED_CALC_INTERVAL / (timeDiff / 1000.0)) * 60 // 분당 걸음 수
-
-            viewModel.setSpeed(speed)
-        }
-        viewModel.setLastStepTime(currentTime)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}

@@ -9,12 +9,12 @@ import timber.log.Timber
 
 class WearableDataManager(private val dataClient: DataClient) {
 
-    fun sendIntToPhone(path: String, key: String, value: Int): Task<DataItem> {
+    fun sendDoubleToPhone(path: String, key: String, value: Double): Task<DataItem> {
 
         Timber.tag("okhttp").d("START SENDING DATA TO PHONE")
 
         val putDataReq: PutDataRequest = PutDataMapRequest.create(path).run {
-            dataMap.putInt(key, value)
+            dataMap.putDouble(key, value)
             asPutDataRequest().setUrgent()
         }
 
