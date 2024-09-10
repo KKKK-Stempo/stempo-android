@@ -67,6 +67,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         initPlayBtnListener()
         initStopBtnListener()
         initWearableSyncBtnListener()
+        observeStepCount()
         observeRhythmLevel()
         observeRhythmUrlState()
         observeDownloadState()
@@ -117,6 +118,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         binding.tvRhythmTitle.setOnSingleClickListener {
             phoneDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.getBpmFromDataStore())
         }
+    }
+
+    private fun observeStepCount() {
+        viewModel.stepCount.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { level ->
+            binding.tvRhythmStep.text = viewModel.stepCount.value.toString()
+        }.launchIn(lifecycleScope)
     }
 
     private fun observeRhythmLevel() {
@@ -237,8 +244,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun observeRecordSaveState() {
-        viewModel.isRecordSaved.flowWithLifecycle(lifecycle).distinctUntilChanged()
-            .onEach { isSuccess ->
+        viewModel.isRecordSaved.flowWithLifecycle(lifecycle).onEach { isSuccess ->
                 if (isSuccess) {
                     toast(stringOf(R.string.rhythm_toast_save_success))
                 } else {
