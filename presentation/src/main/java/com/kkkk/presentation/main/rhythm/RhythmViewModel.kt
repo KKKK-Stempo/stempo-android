@@ -7,7 +7,6 @@ import com.kkkk.core.state.UiState
 import com.kkkk.domain.entity.request.RecordRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
-import com.kkkk.presentation.onboarding.onbarding.OnboardingViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,13 +23,13 @@ constructor(
     private val rhythmRepository: RhythmRepository,
     private val userRepository: UserRepository,
 ) : ViewModel() {
-    var tempRhythmLevel = MutableLiveData<Int>(1)
-    var bpm = 50
-    var filename: String = "stempo_level_1"
-    private var isSubmitted: Boolean = true
+    var bpm = 65
+    var bit = 2
 
-    private val _rhythmLevel = MutableStateFlow<Int>(LEVEL_UNDEFINED)
-    val rhythmLevel: StateFlow<Int> = _rhythmLevel
+    var tempBpm = MutableLiveData<Int>(65)
+    var tempBit = MutableLiveData<Int>(2)
+
+    var filename: String = "stempo_bpm_65_bit_2"
 
     private val _rhythmUrlState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val rhythmUrlState: StateFlow<UiState<String>> = _rhythmUrlState
@@ -52,35 +51,33 @@ constructor(
     }
 
     private fun initRhythmLevelFromDataStore() {
-        bpm = userRepository.getBpm()
-        val currentLevel = setBpmLevel(bpm)
-        filename = "stempo_level_$currentLevel"
-        _rhythmLevel.value = currentLevel
-        tempRhythmLevel.value = currentLevel
+        bpm = getBpmFromDataStore()
+        // TODO  비트 저장 후 추가
+        tempBpm.value = bpm
+        tempBit.value = bit
+        filename = "stempo_bpm_${bpm}_bit_${bit}"
     }
 
     fun addStepCount(newStepCount: Int) {
         _stepCount.value += newStepCount
     }
 
-    fun setTempRhythmLevel(level: Int) {
-        isSubmitted = false
-        tempRhythmLevel.value = level
+    fun setTempRhythmBpm(bpm: Int) {
+        tempBpm.value = bpm
     }
 
     fun resetTempRhythmLevel() {
-        if (!isSubmitted) {
-            isSubmitted = true
-            tempRhythmLevel.value = rhythmLevel.value
-        }
+//        if (!isSubmitted) {
+//            isSubmitted = true
+//            tempRhythmLevel.value = rhythmLevel.value
+//        }
     }
 
     fun setRhythmLevel() {
-        isSubmitted = true
-        filename = "stempo_level_" + tempRhythmLevel.value.toString()
-        bpm = setBpm(tempRhythmLevel.value ?: 1)
-        userRepository.setBpm(bpm)
-        _rhythmLevel.value = tempRhythmLevel.value ?: 1
+//        isSubmitted = true
+//        filename = "stempo_level_" + tempRhythmLevel.value.toString()
+//        bpm = setBpm(tempRhythmLevel.value ?: 1)
+//        userRepository.setBpm(bpm)
     }
 
     fun postToGetRhythmUrlFromServer() {
@@ -158,23 +155,4 @@ constructor(
     }
 
     fun getBpmFromDataStore() = userRepository.getBpm()
-
-    private fun setBpm(level: Int) = 40 + level * 10
-
-    private fun setBpmLevel(bpm: Int) =
-        when (bpm) {
-            in 55..65 -> 2
-            in 65..75 -> 3
-            in 75..85 -> 4
-            in 85..95 -> 5
-            in 95..105 -> 6
-            in 105..115 -> 7
-            in 115..125 -> 8
-            in 125..Int.MAX_VALUE -> 9
-            else -> 1
-        }
-
-    companion object {
-        const val LEVEL_UNDEFINED = -1
-    }
 }
