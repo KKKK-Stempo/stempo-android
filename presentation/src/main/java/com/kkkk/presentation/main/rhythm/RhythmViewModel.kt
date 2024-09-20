@@ -53,8 +53,6 @@ constructor(
     private fun initRhythmLevelFromDataStore() {
         bpm = getBpmFromDataStore()
         // TODO  비트 저장 후 추가
-        tempBpm.value = bpm
-        tempBit.value = bit
         filename = "stempo_bpm_${bpm}_bit_${bit}"
     }
 
@@ -62,22 +60,21 @@ constructor(
         _stepCount.value += newStepCount
     }
 
-    fun setTempRhythmBpm(bpm: Int) {
+    fun setTempBpm(bpm: Int) {
         tempBpm.value = bpm
     }
 
-    fun resetTempRhythmLevel() {
-//        if (!isSubmitted) {
-//            isSubmitted = true
-//            tempRhythmLevel.value = rhythmLevel.value
-//        }
+    fun setRhythmToTemp() {
+        tempBpm.value = bpm
+        tempBit.value = bit
     }
 
-    fun setRhythmLevel() {
-//        isSubmitted = true
-//        filename = "stempo_level_" + tempRhythmLevel.value.toString()
-//        bpm = setBpm(tempRhythmLevel.value ?: 1)
-//        userRepository.setBpm(bpm)
+    fun setTempToRhythm() {
+        bpm = tempBpm.value ?: 65
+        bit = tempBit.value ?: 2
+        filename = "stempo_bpm_${bpm}_bit_${bit}"
+        userRepository.setBpm(bpm)
+        // TODO  비트 저장
     }
 
     fun postToGetRhythmUrlFromServer() {
