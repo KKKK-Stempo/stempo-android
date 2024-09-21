@@ -14,6 +14,7 @@
     <string name="ing">측정 중...</string>
     <string name="before_page">이전페이지</string>
     <string name="next_page">다음페이지</string>
+    <string name="ok">확인</string>
 
     <string name="menu_rhythm">리듬</string>
     <string name="menu_report">기록</string>
