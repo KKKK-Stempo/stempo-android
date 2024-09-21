@@ -31,6 +31,9 @@ constructor(
     var isBpmMinusAvailable = MutableLiveData<Boolean>(false)
     var isBpmPlusAvailable = MutableLiveData<Boolean>(true)
 
+    private val _isRhythmChanged = MutableSharedFlow<Boolean>()
+    val isRhythmChanged: SharedFlow<Boolean> = _isRhythmChanged
+
     private val _rhythmUrlState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val rhythmUrlState: StateFlow<UiState<String>> = _rhythmUrlState
 
@@ -97,6 +100,13 @@ constructor(
         filename = "stempo_bpm_${bpm}_bit_${bit}"
         userRepository.setBpm(bpm)
         userRepository.setBit(bit)
+        viewModelScope.launch {
+            _isRhythmChanged.emit(true)
+        }
+    }
+
+    fun resetRhythmChangedState() {
+        _isRhythmChanged.resetReplayCache()
     }
 
     fun postToGetRhythmUrlFromServer() {

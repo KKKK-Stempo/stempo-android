@@ -64,7 +64,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         initStopBtnListener()
         initWearableSyncBtnListener()
         observeStepCount()
-        // observeRhythmLevel()
+        observeRhythmChanged()
         observeRhythmUrlState()
         observeDownloadState()
         observeRecordSaveState()
@@ -122,25 +122,30 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }.launchIn(lifecycleScope)
     }
 
-//    private fun observeRhythmLevel() {
-//        viewModel.rhythmLevel.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { level ->
-//            if (level == LEVEL_UNDEFINED) return@onEach
-//            if (::mediaPlayer.isInitialized) {
-//                mediaPlayer.pause()
-//                switchPlayingState(false)
-//            }
-//            setUiWithCurrentLevel()
-//            viewModel.postToGetRhythmUrlFromServer()
-//        }.launchIn(lifecycleScope)
-//    }
-//
-//    private fun setUiWithCurrentLevel() {
-//        val color = when (viewModel.rhythmLevel.value.rem(3)) {
-//            1 -> COLOR_PURPLE
-//            2 -> COLOR_SKY
-//            0 -> COLOR_GREEN
-//            else -> return
-//        }
+    private fun observeRhythmChanged() {
+        viewModel.isRhythmChanged.flowWithLifecycle(lifecycle).distinctUntilChanged()
+            .onEach { isChanged ->
+                if (isChanged) {
+                    if (::mediaPlayer.isInitialized) {
+                        mediaPlayer.pause()
+                        switchPlayingState(false)
+                    }
+                    setUiWithCurrentLevel()
+                    viewModel.resetRhythmChangedState()
+                    viewModel.postToGetRhythmUrlFromServer()
+                }
+            }.launchIn(lifecycleScope)
+    }
+
+    private fun setUiWithCurrentLevel() {
+        val color = when (viewModel.bit.rem(3)) {
+            2 -> COLOR_PURPLE
+            3 -> COLOR_SKY
+            4 -> COLOR_GREEN
+            6 -> COLOR_PURPLE
+            8 -> COLOR_SKY
+            else -> return
+        }
 //        with(binding) {
 //            tvRhythmLevel.apply {
 //                text = getString(R.string.rhythm_tv_level, viewModel.rhythmLevel.value)
@@ -160,7 +165,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 //                playAnimation()
 //            }
 //        }
-//    }
+    }
 
     private fun getResource(name: String, defType: String) =
         resources.getIdentifier(name, defType, requireContext().packageName)
