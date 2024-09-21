@@ -2,6 +2,8 @@ package com.kkkk.presentation.main.rhythm
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kkkk.core.base.BaseBottomSheet
@@ -16,7 +18,19 @@ class RhythmBottomSheet :
 
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setBackgroundDrawableResource(R.color.transparent)
+        dialog?.apply {
+            window?.setBackgroundDrawableResource(R.color.transparent)
+            findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)?.let {
+                it.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        it.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        it.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                        BottomSheetBehavior.from(it).state = BottomSheetBehavior.STATE_EXPANDED
+                        it.requestLayout()
+                    }
+                })
+            }
+        }
     }
 
     override fun onViewCreated(
