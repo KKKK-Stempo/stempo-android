@@ -116,7 +116,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun initWearableSyncBtnListener() {
         binding.tvRhythmTitle.setOnSingleClickListener {
-            phoneDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.getBpmFromDataStore())
+            phoneDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.bpm)
         }
     }
 

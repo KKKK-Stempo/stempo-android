@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.max
 
 @HiltViewModel
 class RhythmViewModel
@@ -56,8 +55,8 @@ constructor(
     }
 
     private fun initRhythmLevelFromDataStore() {
-        bpm = getBpmFromDataStore()
-        // TODO  비트 저장 후 추가
+        bpm = userRepository.getBpm()
+        bit = userRepository.getBit()
         filename = "stempo_bpm_${bpm}_bit_${bit}"
     }
 
@@ -87,7 +86,7 @@ constructor(
         bit = tempBit.value ?: 2
         filename = "stempo_bpm_${bpm}_bit_${bit}"
         userRepository.setBpm(bpm)
-        // TODO  비트 저장
+        userRepository.setBit(bit)
     }
 
     fun postToGetRhythmUrlFromServer() {
@@ -172,8 +171,6 @@ constructor(
         _evenStepTime.value = 0L
         _beforeStepTime.value = 0L
     }
-
-    fun getBpmFromDataStore() = userRepository.getBpm()
 
     companion object {
         const val MAX_ALLOWED_DIFFERENCE = 360000L
