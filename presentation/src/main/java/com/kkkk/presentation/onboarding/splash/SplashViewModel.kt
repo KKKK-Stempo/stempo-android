@@ -9,7 +9,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,7 +38,9 @@ class SplashViewModel @Inject constructor(
                     userRepository.setTokens(response.accessToken, response.refreshToken)
                     userRepository.setDeviceToken(deviceTag)
                     _userState.emit(true)
-                }.onFailure(Timber::e)
+                }.onFailure { error -> // 401일 때 회원가입으로 이동 하도록 구현 필요
+                    _userState.emit(false)
+                }
         }
     }
 

@@ -8,5 +8,5 @@ data class AuthRequestDto(
     @SerialName("deviceTag")
     val deviceTag: String,
     @SerialName("password")
-    val password: String = ""
+    val password: String
 )

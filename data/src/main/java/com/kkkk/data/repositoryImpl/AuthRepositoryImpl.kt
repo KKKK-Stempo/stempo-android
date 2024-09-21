@@ -22,7 +22,8 @@ class AuthRepositoryImpl @Inject constructor(
     ): Result<AuthTokenModel> = runCatching {
         authDataSource.postLogin(
             AuthRequestDto(
-                deviceTag = deviceTag
+                deviceTag = deviceTag,
+                password = ""
             )
         ).data.toModel()
     }
@@ -30,7 +31,8 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signup(deviceTag: String): Result<AuthTokenModel> = runCatching {
         authDataSource.postSignUp(
             AuthRequestDto(
-                deviceTag = deviceTag
+                deviceTag = deviceTag,
+                password = ""
             )
         ).data.toModel()
     }
