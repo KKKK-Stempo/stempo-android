@@ -84,7 +84,7 @@
             android:background="@drawable/shape_purple10_fill_12_rect"
             android:gravity="center"
             android:paddingVertical="15dp"
-            android:text="@string/do_later"
+            android:text="@string/ing"
             android:textColor="@color/purple_50"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -29,17 +29,8 @@ class OnboardingMeasureFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initButtonListener()
         initializeSensor()
         checkAndRequestPermission()
-    }
-
-    private fun initButtonListener() {
-        with(binding) {
-            btnOnboardingMeasureLater.setOnClickListener {
-                viewModel.setState(OnboardingState.DONE)
-            }
-        }
     }
 
     private fun initializeSensor() {

@@ -11,7 +11,7 @@
     <string name="view_type_error_msg">Unknown View Type : %d</string>
 
     <string name="getting_start">시작하기</string>
-    <string name="do_later">나중에 할래요</string>
+    <string name="ing">측정 중...</string>
     <string name="before_page">이전페이지</string>
     <string name="next_page">다음페이지</string>
 

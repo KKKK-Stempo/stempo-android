@@ -19,9 +19,6 @@ class OnboardingStartFragment :
 
     private fun initButtonListener() {
         with(binding) {
-            btnOnboardingStartLater.setOnClickListener {
-                viewModel.setState(OnboardingState.DONE)
-            }
             btnOnboardingStartMeasure.setOnClickListener {
                 viewModel.setState(OnboardingState.MEASURE)
             }
