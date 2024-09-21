@@ -42,40 +42,40 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_handler" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/tv_rhythm_bpm"-->
-<!--            style="@style/TextAppearance.Stempo.Head1"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="@{vm.tempBpm}"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/tv_rhythm_level_title"-->
-<!--            tools:text="65" />-->
+        <TextView
+            android:id="@+id/tv_rhythm_bpm"
+            style="@style/TextAppearance.Stempo.Head1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(vm.tempBpm)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_rhythm_level_title"
+            tools:text="65" />
 
-<!--        <ImageView-->
-<!--            android:id="@+id/btn_bpm_minus"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="60dp"-->
-<!--            android:onClick="@{() -> vm.modTempBpm(false)}"-->
-<!--            android:src="@{vm.tempBpm > 65 ? @drawable/ic_minus_purple : @drawable/ic_minus_gray}"-->
-<!--            app:layout_constraintBottom_toBottomOf="@id/tv_rhythm_bpm"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/tv_rhythm_bpm"-->
-<!--            tools:src="@drawable/ic_minus_purple" />-->
+        <ImageView
+            android:id="@+id/btn_bpm_minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="60dp"
+            android:onClick="@{() -> vm.minusTempBpm()}"
+            android:src="@{vm.isBpmMinusAvailable ? @drawable/ic_minus_purple : @drawable/ic_minus_gray}"
+            app:layout_constraintBottom_toBottomOf="@id/tv_rhythm_bpm"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_rhythm_bpm"
+            tools:src="@drawable/ic_minus_purple" />
 
-<!--        <ImageView-->
-<!--            android:id="@+id/btn_bpm_plus"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginEnd="60dp"-->
-<!--            android:onClick="@{() -> vm.modTempBpm(true)}"-->
-<!--            android:src="@{vm.tempBpm > 65 ? @drawable/ic_plus_purple : @drawable/ic_plus_gray}"-->
-<!--            app:layout_constraintBottom_toBottomOf="@id/tv_rhythm_bpm"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/tv_rhythm_bpm"-->
-<!--            tools:src="@drawable/ic_plus_purple" />-->
+        <ImageView
+            android:id="@+id/btn_bpm_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="60dp"
+            android:onClick="@{() -> vm.plusTempBpm()}"
+            android:src="@{vm.isBpmPlusAvailable ? @drawable/ic_plus_purple : @drawable/ic_plus_gray}"
+            app:layout_constraintBottom_toBottomOf="@id/tv_rhythm_bpm"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_rhythm_bpm"
+            tools:src="@drawable/ic_plus_purple" />
 
         <GridLayout
             android:id="@+id/layout_level_grid"
@@ -87,7 +87,7 @@
             android:rowCount="2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_rhythm_level_title">
+            app:layout_constraintTop_toBottomOf="@id/tv_rhythm_bpm">
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head3"
@@ -181,7 +181,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="24dp"
             android:background="@drawable/shape_purple10_fill_12_rect"
             android:gravity="center"
             android:paddingVertical="15dp"

@@ -22,12 +22,14 @@ constructor(
     private val rhythmRepository: RhythmRepository,
     private val userRepository: UserRepository,
 ) : ViewModel() {
-    var bpm = 65
-    var bit = 2
-    var filename: String = "stempo_bpm_65_bit_2"
+    var bpm = MIN_BPM
+    var bit = MAX_BIT
+    var filename: String = "stempo_bpm_${bpm}_bit_${bit}"
 
-    var tempBpm = MutableLiveData<Int>(65)
-    var tempBit = MutableLiveData<Int>(2)
+    var tempBpm = MutableLiveData<Int>(MIN_BPM)
+    var tempBit = MutableLiveData<Int>(MIN_BIT)
+    var isBpmMinusAvailable = MutableLiveData<Boolean>(false)
+    var isBpmPlusAvailable = MutableLiveData<Boolean>(true)
 
     private val _rhythmUrlState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val rhythmUrlState: StateFlow<UiState<String>> = _rhythmUrlState
@@ -62,13 +64,22 @@ constructor(
 
     fun setTempBpm(bpm: Int) {
         tempBpm.value = bpm
+        isBpmMinusAvailable.value = bpm != MIN_BPM
+        isBpmPlusAvailable.value = bpm != MAX_BPM
     }
 
-    fun modTempBpm(isAdded: Boolean) {
-        tempBpm.value?.run {
-            if (this <= 65 || this >= 115) return
-            tempBpm.value = this + if (isAdded) 5 else -5
-        }
+    fun plusTempBpm() {
+        if (tempBpm.value == MAX_BPM) return
+        tempBpm.value = tempBpm.value?.plus(5)
+        isBpmMinusAvailable.value = tempBpm.value != MIN_BPM
+        isBpmPlusAvailable.value = tempBpm.value != MAX_BPM
+    }
+
+    fun minusTempBpm() {
+        if (tempBpm.value == MIN_BPM) return
+        tempBpm.value = tempBpm.value?.minus(5)
+        isBpmMinusAvailable.value = tempBpm.value != MIN_BPM
+        isBpmPlusAvailable.value = tempBpm.value != MAX_BPM
     }
 
     fun setRhythmToTemp() {
@@ -77,8 +88,8 @@ constructor(
     }
 
     fun setTempToRhythm() {
-        bpm = tempBpm.value ?: 65
-        bit = tempBit.value ?: 2
+        bpm = tempBpm.value ?: MIN_BPM
+        bit = tempBit.value ?: MIN_BIT
         filename = "stempo_bpm_${bpm}_bit_${bit}"
         userRepository.setBpm(bpm)
         userRepository.setBit(bit)
@@ -180,6 +191,11 @@ constructor(
     }
 
     companion object {
+        const val MIN_BPM = 65
+        const val MAX_BPM = 115
+        const val MIN_BIT = 2
+        const val MAX_BIT = 8
+
         const val MAX_ALLOWED_DIFFERENCE = 360000L
     }
 }
