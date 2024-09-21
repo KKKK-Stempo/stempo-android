@@ -18,7 +18,7 @@
 
     <string name="menu_rhythm">리듬</string>
     <string name="menu_report">기록</string>
-    <string name="menu_study">학습</string>
+    <string name="menu_study">과제</string>
     <string name="menu_profile">마이</string>
 
     <string name="rhythm_tv_level">%d단계 리듬</string>
