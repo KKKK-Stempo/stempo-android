@@ -13,9 +13,11 @@ constructor(
 
     override fun getRefreshToken(): String = userSharedPref.refreshToken
 
+    override fun getDeviceToken(): String = userSharedPref.deviceToken
+
     override fun getBpm(): Int = userSharedPref.bpm
 
-    override fun getDeviceToken(): String = userSharedPref.deviceToken
+    override fun getBit(): Int = userSharedPref.bit
 
     override fun setTokens(
         accessToken: String,
@@ -25,12 +27,16 @@ constructor(
         userSharedPref.refreshToken = refreshToken
     }
 
+    override fun setDeviceToken(deviceToken: String) {
+        userSharedPref.deviceToken = deviceToken
+    }
+
     override fun setBpm(bpm: Int) {
         userSharedPref.bpm = bpm
     }
 
-    override fun setDeviceToken(deviceToken: String) {
-        userSharedPref.deviceToken = deviceToken
+    override fun setBit(bit: Int) {
+        userSharedPref.bit = bit
     }
 
     override fun clearInfo() {

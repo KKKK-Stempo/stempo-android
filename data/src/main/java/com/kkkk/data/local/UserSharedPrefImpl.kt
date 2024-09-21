@@ -22,8 +22,12 @@ constructor(
         set(value) = dataStore.edit { putString(DEVICE_TOKEN, value) }
 
     override var bpm: Int
-        get() = dataStore.getInt(BPM_LEVEL, 50)
-        set(value) = dataStore.edit { putInt(BPM_LEVEL, value) }
+        get() = dataStore.getInt(BPM, 65)
+        set(value) = dataStore.edit { putInt(BPM, value) }
+
+    override var bit: Int
+        get() = dataStore.getInt(BIT, 2)
+        set(value) = dataStore.edit { putInt(BIT, value) }
 
     override fun clearInfo() {
         dataStore.edit().clear().apply()
@@ -33,6 +37,7 @@ constructor(
         private const val ACCESS_TOKEN = "ACCESS_TOKEN"
         private const val REFRESH_TOKEN = "REFRESH_TOKEN"
         private const val DEVICE_TOKEN = "DEVICE_TOKEN"
-        private const val BPM_LEVEL = "BPM_LEVEL"
+        private const val BPM = "BPM"
+        private const val BIT = "BIT"
     }
 }

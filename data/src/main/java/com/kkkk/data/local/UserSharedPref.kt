@@ -5,6 +5,7 @@ interface UserSharedPref {
     var refreshToken: String
     var deviceToken: String
     var bpm: Int
+    var bit : Int
 
     fun clearInfo()
 }

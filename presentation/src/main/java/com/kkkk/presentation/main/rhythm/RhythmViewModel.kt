@@ -25,11 +25,10 @@ constructor(
 ) : ViewModel() {
     var bpm = 65
     var bit = 2
+    var filename: String = "stempo_bpm_65_bit_2"
 
     var tempBpm = MutableLiveData<Int>(65)
     var tempBit = MutableLiveData<Int>(2)
-
-    var filename: String = "stempo_bpm_65_bit_2"
 
     private val _rhythmUrlState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val rhythmUrlState: StateFlow<UiState<String>> = _rhythmUrlState
