@@ -1,7 +1,9 @@
 package com.kkkk.presentation.onboarding.onbarding
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.provider.Settings
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -56,7 +58,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
 
             override fun onFinish() {
                 with(viewModel) {
-                    setBpmLevel()
+                    setBpmLevel(getDeviceTag())
                     setState(OnboardingState.END)
                 }
             }
@@ -75,6 +77,10 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
             replace<T>(R.id.fcv_onboarding, T::class.java.canonicalName)
         }
     }
+
+    @SuppressLint("HardwareIds")
+    private fun getDeviceTag(): String =
+        Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 
     companion object {
         private const val TIME = 60000L

@@ -10,4 +10,8 @@ interface AuthRepository {
     suspend fun login(
         deviceTag: String
     ): Result<AuthTokenModel>
+
+    suspend fun signup(
+        deviceTag: String
+    ): Result<AuthTokenModel>
 }
