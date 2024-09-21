@@ -54,82 +54,88 @@
             app:layout_constraintTop_toBottomOf="@id/tv_rhythm_level_title">
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head3"
                 android:layout_row="0"
                 android:layout_rowWeight="1"
                 android:layout_column="0"
                 android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempBpm == 65 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:layout_margin="5dp"
+                android:background="@{vm.tempBpm == 65 ? @drawable/shape_white_fill_purple50_line_25_rect : @drawable/shape_gray100_fill_gray300_line_25_rect}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.tempRhythmBpm(65)}"
+                android:onClick="@{() -> vm.setTempBpm(65)}"
+                android:paddingVertical="12dp"
                 android:text="65"
-                android:textColor="@{vm.tempBpm == 65 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempBpm == 65 ? @color/purple_50 : @color/gray_500}" />
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head3"
                 android:layout_row="0"
                 android:layout_rowWeight="1"
                 android:layout_column="1"
                 android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempBpm == 75 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:layout_margin="5dp"
+                android:background="@{vm.tempBpm == 75 ? @drawable/shape_white_fill_purple50_line_25_rect : @drawable/shape_gray100_fill_gray300_line_25_rect}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.tempRhythmBpm(75)}"
+                android:onClick="@{() -> vm.setTempBpm(75)}"
+                android:paddingVertical="12dp"
                 android:text="75"
-                android:textColor="@{vm.tempBpm == 75 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempBpm == 75 ? @color/purple_50 : @color/gray_500}" />
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head3"
                 android:layout_row="0"
                 android:layout_rowWeight="1"
                 android:layout_column="2"
                 android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempBpm == 85 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:layout_margin="5dp"
+                android:background="@{vm.tempBpm == 85 ? @drawable/shape_white_fill_purple50_line_25_rect : @drawable/shape_gray100_fill_gray300_line_25_rect}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.tempRhythmBpm(85)}"
+                android:onClick="@{() -> vm.setTempBpm(85)}"
+                android:paddingVertical="12dp"
                 android:text="85"
-                android:textColor="@{vm.tempBpm == 85 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempBpm == 85 ? @color/purple_50 : @color/gray_500}" />
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head3"
                 android:layout_row="1"
                 android:layout_rowWeight="1"
                 android:layout_column="0"
                 android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempBpm == 95 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:layout_margin="5dp"
+                android:background="@{vm.tempBpm == 95 ? @drawable/shape_white_fill_purple50_line_25_rect : @drawable/shape_gray100_fill_gray300_line_25_rect}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.tempRhythmBpm(95)}"
+                android:onClick="@{() -> vm.setTempBpm(95)}"
+                android:paddingVertical="12dp"
                 android:text=" 95 "
-                android:textColor="@{vm.tempBpm == 95 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempBpm == 95 ? @color/purple_50 : @color/gray_500}" />
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head3"
                 android:layout_row="1"
                 android:layout_rowWeight="1"
                 android:layout_column="1"
                 android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempBpm == 105 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:layout_margin="5dp"
+                android:background="@{vm.tempBpm == 105 ? @drawable/shape_white_fill_purple50_line_25_rect : @drawable/shape_gray100_fill_gray300_line_25_rect}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.tempRhythmBpm(105)}"
+                android:onClick="@{() -> vm.setTempBpm(105)}"
+                android:paddingVertical="12dp"
                 android:text="105"
-                android:textColor="@{vm.tempBpm == 105 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempBpm == 105 ? @color/purple_50 : @color/gray_500}" />
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head3"
                 android:layout_row="1"
                 android:layout_rowWeight="1"
                 android:layout_column="2"
                 android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempBpm == 115? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:layout_margin="5dp"
+                android:background="@{vm.tempBpm == 115 ? @drawable/shape_white_fill_purple50_line_25_rect : @drawable/shape_gray100_fill_gray300_line_25_rect}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.tempRhythmBpm(115)}"
+                android:onClick="@{() -> vm.setTempBpm(115)}"
+                android:paddingVertical="12dp"
                 android:text="115"
-                android:textColor="@{vm.tempBpm == 115 ? @color/white : @color/gray_700}" />
+                android:textColor="@{vm.tempBpm == 115 ? @color/purple_50 : @color/gray_500}" />
 
         </GridLayout>
 

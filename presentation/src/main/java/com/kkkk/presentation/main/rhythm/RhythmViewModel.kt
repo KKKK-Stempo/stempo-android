@@ -60,20 +60,15 @@ constructor(
         filename = "stempo_bpm_${bpm}_bit_${bit}"
     }
 
-    fun addStepCount(newStepCount: Int) {
-        if ((_oddStepCount.value + _evenStepCount.value) % 2 == 0) {
-            _oddStepCount.value += newStepCount
-            _oddStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
-        } else {
-            _evenStepCount.value += newStepCount
-            _evenStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
-        }
-        _stepCount.value += newStepCount
-        _beforeStepTime.value = System.currentTimeMillis()
-    }
-
     fun setTempBpm(bpm: Int) {
         tempBpm.value = bpm
+    }
+
+    fun modTempBpm(isAdded: Boolean) {
+        tempBpm.value?.run {
+            if (this <= 65 || this >= 115) return
+            tempBpm.value = this + if (isAdded) 5 else -5
+        }
     }
 
     fun setRhythmToTemp() {
@@ -114,6 +109,18 @@ constructor(
                     _downloadWavState.value = UiState.Failure(it.message.toString())
                 }
         }
+    }
+
+    fun addStepCount(newStepCount: Int) {
+        if ((_oddStepCount.value + _evenStepCount.value) % 2 == 0) {
+            _oddStepCount.value += newStepCount
+            _oddStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
+        } else {
+            _evenStepCount.value += newStepCount
+            _evenStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
+        }
+        _stepCount.value += newStepCount
+        _beforeStepTime.value = System.currentTimeMillis()
     }
 
     fun posRhythmRecordToSave() {

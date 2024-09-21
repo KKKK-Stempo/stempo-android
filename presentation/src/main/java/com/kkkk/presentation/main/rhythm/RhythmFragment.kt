@@ -20,18 +20,14 @@ import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.kkkk.core.base.BaseFragment
-import com.kkkk.core.extension.colorOf
-import com.kkkk.core.extension.drawableOf
 import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.core.state.UiState
-import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.LEVEL_UNDEFINED
 import com.kkkk.presentation.manager.PhoneDataManager
 import com.kkkk.presentation.manager.PhoneDataManager.Companion.KEY_BPM
 import com.kkkk.presentation.manager.PhoneDataManager.Companion.PATH_BPM
-import com.kkkk.presentation.onboarding.onbarding.OnboardingViewModel.Companion.SPEED_CALC_INTERVAL
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -68,7 +64,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         initStopBtnListener()
         initWearableSyncBtnListener()
         observeStepCount()
-        observeRhythmLevel()
+        // observeRhythmLevel()
         observeRhythmUrlState()
         observeDownloadState()
         observeRecordSaveState()
@@ -126,45 +122,45 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }.launchIn(lifecycleScope)
     }
 
-    private fun observeRhythmLevel() {
-        viewModel.rhythmLevel.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { level ->
-            if (level == LEVEL_UNDEFINED) return@onEach
-            if (::mediaPlayer.isInitialized) {
-                mediaPlayer.pause()
-                switchPlayingState(false)
-            }
-            setUiWithCurrentLevel()
-            viewModel.postToGetRhythmUrlFromServer()
-        }.launchIn(lifecycleScope)
-    }
-
-    private fun setUiWithCurrentLevel() {
-        val color = when (viewModel.rhythmLevel.value.rem(3)) {
-            1 -> COLOR_PURPLE
-            2 -> COLOR_SKY
-            0 -> COLOR_GREEN
-            else -> return
-        }
-        with(binding) {
-            tvRhythmLevel.apply {
-                text = getString(R.string.rhythm_tv_level, viewModel.rhythmLevel.value)
-                setTextColor(colorOf(getResource("${color}_50", COLOR)))
-                background =
-                    drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
-            }
-            tvRhythmStep.apply {
-                setTextColor(colorOf(getResource("${color}_50", COLOR)))
-                background =
-                    drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
-            }
-            ivRhythmBg.setImageResource(getResource("img_rhythm_bg_$color", DRAWABLE))
-            lottieRhythmBg.apply {
-                setAnimation(getResource("stempo_rhythm_$color", RAW))
-                speed = viewModel.bpm / FLOAT_120
-                playAnimation()
-            }
-        }
-    }
+//    private fun observeRhythmLevel() {
+//        viewModel.rhythmLevel.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { level ->
+//            if (level == LEVEL_UNDEFINED) return@onEach
+//            if (::mediaPlayer.isInitialized) {
+//                mediaPlayer.pause()
+//                switchPlayingState(false)
+//            }
+//            setUiWithCurrentLevel()
+//            viewModel.postToGetRhythmUrlFromServer()
+//        }.launchIn(lifecycleScope)
+//    }
+//
+//    private fun setUiWithCurrentLevel() {
+//        val color = when (viewModel.rhythmLevel.value.rem(3)) {
+//            1 -> COLOR_PURPLE
+//            2 -> COLOR_SKY
+//            0 -> COLOR_GREEN
+//            else -> return
+//        }
+//        with(binding) {
+//            tvRhythmLevel.apply {
+//                text = getString(R.string.rhythm_tv_level, viewModel.rhythmLevel.value)
+//                setTextColor(colorOf(getResource("${color}_50", COLOR)))
+//                background =
+//                    drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
+//            }
+//            tvRhythmStep.apply {
+//                setTextColor(colorOf(getResource("${color}_50", COLOR)))
+//                background =
+//                    drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
+//            }
+//            ivRhythmBg.setImageResource(getResource("img_rhythm_bg_$color", DRAWABLE))
+//            lottieRhythmBg.apply {
+//                setAnimation(getResource("stempo_rhythm_$color", RAW))
+//                speed = viewModel.bpm / FLOAT_120
+//                playAnimation()
+//            }
+//        }
+//    }
 
     private fun getResource(name: String, defType: String) =
         resources.getIdentifier(name, defType, requireContext().packageName)
@@ -245,12 +241,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun observeRecordSaveState() {
         viewModel.isRecordSaved.flowWithLifecycle(lifecycle).onEach { isSuccess ->
-                if (isSuccess) {
-                    toast(stringOf(R.string.rhythm_toast_save_success))
-                } else {
-                    toast(stringOf(R.string.error_msg))
-                }
-            }.launchIn(lifecycleScope)
+            if (isSuccess) {
+                toast(stringOf(R.string.rhythm_toast_save_success))
+            } else {
+                toast(stringOf(R.string.error_msg))
+            }
+        }.launchIn(lifecycleScope)
     }
 
     override fun onDestroyView() {
