@@ -82,6 +82,10 @@ constructor(
         isBpmPlusAvailable.value = tempBpm.value != MAX_BPM
     }
 
+    fun setTempBit(bit: Int) {
+        tempBit.value = bit
+    }
+
     fun setRhythmToTemp() {
         tempBpm.value = bpm
         tempBit.value = bit
