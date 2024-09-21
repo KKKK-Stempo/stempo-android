@@ -1,6 +1,7 @@
 package com.kkkk.data.dataSource
 
 import com.kkkk.data.dto.BaseResponse
+import com.kkkk.data.dto.request.AuthRequestDto
 import com.kkkk.data.dto.response.AuthTokenDto
 
 interface AuthDataSource {
@@ -9,6 +10,10 @@ interface AuthDataSource {
     ): BaseResponse<AuthTokenDto>
 
     suspend fun postLogin(
-        deviceTag: String,
+        auth: AuthRequestDto,
+    ): BaseResponse<AuthTokenDto>
+
+    suspend fun postSignUp(
+        auth: AuthRequestDto,
     ): BaseResponse<AuthTokenDto>
 }

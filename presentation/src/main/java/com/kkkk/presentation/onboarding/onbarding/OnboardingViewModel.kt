@@ -1,15 +1,20 @@
 package com.kkkk.presentation.onboarding.onbarding
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.kkkk.domain.repository.AuthRepository
 import com.kkkk.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(OnboardingState.START)
     val state: StateFlow<OnboardingState> = _state
@@ -38,9 +43,14 @@ class OnboardingViewModel @Inject constructor(
         _state.value = newState
     }
 
-    fun setBpmLevel() {
+    fun setBpmLevel(deviceTag: String) {
         val bpm = _speed.value / (_stepCount.value / SPEED_CALC_INTERVAL)
-        userRepository.setBpm(bpm.toInt())
+
+        viewModelScope.launch {
+            authRepository.signup(deviceTag).onSuccess {
+                userRepository.setBpm(bpm.toInt())
+            }.onFailure(Timber::e)
+        }
     }
 
     companion object {
