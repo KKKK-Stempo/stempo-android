@@ -7,7 +7,6 @@ import com.kkkk.core.state.UiState
 import com.kkkk.domain.entity.request.RecordRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
-import com.kkkk.presentation.onboarding.onbarding.OnboardingViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +44,13 @@ constructor(
     private val _stepCount = MutableStateFlow(0)
     val stepCount: StateFlow<Int> = _stepCount
 
-    private val _firstStepTime = MutableStateFlow(0L)
+    private val _oddStepCount = MutableStateFlow(0)
+    private val _oddStepTime = MutableStateFlow(0L)
+
+    private val _evenStepCount = MutableStateFlow(0)
+    private val _evenStepTime = MutableStateFlow(0L)
+
+    private val _beforeStepTime = MutableStateFlow(0L)
 
     init {
         initRhythmLevelFromDataStore()
@@ -60,7 +65,15 @@ constructor(
     }
 
     fun addStepCount(newStepCount: Int) {
+        if ((_oddStepCount.value + _evenStepCount.value) % 2 == 0) {
+            _oddStepCount.value += newStepCount
+            _oddStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
+        } else {
+            _evenStepCount.value += newStepCount
+            _evenStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
+        }
         _stepCount.value += newStepCount
+        _beforeStepTime.value = System.currentTimeMillis()
     }
 
     fun setTempRhythmLevel(level: Int) {
@@ -102,7 +115,7 @@ constructor(
             rhythmRepository.getRhythmWav(url)
                 .onSuccess {
                     _downloadWavState.value = UiState.Success(it)
-                    _firstStepTime.value = System.currentTimeMillis()
+                    _beforeStepTime.value = System.currentTimeMillis()
                 }
                 .onFailure {
                     _downloadWavState.value = UiState.Failure(it.message.toString())
@@ -111,11 +124,7 @@ constructor(
     }
 
     fun posRhythmRecordToSave() {
-        var accuracy =
-            (stepCount.value.toDouble() / (bpm / 60 * ((System.currentTimeMillis() - _firstStepTime.value) / 10000)))
-        if (accuracy > 1) {
-            accuracy = max(2 - accuracy, 0.0)
-        }
+        val accuracy = calculateAccuracy(_oddStepTime.value, _evenStepTime.value)
 
         viewModelScope.launch {
             rhythmRepository.postRhythmRecord(
@@ -130,6 +139,16 @@ constructor(
             }.onFailure {
                 _isRecordSaved.emit(false)
             }
+        }
+    }
+
+    private fun calculateAccuracy(time1: Long, time2: Long): Double {
+        val difference = kotlin.math.abs(time1 - time2)
+
+        return when {
+            difference == 0L -> 1.0
+            difference >= MAX_ALLOWED_DIFFERENCE -> 0.0
+            else -> (1 - difference.toDouble() / MAX_ALLOWED_DIFFERENCE)
         }
     }
 
@@ -153,8 +172,11 @@ constructor(
     }
 
     private fun resetStepInfo() {
-        _stepCount.value = 0
-        _firstStepTime.value = 0L
+        _oddStepCount.value = 0
+        _evenStepCount.value = 0
+        _oddStepTime.value = 0L
+        _evenStepTime.value = 0L
+        _beforeStepTime.value = 0L
     }
 
     fun getBpmFromDataStore() = userRepository.getBpm()
@@ -176,5 +198,6 @@ constructor(
 
     companion object {
         const val LEVEL_UNDEFINED = -1
+        const val MAX_ALLOWED_DIFFERENCE = 360000L
     }
 }
