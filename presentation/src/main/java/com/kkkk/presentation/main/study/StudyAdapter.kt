@@ -8,7 +8,7 @@ import com.kkkk.core.util.ItemDiffCallback
 import com.kkkk.domain.entity.response.StudyModel
 import kr.genti.presentation.databinding.ItemStudyCheckStringBinding
 
-class StudyAdapter(context: Context, private val isMe: Boolean) :
+class StudyAdapter(context: Context, private val listener: OnItemClickListener, private val isMe: Boolean) :
     ListAdapter<StudyModel.StudyItemModel, StudyViewHolder>(
         StudyDiffCallback,
     ) {
@@ -16,7 +16,7 @@ class StudyAdapter(context: Context, private val isMe: Boolean) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudyViewHolder {
         val binding = ItemStudyCheckStringBinding.inflate(inflater, parent, false)
-        return StudyViewHolder(binding, isMe = isMe)
+        return StudyViewHolder(binding, isMe = isMe, listener = listener)
     }
 
     override fun onBindViewHolder(holder: StudyViewHolder, position: Int) {

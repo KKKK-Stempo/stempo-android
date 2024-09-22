@@ -3,12 +3,14 @@ package com.kkkk.presentation.main.study
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.setStatusBarColor
+import com.kkkk.core.extension.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -17,7 +19,7 @@ import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentStudyBinding
 
 @AndroidEntryPoint
-class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study) {
+class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study), OnItemClickListener {
     private val viewModel by activityViewModels<StudyViewModel>()
 
     private var _studyStudentAdapter: StudyAdapter? = null
@@ -44,10 +46,10 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
     }
 
     private fun setAdapter() {
-        _studyTeacherAdapter = StudyAdapter(requireContext(), false)
+        _studyTeacherAdapter = StudyAdapter(requireContext(), this, false)
         binding.rvTeacherExercise.adapter = studyTeacherAdapter
 
-        _studyStudentAdapter = StudyAdapter(requireContext(), true)
+        _studyStudentAdapter = StudyAdapter(requireContext(), this, true)
         binding.rvStudentExercise.adapter = studyStudentAdapter
     }
 
@@ -155,5 +157,13 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
         super.onDestroyView()
         _studyStudentAdapter = null
         _studyTeacherAdapter = null
+    }
+
+    override fun onCheckboxClick(itemId: Int, isChecked: Boolean) {
+        toast("Clicked item ID: $itemId + isChecked: $isChecked")
+    }
+
+    override fun onDeleteButtonClick(itemId: Int) {
+        toast("Clicked item ID: $itemId")
     }
 }

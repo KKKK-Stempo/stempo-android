@@ -8,7 +8,8 @@ import kr.genti.presentation.databinding.ItemStudyCheckStringBinding
 
 class StudyViewHolder(
     private val binding: ItemStudyCheckStringBinding,
-    private val isMe: Boolean
+    private val listener: OnItemClickListener,
+    private val isMe: Boolean,
 ) :
     RecyclerView.ViewHolder(binding.root) {
     fun onBind(data: StudyModel.StudyItemModel) =
@@ -16,13 +17,25 @@ class StudyViewHolder(
             ivCheckbox.setImageResource(
                 if (data.completed) R.drawable.ic_checkbox_checked else R.drawable.ic_checkbox_unchecked
             )
+            ivCheckbox.setOnClickListener {
+                listener.onCheckboxClick(data.id, !data.completed)
+            }
             if (isMe) {
                 ivDelete.visibility = View.GONE
                 etString.isEnabled = false
-            } else{
+            } else {
                 ivDelete.visibility = View.VISIBLE
                 etString.isEnabled = true
+
+                ivDelete.setOnClickListener {
+                    listener.onDeleteButtonClick(data.id)
+                }
             }
             etString.setText(data.description)
         }
+}
+
+interface OnItemClickListener {
+    fun onCheckboxClick(itemId: Int, isChecked: Boolean)
+    fun onDeleteButtonClick(itemId: Int)
 }
