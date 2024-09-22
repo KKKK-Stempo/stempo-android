@@ -1,52 +1,30 @@
 package com.kkkk.presentation.main.study
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.entity.response.StudyModel
 import com.kkkk.domain.repository.StudyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class StudyViewModel @Inject constructor(
     private val studyRepository: StudyRepository,
 ) : ViewModel() {
-    private val _videoState = MutableStateFlow(StudyModel())
-    val videoState: StateFlow<StudyModel>
-        get() = _videoState
+    // 추후 과제 리스트 관련으로 사용
+    private val _studyList = MutableStateFlow<List<Int>>(emptyList())
+    val studyList: StateFlow<List<Int>> = _studyList
 
-    private val _articleState = MutableStateFlow(StudyModel())
-    val articleState: StateFlow<StudyModel>
-        get() = _articleState
+    private val _typeIsMe = MutableStateFlow(true)
+    val typeIsMe: StateFlow<Boolean> = _typeIsMe
 
-    init {
-        getVideos()
-        getArticles()
+    fun setTypeIsMe(isMe: Boolean) {
+        _typeIsMe.value = isMe
     }
 
-    fun getVideos(value: Int = 0) {
-        viewModelScope.launch {
-            studyRepository.getVideos(
-                page = _videoState.value.currentPage + value,
-                size = 2
-            ).onSuccess {
-                _videoState.value = it
-            }.onFailure(Timber::e)
-        }
-    }
-
-    fun getArticles(value: Int = 0) {
-        viewModelScope.launch {
-            studyRepository.getArticles(
-                page = _articleState.value.currentPage + value,
-                size = 3
-            ).onSuccess {
-                _articleState.value = it
-            }.onFailure(Timber::e)
-        }
+    fun addItems(items: List<Int>) {
+        _studyList.value += items
     }
 }
