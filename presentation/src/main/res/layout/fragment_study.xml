@@ -42,7 +42,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:background="@drawable/shape_dark_fill_12_rect"
-            android:paddingHorizontal="16dp"
             android:paddingVertical="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -54,18 +53,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="과제 진척도"
+                android:paddingHorizontal="16dp"
                 android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.divider.MaterialDivider
-                android:id="@+id/progressbar"
+            <ProgressBar
+                android:id="@+id/progress_bar_homework"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="9dp"
+                android:layout_height="10dp"
+                android:layout_marginTop="12dp"
+                android:max="5"
+                android:layout_marginHorizontal="16dp"
+                android:progressDrawable="@drawable/layer_list_progressbar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_exercise" />
+
+            <ImageView
+                android:id="@+id/iv_seekbar_thumb"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/progress_bar_homework"
+                app:layout_constraintBottom_toBottomOf="@id/progress_bar_homework"
+                android:src="@drawable/shape_seekbar_thumb"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Space

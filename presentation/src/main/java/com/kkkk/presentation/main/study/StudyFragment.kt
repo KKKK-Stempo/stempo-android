@@ -75,6 +75,10 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
                 studyStudentAdapter.submitList(studyList)
                 studyTeacherAdapter.submitList(studyList)
                 setToggleState(viewModel.typeIsMe.value)
+
+                binding.progressBarHomework.max = studyList.size
+                binding.progressBarHomework.progress = studyList.count { it.completed }
+                binding.ivSeekbarThumb.x = binding.progressBarHomework.width * binding.progressBarHomework.progress / binding.progressBarHomework.max.toFloat()
             }.launchIn(lifecycleScope)
     }
 
