@@ -112,6 +112,15 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        if (::mediaPlayer.isInitialized) {
+            mediaPlayer.pause()
+            switchPlayingState(false)
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
     private fun switchPlayingState(start: Boolean) {
         with(binding) {
             btnRhythmPlay.isVisible = !start
@@ -243,6 +252,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             setDataSource(
                 File(requireContext().filesDir, viewModel.filename).absolutePath
             )
+            isLooping = true
             prepare()
         }
         setLoadingView(false)

@@ -61,6 +61,15 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        if (::mediaPlayer.isInitialized) {
+            mediaPlayer.pause()
+            switchPlayingState(false)
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
     private fun switchPlayingState(start: Boolean) {
         with(binding) {
             btnStretchPlay.isVisible = !start
@@ -76,6 +85,7 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
                 setDataSource(
                     File(requireContext().filesDir, STRETCH_WAV_FILE).absolutePath
                 )
+                isLooping = true
                 prepare()
             }
         } else {
