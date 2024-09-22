@@ -12,11 +12,24 @@
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/btn_stretch"
+            style="@style/TextAppearance.Stempo.Head1"
+            android:textColor="@color/gray_700"
+            android:layout_width="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_gray100_fill_gray300_line_25_rect"
+            android:padding="12dp"
+            android:text="스트레칭"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/tv_rhythm_title"
             style="@style/TextAppearance.Stempo.Head1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="100dp"
             android:gravity="center"
             android:text="@string/rhythm_tv_title"
             app:layout_constraintEnd_toEndOf="parent"
