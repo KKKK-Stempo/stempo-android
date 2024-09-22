@@ -11,50 +11,50 @@
 
     <style name="TextAppearance.Stempo.Head1">
         <item name="fontFamily">@font/font_pretendard_semibold</item>
-        <item name="android:textSize">26sp</item>
-        <item name="android:paddingVertical">9sp</item>
+        <item name="android:textSize">26dp</item>
+        <item name="android:paddingVertical">9dp</item>
     </style>
 
     <style name="TextAppearance.Stempo.Head2">
         <item name="fontFamily">@font/font_pretendard_semibold</item>
-        <item name="android:textSize">24sp</item>
-        <item name="android:paddingVertical">7sp</item>
+        <item name="android:textSize">24dp</item>
+        <item name="android:paddingVertical">7dp</item>
     </style>
 
     <style name="TextAppearance.Stempo.Head3">
         <item name="fontFamily">@font/font_pretendard_semibold</item>
-        <item name="android:textSize">20sp</item>
-        <item name="android:paddingVertical">4sp</item>
+        <item name="android:textSize">20dp</item>
+        <item name="android:paddingVertical">4dp</item>
     </style>
 
     <style name="TextAppearance.Stempo.Head4">
         <item name="fontFamily">@font/font_pretendard_semibold</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:paddingVertical">4sp</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:paddingVertical">4dp</item>
     </style>
 
     <style name="TextAppearance.Stempo.Body1">
         <item name="fontFamily">@font/font_pretendard_medium</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:paddingVertical">6sp</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:paddingVertical">6dp</item>
     </style>
 
     <style name="TextAppearance.Stempo.Body2">
         <item name="fontFamily">@font/font_pretendard_medium</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:paddingVertical">5sp</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:paddingVertical">5dp</item>
     </style>
 
     <style name="TextAppearance.Stempo.Body3">
         <item name="fontFamily">@font/font_pretendard_medium</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:paddingVertical">4sp</item>
+        <item name="android:textSize">14dp</item>
+        <item name="android:paddingVertical">4dp</item>
     </style>
 
     <style name="TextAppearance.Stempo.Caption1">
         <item name="fontFamily">@font/font_pretendard_medium</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:paddingVertical">5sp</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:paddingVertical">5dp</item>
     </style>
 
 </resources>
