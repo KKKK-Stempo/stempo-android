@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.entity.response.StudyModel
 import com.kkkk.domain.repository.StudyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -15,12 +17,14 @@ import javax.inject.Inject
 class StudyViewModel @Inject constructor(
     private val studyRepository: StudyRepository,
 ) : ViewModel() {
-    // 추후 과제 리스트 관련으로 사용
     private val _studyList = MutableStateFlow<List<StudyModel.StudyItemModel>>(emptyList())
     val studyList: StateFlow<List<StudyModel.StudyItemModel>> = _studyList
 
     private val _typeIsMe = MutableStateFlow(true)
     val typeIsMe: StateFlow<Boolean> = _typeIsMe
+
+    private val _toast = MutableSharedFlow<String>()
+    val toast: SharedFlow<String> = _toast
 
     init {
         getHomeworks()
@@ -42,6 +46,7 @@ class StudyViewModel @Inject constructor(
         viewModelScope.launch {
             studyRepository.deleteHomework(homeworkId)
                 .onSuccess {
+                    _toast.emit("삭제되었습니다")
                     getHomeworks()
                 }.onFailure(Timber::e)
         }
@@ -51,6 +56,7 @@ class StudyViewModel @Inject constructor(
         viewModelScope.launch {
             studyRepository.updateHomework(homeworkId, description, completed)
                 .onSuccess {
+                    _toast.emit("수정되었습니다")
                     getHomeworks()
                 }.onFailure(Timber::e)
         }

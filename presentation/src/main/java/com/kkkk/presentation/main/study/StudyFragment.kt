@@ -9,6 +9,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.setStatusBarColor
+import com.kkkk.core.extension.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -40,6 +41,7 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
         setAdapter()
         observeTypeIsMe()
         observeStudyList()
+        observeToast()
         setToggleClickListener()
         setAddStudyButtonClickListener()
     }
@@ -66,6 +68,12 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
                 studyTeacherAdapter.submitList(studyList)
                 setToggleState(viewModel.typeIsMe.value)
             }.launchIn(lifecycleScope)
+    }
+
+    private fun observeToast() {
+        viewModel.toast.flowWithLifecycle(lifecycle).onEach {
+            toast(it)
+        }.launchIn(lifecycleScope)
     }
 
     @SuppressLint("ResourceAsColor")
