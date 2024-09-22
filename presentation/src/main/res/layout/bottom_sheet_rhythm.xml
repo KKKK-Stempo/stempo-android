@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -29,147 +30,267 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_rhythm_level_title"
-            style="@style/TextAppearance.Stempo.Head3"
+            android:id="@+id/tv_rhythm_bit_title"
+            style="@style/TextAppearance.Stempo.Head4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:text="@string/rhythm_btn_change_level"
+            android:layout_marginTop="14dp"
+            android:text="비트 선택"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_handler" />
 
         <GridLayout
-            android:id="@+id/layout_level_grid"
+            android:id="@+id/layout_grid_bit"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="20dp"
-            android:columnCount="3"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="10dp"
+            android:columnCount="2"
             android:rowCount="3"
-            app:layout_constraintDimensionRatio="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_rhythm_level_title">
+            app:layout_constraintTop_toBottomOf="@id/tv_rhythm_bit_title">
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head2"
                 android:layout_row="0"
                 android:layout_rowWeight="1"
                 android:layout_column="0"
                 android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempRhythmLevel == 1 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:layout_margin="8dp"
+                android:background="@{vm.tempBit == 2 ? @drawable/shape_purple50_fill_16_rect : @drawable/shape_gray200_fill_16_rect}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.setTempRhythmLevel(1)}"
-                android:text="1"
-                android:textColor="@{vm.tempRhythmLevel == 1 ? @color/white : @color/gray_700}" />
+                android:onClick="@{() -> vm.setTempBit(2)}"
+                android:paddingVertical="12dp"
+                android:text="2 비트"
+                android:textColor="@{vm.tempBit == 2 ? @color/white : @color/gray_600}"
+                tools:background="@drawable/shape_gray200_fill_16_rect" />
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head2"
                 android:layout_row="0"
                 android:layout_rowWeight="1"
                 android:layout_column="1"
                 android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempRhythmLevel == 2 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:layout_margin="8dp"
+                android:background="@{vm.tempBit == 3 ? @drawable/shape_purple50_fill_16_rect : @drawable/shape_gray200_fill_16_rect}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.setTempRhythmLevel(2)}"
-                android:text="2"
-                android:textColor="@{vm.tempRhythmLevel == 2 ? @color/white : @color/gray_700}" />
+                android:onClick="@{() -> vm.setTempBit(3)}"
+                android:paddingVertical="12dp"
+                android:text="3 비트"
+                android:textColor="@{vm.tempBit == 3 ? @color/white : @color/gray_600}"
+                tools:background="@drawable/shape_gray200_fill_16_rect" />
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head2"
+                android:layout_row="1"
+                android:layout_rowWeight="1"
+                android:layout_column="0"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:background="@{vm.tempBit == 4 ? @drawable/shape_purple50_fill_16_rect : @drawable/shape_gray200_fill_16_rect}"
+                android:gravity="center"
+                android:onClick="@{() -> vm.setTempBit(4)}"
+                android:paddingVertical="12dp"
+                android:text="4 비트"
+                android:textColor="@{vm.tempBit == 4 ? @color/white : @color/gray_600}"
+                tools:background="@drawable/shape_gray200_fill_16_rect" />
+
+            <TextView
+                style="@style/TextAppearance.Stempo.Head2"
+                android:layout_row="1"
+                android:layout_rowWeight="1"
+                android:layout_column="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:background="@{vm.tempBit == 6 ? @drawable/shape_purple50_fill_16_rect : @drawable/shape_gray200_fill_16_rect}"
+                android:gravity="center"
+                android:onClick="@{() -> vm.setTempBit(6)}"
+                android:paddingVertical="12dp"
+                android:text="6 비트"
+                android:textColor="@{vm.tempBit == 6 ? @color/white : @color/gray_600}"
+                tools:background="@drawable/shape_gray200_fill_16_rect" />
+
+            <TextView
+                style="@style/TextAppearance.Stempo.Head2"
+                android:layout_row="2"
+                android:layout_rowWeight="1"
+                android:layout_column="0"
+                android:layout_columnWeight="1"
+                android:layout_margin="8dp"
+                android:background="@{vm.tempBit == 8 ? @drawable/shape_purple50_fill_16_rect : @drawable/shape_gray200_fill_16_rect}"
+                android:gravity="center"
+                android:onClick="@{() -> vm.setTempBit(8)}"
+                android:paddingVertical="12dp"
+                android:text="8 비트"
+                android:textColor="@{vm.tempBit == 8 ? @color/white : @color/gray_600}"
+                tools:background="@drawable/shape_gray200_fill_16_rect" />
+
+
+        </GridLayout>
+
+        <View
+            android:id="@+id/border_rhythm"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/gray_300"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_grid_bit" />
+
+        <TextView
+            android:id="@+id/tv_rhythm_bpm_title"
+            style="@style/TextAppearance.Stempo.Head4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="8dp"
+            android:text="BPM 선택"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/border_rhythm" />
+
+        <TextView
+            android:id="@+id/tv_rhythm_bpm"
+            style="@style/TextAppearance.Stempo.Head1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:text="@{String.valueOf(vm.tempBpm)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_rhythm_bpm_title"
+            tools:text="65" />
+
+        <ImageView
+            android:id="@+id/btn_bpm_minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="60dp"
+            android:onClick="@{() -> vm.minusTempBpm()}"
+            android:src="@{vm.isBpmMinusAvailable ? @drawable/ic_minus_purple : @drawable/ic_minus_gray}"
+            app:layout_constraintBottom_toBottomOf="@id/tv_rhythm_bpm"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_rhythm_bpm"
+            tools:src="@drawable/ic_minus_purple" />
+
+        <ImageView
+            android:id="@+id/btn_bpm_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="60dp"
+            android:onClick="@{() -> vm.plusTempBpm()}"
+            android:src="@{vm.isBpmPlusAvailable ? @drawable/ic_plus_purple : @drawable/ic_plus_gray}"
+            app:layout_constraintBottom_toBottomOf="@id/tv_rhythm_bpm"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_rhythm_bpm"
+            tools:src="@drawable/ic_plus_purple" />
+
+        <GridLayout
+            android:id="@+id/layout_grid_bpm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="40dp"
+            android:columnCount="3"
+            android:rowCount="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_rhythm_bpm">
+
+            <TextView
+                style="@style/TextAppearance.Stempo.Head3"
+                android:layout_row="0"
+                android:layout_rowWeight="1"
+                android:layout_column="0"
+                android:layout_columnWeight="1"
+                android:layout_margin="5dp"
+                android:background="@{vm.tempBpm == 65 ? @drawable/shape_white_fill_purple50_line_25_rect : @drawable/shape_gray100_fill_gray300_line_25_rect}"
+                android:gravity="center"
+                android:onClick="@{() -> vm.setTempBpm(65)}"
+                android:paddingVertical="12dp"
+                android:text="65"
+                android:textColor="@{vm.tempBpm == 65 ? @color/purple_50 : @color/gray_500}"
+                tools:background="@drawable/shape_gray100_fill_gray300_line_25_rect" />
+
+            <TextView
+                style="@style/TextAppearance.Stempo.Head3"
+                android:layout_row="0"
+                android:layout_rowWeight="1"
+                android:layout_column="1"
+                android:layout_columnWeight="1"
+                android:layout_margin="5dp"
+                android:background="@{vm.tempBpm == 75 ? @drawable/shape_white_fill_purple50_line_25_rect : @drawable/shape_gray100_fill_gray300_line_25_rect}"
+                android:gravity="center"
+                android:onClick="@{() -> vm.setTempBpm(75)}"
+                android:paddingVertical="12dp"
+                android:text="75"
+                android:textColor="@{vm.tempBpm == 75 ? @color/purple_50 : @color/gray_500}"
+                tools:background="@drawable/shape_gray100_fill_gray300_line_25_rect" />
+
+            <TextView
+                style="@style/TextAppearance.Stempo.Head3"
                 android:layout_row="0"
                 android:layout_rowWeight="1"
                 android:layout_column="2"
                 android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempRhythmLevel == 3 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:layout_margin="5dp"
+                android:background="@{vm.tempBpm == 85 ? @drawable/shape_white_fill_purple50_line_25_rect : @drawable/shape_gray100_fill_gray300_line_25_rect}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.setTempRhythmLevel(3)}"
-                android:text="3"
-                android:textColor="@{vm.tempRhythmLevel == 3 ? @color/white : @color/gray_700}" />
+                android:onClick="@{() -> vm.setTempBpm(85)}"
+                android:paddingVertical="12dp"
+                android:text="85"
+                android:textColor="@{vm.tempBpm == 85 ? @color/purple_50 : @color/gray_500}"
+                tools:background="@drawable/shape_gray100_fill_gray300_line_25_rect" />
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head3"
                 android:layout_row="1"
                 android:layout_rowWeight="1"
                 android:layout_column="0"
                 android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempRhythmLevel == 4 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:layout_margin="5dp"
+                android:background="@{vm.tempBpm == 95 ? @drawable/shape_white_fill_purple50_line_25_rect : @drawable/shape_gray100_fill_gray300_line_25_rect}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.setTempRhythmLevel(4)}"
-                android:text="4"
-                android:textColor="@{vm.tempRhythmLevel == 4 ? @color/white : @color/gray_700}" />
+                android:onClick="@{() -> vm.setTempBpm(95)}"
+                android:paddingVertical="12dp"
+                android:text=" 95 "
+                android:textColor="@{vm.tempBpm == 95 ? @color/purple_50 : @color/gray_500}"
+                tools:background="@drawable/shape_gray100_fill_gray300_line_25_rect" />
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head3"
                 android:layout_row="1"
                 android:layout_rowWeight="1"
                 android:layout_column="1"
                 android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempRhythmLevel == 5 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:layout_margin="5dp"
+                android:background="@{vm.tempBpm == 105 ? @drawable/shape_white_fill_purple50_line_25_rect : @drawable/shape_gray100_fill_gray300_line_25_rect}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.setTempRhythmLevel(5)}"
-                android:text="5"
-                android:textColor="@{vm.tempRhythmLevel == 5 ? @color/white : @color/gray_700}" />
+                android:onClick="@{() -> vm.setTempBpm(105)}"
+                android:paddingVertical="12dp"
+                android:text="105"
+                android:textColor="@{vm.tempBpm == 105 ? @color/purple_50 : @color/gray_500}"
+                tools:background="@drawable/shape_gray100_fill_gray300_line_25_rect" />
 
             <TextView
-                style="@style/TextAppearance.Stempo.Head1"
+                style="@style/TextAppearance.Stempo.Head3"
                 android:layout_row="1"
                 android:layout_rowWeight="1"
                 android:layout_column="2"
                 android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempRhythmLevel == 6 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
+                android:layout_margin="5dp"
+                android:background="@{vm.tempBpm == 115 ? @drawable/shape_white_fill_purple50_line_25_rect : @drawable/shape_gray100_fill_gray300_line_25_rect}"
                 android:gravity="center"
-                android:onClick="@{() -> vm.setTempRhythmLevel(6)}"
-                android:text="6"
-                android:textColor="@{vm.tempRhythmLevel == 6 ? @color/white : @color/gray_700}" />
-
-            <TextView
-                style="@style/TextAppearance.Stempo.Head1"
-                android:layout_row="2"
-                android:layout_rowWeight="1"
-                android:layout_column="0"
-                android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempRhythmLevel == 7 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
-                android:gravity="center"
-                android:onClick="@{() -> vm.setTempRhythmLevel(7)}"
-                android:text="7"
-                android:textColor="@{vm.tempRhythmLevel == 7 ? @color/white : @color/gray_700}" />
-
-            <TextView
-                style="@style/TextAppearance.Stempo.Head1"
-                android:layout_row="2"
-                android:layout_rowWeight="1"
-                android:layout_column="1"
-                android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempRhythmLevel == 8 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
-                android:gravity="center"
-                android:onClick="@{() -> vm.setTempRhythmLevel(8)}"
-                android:text="8"
-                android:textColor="@{vm.tempRhythmLevel == 8 ? @color/white : @color/gray_700}" />
-
-            <TextView
-                style="@style/TextAppearance.Stempo.Head1"
-                android:layout_row="2"
-                android:layout_rowWeight="1"
-                android:layout_column="2"
-                android:layout_columnWeight="1"
-                android:layout_margin="16dp"
-                android:background="@{vm.tempRhythmLevel == 9 ? @drawable/shape_purple50_fill_circle : @drawable/shape_gray200_fill_circle}"
-                android:gravity="center"
-                android:onClick="@{() -> vm.setTempRhythmLevel(9)}"
-                android:text="9"
-                android:textColor="@{vm.tempRhythmLevel == 9 ? @color/white : @color/gray_700}" />
+                android:onClick="@{() -> vm.setTempBpm(115)}"
+                android:paddingVertical="12dp"
+                android:text="115"
+                android:textColor="@{vm.tempBpm == 115 ? @color/purple_50 : @color/gray_500}"
+                tools:background="@drawable/shape_gray100_fill_gray300_line_25_rect" />
 
         </GridLayout>
 
@@ -179,7 +300,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="24dp"
             android:background="@drawable/shape_purple10_fill_12_rect"
             android:gravity="center"
             android:paddingVertical="15dp"
@@ -187,7 +308,7 @@
             android:textColor="@color/purple_50"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layout_level_grid" />
+            app:layout_constraintTop_toBottomOf="@id/layout_grid_bpm" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

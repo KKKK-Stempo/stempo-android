@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.max
 
 @HiltViewModel
 class RhythmViewModel
@@ -23,13 +22,17 @@ constructor(
     private val rhythmRepository: RhythmRepository,
     private val userRepository: UserRepository,
 ) : ViewModel() {
-    var tempRhythmLevel = MutableLiveData<Int>(1)
-    var bpm = 50
-    var filename: String = "stempo_level_1"
-    private var isSubmitted: Boolean = true
+    var bpm = MIN_BPM
+    var bit = MAX_BIT
+    var filename: String = "stempo_bpm_${bpm}_bit_${bit}"
 
-    private val _rhythmLevel = MutableStateFlow<Int>(LEVEL_UNDEFINED)
-    val rhythmLevel: StateFlow<Int> = _rhythmLevel
+    var tempBpm = MutableLiveData<Int>(MIN_BPM)
+    var tempBit = MutableLiveData<Int>(MIN_BIT)
+    var isBpmMinusAvailable = MutableLiveData<Boolean>(false)
+    var isBpmPlusAvailable = MutableLiveData<Boolean>(true)
+
+    private val _isRhythmChanged = MutableSharedFlow<Boolean>()
+    val isRhythmChanged: SharedFlow<Boolean> = _isRhythmChanged
 
     private val _rhythmUrlState = MutableStateFlow<UiState<String>>(UiState.Empty)
     val rhythmUrlState: StateFlow<UiState<String>> = _rhythmUrlState
@@ -58,42 +61,52 @@ constructor(
 
     private fun initRhythmLevelFromDataStore() {
         bpm = userRepository.getBpm()
-        val currentLevel = setBpmLevel(bpm)
-        filename = "stempo_level_$currentLevel"
-        _rhythmLevel.value = currentLevel
-        tempRhythmLevel.value = currentLevel
+        bit = userRepository.getBit()
+        filename = "stempo_bpm_${bpm}_bit_${bit}"
     }
 
-    fun addStepCount(newStepCount: Int) {
-        if ((_oddStepCount.value + _evenStepCount.value) % 2 == 0) {
-            _oddStepCount.value += newStepCount
-            _oddStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
-        } else {
-            _evenStepCount.value += newStepCount
-            _evenStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
-        }
-        _stepCount.value += newStepCount
-        _beforeStepTime.value = System.currentTimeMillis()
+    fun setTempBpm(bpm: Int) {
+        tempBpm.value = bpm
+        isBpmMinusAvailable.value = bpm != MIN_BPM
+        isBpmPlusAvailable.value = bpm != MAX_BPM
     }
 
-    fun setTempRhythmLevel(level: Int) {
-        isSubmitted = false
-        tempRhythmLevel.value = level
+    fun plusTempBpm() {
+        if (tempBpm.value == MAX_BPM) return
+        tempBpm.value = tempBpm.value?.plus(5)
+        isBpmMinusAvailable.value = tempBpm.value != MIN_BPM
+        isBpmPlusAvailable.value = tempBpm.value != MAX_BPM
     }
 
-    fun resetTempRhythmLevel() {
-        if (!isSubmitted) {
-            isSubmitted = true
-            tempRhythmLevel.value = rhythmLevel.value
-        }
+    fun minusTempBpm() {
+        if (tempBpm.value == MIN_BPM) return
+        tempBpm.value = tempBpm.value?.minus(5)
+        isBpmMinusAvailable.value = tempBpm.value != MIN_BPM
+        isBpmPlusAvailable.value = tempBpm.value != MAX_BPM
     }
 
-    fun setRhythmLevel() {
-        isSubmitted = true
-        filename = "stempo_level_" + tempRhythmLevel.value.toString()
-        bpm = setBpm(tempRhythmLevel.value ?: 1)
+    fun setTempBit(bit: Int) {
+        tempBit.value = bit
+    }
+
+    fun setRhythmToTemp() {
+        tempBpm.value = bpm
+        tempBit.value = bit
+    }
+
+    fun setTempToRhythm() {
+        bpm = tempBpm.value ?: MIN_BPM
+        bit = tempBit.value ?: MIN_BIT
+        filename = "stempo_bpm_${bpm}_bit_${bit}"
         userRepository.setBpm(bpm)
-        _rhythmLevel.value = tempRhythmLevel.value ?: 1
+        userRepository.setBit(bit)
+        viewModelScope.launch {
+            _isRhythmChanged.emit(true)
+        }
+    }
+
+    fun resetRhythmChangedState() {
+        _isRhythmChanged.resetReplayCache()
     }
 
     fun postToGetRhythmUrlFromServer() {
@@ -121,6 +134,18 @@ constructor(
                     _downloadWavState.value = UiState.Failure(it.message.toString())
                 }
         }
+    }
+
+    fun addStepCount(newStepCount: Int) {
+        if ((_oddStepCount.value + _evenStepCount.value) % 2 == 0) {
+            _oddStepCount.value += newStepCount
+            _oddStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
+        } else {
+            _evenStepCount.value += newStepCount
+            _evenStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
+        }
+        _stepCount.value += newStepCount
+        _beforeStepTime.value = System.currentTimeMillis()
     }
 
     fun posRhythmRecordToSave() {
@@ -179,25 +204,12 @@ constructor(
         _beforeStepTime.value = 0L
     }
 
-    fun getBpmFromDataStore() = userRepository.getBpm()
-
-    private fun setBpm(level: Int) = 40 + level * 10
-
-    private fun setBpmLevel(bpm: Int) =
-        when (bpm) {
-            in 55..65 -> 2
-            in 65..75 -> 3
-            in 75..85 -> 4
-            in 85..95 -> 5
-            in 95..105 -> 6
-            in 105..115 -> 7
-            in 115..125 -> 8
-            in 125..Int.MAX_VALUE -> 9
-            else -> 1
-        }
-
     companion object {
-        const val LEVEL_UNDEFINED = -1
+        const val MIN_BPM = 65
+        const val MAX_BPM = 115
+        const val MIN_BIT = 2
+        const val MAX_BIT = 8
+
         const val MAX_ALLOWED_DIFFERENCE = 360000L
     }
 }
