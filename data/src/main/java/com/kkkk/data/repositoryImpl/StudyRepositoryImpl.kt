@@ -5,25 +5,10 @@ import com.kkkk.domain.entity.response.StudyModel
 import com.kkkk.domain.repository.StudyRepository
 import javax.inject.Inject
 
-class StudyRepositoryImpl
-@Inject
-constructor(
+class StudyRepositoryImpl @Inject constructor(
     private val studyDataSource: StudyDataSource,
 ) : StudyRepository {
-    override suspend fun getVideos(
-        page: Int,
-        size: Int,
-    ): Result<StudyModel> = runCatching {
-        studyDataSource.getVideos(
-            page = page,
-            size = size
-        ).data.toModel()
-    }
-
-    override suspend fun getArticles(page: Int, size: Int): Result<StudyModel> = runCatching {
-        studyDataSource.getArticles(
-            page = page,
-            size = size
-        ).data.toModel()
+    override suspend fun getHomeworks(page: Int, size: Int): Result<StudyModel> = runCatching {
+        studyDataSource.getHomeworks(page, size).data.toModel()
     }
 }

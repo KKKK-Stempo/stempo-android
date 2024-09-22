@@ -4,13 +4,5 @@ import com.kkkk.data.dto.BaseResponse
 import com.kkkk.data.dto.response.StudyDto
 
 interface StudyDataSource {
-    suspend fun getVideos(
-        page: Int,
-        size: Int
-    ): BaseResponse<StudyDto>
-
-    suspend fun getArticles(
-        page: Int,
-        size: Int
-    ): BaseResponse<StudyDto>
+    suspend fun getHomeworks(page: Int, size: Int): BaseResponse<StudyDto>
 }

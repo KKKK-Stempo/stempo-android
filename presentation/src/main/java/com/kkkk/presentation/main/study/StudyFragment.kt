@@ -20,6 +20,14 @@ import kr.genti.presentation.databinding.FragmentStudyBinding
 class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study) {
     private val viewModel by activityViewModels<StudyViewModel>()
 
+    private var _studyStudentAdapter: StudyAdapter? = null
+    private val studyStudentAdapter
+        get() = requireNotNull(_studyStudentAdapter) { getString(R.string.error_msg) }
+
+    private var _studyTeacherAdapter: StudyAdapter? = null
+    private val studyTeacherAdapter
+        get() = requireNotNull(_studyTeacherAdapter) { getString(R.string.error_msg) }
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -27,15 +35,36 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
         super.onViewCreated(view, savedInstanceState)
 
         setStatusBarColor(R.color.gray_100)
+
+        setAdapter()
         observeTypeIsMe()
+        observeStudyList()
         setToggleClickListener()
         setAddStudyButtonClickListener()
     }
+
+    private fun setAdapter() {
+        _studyTeacherAdapter = StudyAdapter(requireContext(), false)
+        binding.rvTeacherExercise.adapter = studyTeacherAdapter
+
+        _studyStudentAdapter = StudyAdapter(requireContext(), true)
+        binding.rvStudentExercise.adapter = studyStudentAdapter
+    }
+
 
     private fun observeTypeIsMe() {
         viewModel.typeIsMe.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { isMe ->
             setToggleState(isMe)
         }.launchIn(lifecycleScope)
+    }
+
+    private fun observeStudyList() {
+        viewModel.studyList.flowWithLifecycle(lifecycle).distinctUntilChanged()
+            .onEach { studyList ->
+                studyStudentAdapter.submitList(studyList)
+                studyTeacherAdapter.submitList(studyList)
+                setToggleState(viewModel.typeIsMe.value)
+            }.launchIn(lifecycleScope)
     }
 
     @SuppressLint("ResourceAsColor")
@@ -50,7 +79,6 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
 
     private fun setAddStudyButtonClickListener() {
         binding.btnTeacherExercise.setOnClickListener {
-            viewModel.addItems(listOf(1, 2, 3))
             setToggleState(false)
         }
     }
@@ -121,5 +149,11 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _studyStudentAdapter = null
+        _studyTeacherAdapter = null
     }
 }

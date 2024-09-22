@@ -8,9 +8,7 @@ data class StudyModel(
 ) {
     data class StudyItemModel(
         val id: Int = 0,
-        val title: String = "",
-        val content: String = "",
-        val thumbnailUrl: String? = null,
-        val createdAt: String = "",
+        val description: String = "",
+        val completed: Boolean = false,
     )
 }

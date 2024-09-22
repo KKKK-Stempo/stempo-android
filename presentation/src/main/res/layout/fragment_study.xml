@@ -115,15 +115,19 @@
                     tools:text="진행해야 할 과제에요!" />
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_student_exercise"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:background="@drawable/shape_white_fill_gray200_line_8_rect"
+                    android:orientation="vertical"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="16dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_my_exercise" />
+                    app:layout_constraintTop_toBottomOf="@id/tv_my_exercise"
+                    tools:listitem="@layout/item_study_check_string" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -172,10 +176,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toTopOf="@id/btn_teacher_exercise"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:listitem="@layout/item_study_check_string" />
 
                 <TextView
                     android:id="@+id/btn_teacher_exercise"

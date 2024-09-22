@@ -6,16 +6,8 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface StudyService {
-    @GET("api/v1/videos")
-    suspend fun getVideos(
-        @Query("page")
-        page: Int,
-        @Query("size")
-        size: Int
-    ): BaseResponse<StudyDto>
-
-    @GET("api/v1/articles")
-    suspend fun getArticles(
+    @GET("api/v1/homeworks")
+    suspend fun getHomeworks(
         @Query("page")
         page: Int,
         @Query("size")

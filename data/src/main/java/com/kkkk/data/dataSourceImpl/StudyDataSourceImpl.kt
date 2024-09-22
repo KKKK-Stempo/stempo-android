@@ -9,17 +9,6 @@ import javax.inject.Inject
 data class StudyDataSourceImpl @Inject constructor(
     private val studyService: StudyService,
 ) : StudyDataSource {
-    override suspend fun getVideos(
-        page: Int,
-        size: Int,
-    ): BaseResponse<StudyDto> = studyService.getVideos(
-        page = page,
-        size = size
-    )
-
-    override suspend fun getArticles(page: Int, size: Int): BaseResponse<StudyDto> =
-        studyService.getArticles(
-            page = page,
-            size = size
-        )
+    override suspend fun getHomeworks(page: Int, size: Int): BaseResponse<StudyDto> =
+        studyService.getHomeworks(page, size)
 }
