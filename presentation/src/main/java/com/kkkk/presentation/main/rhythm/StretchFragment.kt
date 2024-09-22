@@ -23,7 +23,7 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
     }
 
     private fun initRhythmNavigateBtnListener() {
-        binding.btnRhythm.setOnSingleClickListener {
+        binding.btnRhythmMode.setOnSingleClickListener {
             viewModel.navigateToStretchView(false)
         }
     }

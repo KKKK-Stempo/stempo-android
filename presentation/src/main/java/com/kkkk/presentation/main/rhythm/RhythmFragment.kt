@@ -83,7 +83,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun initStretchNavigateBtnListener() {
-        binding.btnStretch.setOnSingleClickListener {
+        binding.btnStretchMode.setOnSingleClickListener {
             viewModel.navigateToStretchView(true)
         }
     }
@@ -128,7 +128,8 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun observeStepCount() {
         viewModel.stepCount.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach {
-            binding.tvRhythmStep.text = getString(R.string.rhythm_tv_step, viewModel.stepCount.value)
+            binding.tvRhythmStep.text =
+                getString(R.string.rhythm_tv_step, viewModel.stepCount.value)
         }.launchIn(lifecycleScope)
     }
 

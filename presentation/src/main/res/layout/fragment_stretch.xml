@@ -10,30 +10,53 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/btn_rhythm"
-            style="@style/TextAppearance.Stempo.Head1"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/toggle_rhythm_mode"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:background="@drawable/shape_gray100_fill_gray300_line_25_rect"
-            android:padding="12dp"
-            android:text="리듬모드"
-            android:textColor="@color/gray_700"
+            android:layout_marginHorizontal="36dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_gray200_fill_26_rect"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/btn_rhythm_mode"
+                style="@style/TextAppearance.Stempo.Head3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="리듬모드"
+                android:textColor="@color/gray_600" />
+
+            <TextView
+                style="@style/TextAppearance.Stempo.Head3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/shape_white_fill_26_rect"
+                android:gravity="center"
+                android:paddingVertical="8dp"
+                android:text="스트레칭" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_stretch_title"
             style="@style/TextAppearance.Stempo.Head1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="26dp"
             android:gravity="center"
             android:text="리듬에 맞춰\n스트레칭을 진행해주세요!"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/toggle_rhythm_mode" />
 
         <ImageView
             android:id="@+id/iv_stretch_bg"
@@ -89,13 +112,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
+            android:layout_marginBottom="40dp"
             android:gravity="center"
             android:text="스트레칭 모드에서는\n자동 리듬을 제공해요"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="28dp"
+            android:textColor="@color/gray_500"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:textColor="@color/gray_500"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
