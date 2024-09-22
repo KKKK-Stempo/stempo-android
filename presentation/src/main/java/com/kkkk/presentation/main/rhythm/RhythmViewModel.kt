@@ -187,9 +187,9 @@ constructor(
         val difference = kotlin.math.abs(time1 - time2)
 
         return when {
-            difference == 0L -> 1.0
+            difference == 0L -> 100.0
             difference >= MAX_ALLOWED_DIFFERENCE -> 0.0
-            else -> (1 - difference.toDouble() / MAX_ALLOWED_DIFFERENCE)
+            else -> (1 - difference.toDouble() / MAX_ALLOWED_DIFFERENCE) * 100
         }
     }
 
@@ -215,6 +215,7 @@ constructor(
     private fun resetStepInfo() {
         _oddStepCount.value = 0
         _evenStepCount.value = 0
+        _stepCount.value = 0
         _oddStepTime.value = 0L
         _evenStepTime.value = 0L
         _beforeStepTime.value = 0L
@@ -226,6 +227,6 @@ constructor(
         const val MIN_BIT = 2
         const val MAX_BIT = 8
 
-        const val MAX_ALLOWED_DIFFERENCE = 360000L
+        const val MAX_ALLOWED_DIFFERENCE = 3600L
     }
 }
