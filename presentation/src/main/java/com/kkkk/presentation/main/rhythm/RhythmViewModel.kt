@@ -31,6 +31,9 @@ constructor(
     var isBpmMinusAvailable = MutableLiveData<Boolean>(false)
     var isBpmPlusAvailable = MutableLiveData<Boolean>(true)
 
+    private val _isStretchView = MutableSharedFlow<Boolean>()
+    val isStretchView: SharedFlow<Boolean> = _isStretchView
+
     private val _isRhythmChanged = MutableSharedFlow<Boolean>()
     val isRhythmChanged: SharedFlow<Boolean> = _isRhythmChanged
 
@@ -108,6 +111,13 @@ constructor(
     fun resetRhythmChangedState() {
         viewModelScope.launch {
             _isRhythmChanged.emit(false)
+        }
+    }
+
+    fun navigateToStretchView(isStretch: Boolean) {
+        viewModelScope.launch {
+            _isStretchView.emit(isStretch)
+            _isStretchView.resetReplayCache()
         }
     }
 

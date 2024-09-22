@@ -62,6 +62,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         super.onViewCreated(view, savedInstanceState)
 
         initChangeRhythmBtnListener()
+        initStretchNavigateBtnListener()
         initPlayBtnListener()
         initStopBtnListener()
         initWearableSyncBtnListener()
@@ -78,6 +79,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         binding.btnChangeLevel.setOnSingleClickListener {
             rhythmBottomSheet = RhythmBottomSheet()
             rhythmBottomSheet?.show(parentFragmentManager, BOTTOM_SHEET_CHANGE_LEVEL)
+        }
+    }
+
+    private fun initStretchNavigateBtnListener() {
+        binding.btnStretch.setOnSingleClickListener {
+            viewModel.navigateToStretchView(true)
         }
     }
 
