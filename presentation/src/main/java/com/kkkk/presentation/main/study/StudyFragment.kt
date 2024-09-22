@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -75,17 +76,19 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
                 studyTeacherAdapter.submitList(studyList)
                 setToggleState(viewModel.typeIsMe.value)
 
-                if (studyList.isEmpty()) {
-                    binding.layoutHomeworkEmpty.visibility = View.VISIBLE
-                    binding.layoutHomeworkValid.visibility = View.INVISIBLE
-                } else {
-                    binding.layoutHomeworkEmpty.visibility = View.INVISIBLE
-                    binding.layoutHomeworkValid.visibility = View.VISIBLE
+                with(binding) {
+                    if (studyList.isEmpty()) {
+                        layoutHomeworkEmpty.visibility = View.VISIBLE
+                        layoutHomeworkValid.visibility = View.INVISIBLE
+                    } else {
+                        layoutHomeworkEmpty.visibility = View.INVISIBLE
+                        layoutHomeworkValid.visibility = View.VISIBLE
 
-                    binding.progressBarHomework.max = studyList.size
-                    binding.progressBarHomework.progress = studyList.count { it.completed }
-                    binding.ivSeekbarThumb.x =
-                        binding.progressBarHomework.width * binding.progressBarHomework.progress / binding.progressBarHomework.max.toFloat()
+                        progressBarHomework.max = studyList.size
+                        progressBarHomework.progress = studyList.count { it.completed }
+                        ivSeekbarThumb.x =
+                            progressBarHomework.width * progressBarHomework.progress / progressBarHomework.max.toFloat()
+                    }
                 }
             }.launchIn(lifecycleScope)
     }
@@ -113,70 +116,49 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
     }
 
     private fun setToggleState(isMe: Boolean) {
-        when (isMe) {
-            true -> {
-                with(binding) {
-                    with(itemToggle) {
-                        tvStudent.setBackgroundResource(R.drawable.shape_toggle_selected)
-                        tvStudent.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.black
-                            )
-                        )
-                        tvTeacher.background = null
-                        tvTeacher.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.white
-                            )
-                        )
-                    }
+        setToggleAppearance(isMe)
+        setLayoutVisibility(isMe)
+        updateExerciseVisibility(isMe)
+    }
 
-                    layoutMyExercise.visibility = View.VISIBLE
-                    layoutTeacherExercise.visibility = View.GONE
-
-                    if (viewModel.studyList.value.isEmpty()) {
-                        ivMyExerciseEmpty.visibility = View.VISIBLE
-                        layoutMyExerciseValid.visibility = View.GONE
-                    } else {
-                        ivMyExerciseEmpty.visibility = View.GONE
-                        layoutMyExerciseValid.visibility = View.VISIBLE
-                    }
-                }
+    private fun setToggleAppearance(isMe: Boolean) {
+        with(binding.itemToggle) {
+            val (selectedView, unselectedView) = if (isMe) {
+                tvStudent to tvTeacher
+            } else {
+                tvTeacher to tvStudent
             }
 
-            false -> {
-                with(binding) {
-                    with(itemToggle) {
-                        tvTeacher.setBackgroundResource(R.drawable.shape_toggle_selected)
-                        tvTeacher.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.black
-                            )
-                        )
-                        tvStudent.background = null
-                        tvStudent.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.white
-                            )
-                        )
-                    }
-
-                    layoutMyExercise.visibility = View.GONE
-                    layoutTeacherExercise.visibility = View.VISIBLE
-
-                    if (viewModel.studyList.value.isEmpty()) {
-                        ivTeacherExerciseEmpty.visibility = View.VISIBLE
-                        rvTeacherExercise.visibility = View.GONE
-                    } else {
-                        ivTeacherExerciseEmpty.visibility = View.GONE
-                        rvTeacherExercise.visibility = View.VISIBLE
-                    }
-                }
+            selectedView.apply {
+                setBackgroundResource(R.drawable.shape_toggle_selected)
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             }
+            unselectedView.apply {
+                background = null
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+            }
+        }
+    }
+
+    private fun setLayoutVisibility(isMe: Boolean) {
+        with(binding) {
+            layoutMyExercise.isVisible = isMe
+            layoutTeacherExercise.isVisible = !isMe
+        }
+    }
+
+    private fun updateExerciseVisibility(isMe: Boolean) {
+        with(binding) {
+            val (emptyView, exerciseView) = if (isMe) {
+                ivMyExerciseEmpty to layoutMyExerciseValid
+            } else {
+                ivTeacherExerciseEmpty to rvTeacherExercise
+            }
+
+            val isEmpty = viewModel.studyList.value.isEmpty()
+
+            emptyView.isVisible = isEmpty
+            exerciseView.isVisible = !isEmpty
         }
     }
 
