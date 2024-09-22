@@ -20,6 +20,8 @@ import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.kkkk.core.base.BaseFragment
+import com.kkkk.core.extension.colorOf
+import com.kkkk.core.extension.drawableOf
 import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
@@ -59,10 +61,11 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        initChangeLevelBtnListener()
+        initChangeRhythmBtnListener()
         initPlayBtnListener()
         initStopBtnListener()
         initWearableSyncBtnListener()
+        setUiWithCurrentRhythm()
         observeStepCount()
         observeRhythmChanged()
         observeRhythmUrlState()
@@ -71,7 +74,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         setStatusBarColor(R.color.white)
     }
 
-    private fun initChangeLevelBtnListener() {
+    private fun initChangeRhythmBtnListener() {
         binding.btnChangeLevel.setOnSingleClickListener {
             rhythmBottomSheet = RhythmBottomSheet()
             rhythmBottomSheet?.show(parentFragmentManager, BOTTOM_SHEET_CHANGE_LEVEL)
@@ -117,8 +120,8 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun observeStepCount() {
-        viewModel.stepCount.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { level ->
-            binding.tvRhythmStep.text = viewModel.stepCount.value.toString()
+        viewModel.stepCount.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach {
+            binding.tvRhythmStep.text = getString(R.string.rhythm_tv_step, viewModel.stepCount.value)
         }.launchIn(lifecycleScope)
     }
 
@@ -130,15 +133,15 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                         mediaPlayer.pause()
                         switchPlayingState(false)
                     }
-                    setUiWithCurrentLevel()
+                    setUiWithCurrentRhythm()
                     viewModel.resetRhythmChangedState()
                     viewModel.postToGetRhythmUrlFromServer()
                 }
             }.launchIn(lifecycleScope)
     }
 
-    private fun setUiWithCurrentLevel() {
-        val color = when (viewModel.bit.rem(3)) {
+    private fun setUiWithCurrentRhythm() {
+        val color = when (viewModel.bit) {
             2 -> COLOR_PURPLE
             3 -> COLOR_SKY
             4 -> COLOR_GREEN
@@ -146,25 +149,25 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             8 -> COLOR_SKY
             else -> return
         }
-//        with(binding) {
-//            tvRhythmLevel.apply {
-//                text = getString(R.string.rhythm_tv_level, viewModel.rhythmLevel.value)
-//                setTextColor(colorOf(getResource("${color}_50", COLOR)))
-//                background =
-//                    drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
-//            }
-//            tvRhythmStep.apply {
-//                setTextColor(colorOf(getResource("${color}_50", COLOR)))
-//                background =
-//                    drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
-//            }
-//            ivRhythmBg.setImageResource(getResource("img_rhythm_bg_$color", DRAWABLE))
-//            lottieRhythmBg.apply {
-//                setAnimation(getResource("stempo_rhythm_$color", RAW))
-//                speed = viewModel.bpm / FLOAT_120
-//                playAnimation()
-//            }
-//        }
+        with(binding) {
+            tvRhythmBpm.apply {
+                text = getString(R.string.rhythm_tv_bpm, viewModel.bpm)
+                setTextColor(colorOf(getResource("${color}_50", COLOR)))
+                background =
+                    drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
+            }
+            tvRhythmBit.apply {
+                text = getString(R.string.rhythm_tv_bit, viewModel.bit)
+                background =
+                    drawableOf(getResource("shape_${color}50_fill_17_rect", DRAWABLE))
+            }
+            ivRhythmBg.setImageResource(getResource("img_rhythm_bg_$color", DRAWABLE))
+            lottieRhythmBg.apply {
+                setAnimation(getResource("stempo_rhythm_$color", RAW))
+                speed = viewModel.bpm / FLOAT_120
+                playAnimation()
+            }
+        }
     }
 
     private fun getResource(name: String, defType: String) =

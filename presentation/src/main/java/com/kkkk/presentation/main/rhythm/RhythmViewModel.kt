@@ -106,7 +106,9 @@ constructor(
     }
 
     fun resetRhythmChangedState() {
-        _isRhythmChanged.resetReplayCache()
+        viewModelScope.launch {
+            _isRhythmChanged.emit(false)
+        }
     }
 
     fun postToGetRhythmUrlFromServer() {
