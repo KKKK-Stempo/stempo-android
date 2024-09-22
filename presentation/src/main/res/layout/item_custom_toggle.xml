@@ -25,7 +25,6 @@
                 style="@style/TextAppearance.Stempo.Body3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="6dp"
                 android:background="@drawable/shape_toggle_selected"
                 android:gravity="center"
                 android:paddingVertical="3dp"
@@ -33,14 +32,13 @@
                 android:paddingLeft="15dp"
                 android:paddingEnd="14dp"
                 android:text="본인"
-                android:textColor="@color/white" />
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/tv_teacher"
                 style="@style/TextAppearance.Stempo.Body3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@drawable/shape_toggle_selected"
                 android:gravity="center"
                 android:paddingHorizontal="9dp"
                 android:paddingVertical="3dp"
