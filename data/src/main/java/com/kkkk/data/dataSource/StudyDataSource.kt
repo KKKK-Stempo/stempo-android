@@ -7,10 +7,12 @@ import com.kkkk.data.dto.response.StudyDto
 interface StudyDataSource {
     suspend fun getHomeworks(page: Int, size: Int): BaseResponse<StudyDto>
 
+    suspend fun addHomework(description: String): BaseResponse<Int>
+
     suspend fun deleteHomework(homeworkId: Int): BaseResponse<Int>
 
     suspend fun updateHomework(
         homeworkId: Int,
-        homeworkDto: HomeworkDto
+        homeworkDto: HomeworkDto,
     ): BaseResponse<Int>
 }

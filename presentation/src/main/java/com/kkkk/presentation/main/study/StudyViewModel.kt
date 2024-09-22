@@ -42,6 +42,17 @@ class StudyViewModel @Inject constructor(
         _typeIsMe.value = isMe
     }
 
+    fun addHomework(description: String) {
+        viewModelScope.launch {
+            studyRepository.addHomework(description)
+                .onSuccess { id ->
+                    _toast.emit("추가되었습니다")
+                    _studyList.value += StudyModel.StudyItemModel(id, description, false)
+                    _studyList.value = _studyList.value.sortedBy { it.completed }
+                }.onFailure(Timber::e)
+        }
+    }
+
     fun deleteHomework(homeworkId: Int) {
         viewModelScope.launch {
             studyRepository.deleteHomework(homeworkId)

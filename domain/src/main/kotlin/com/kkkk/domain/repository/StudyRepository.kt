@@ -8,6 +8,10 @@ interface StudyRepository {
         size: Int,
     ): Result<StudyModel>
 
+    suspend fun addHomework(
+        description: String,
+    ): Result<Int>
+
     suspend fun deleteHomework(
         homeworkId: Int,
     ): Result<Int>

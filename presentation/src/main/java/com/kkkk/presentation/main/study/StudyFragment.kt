@@ -1,8 +1,13 @@
 package com.kkkk.presentation.main.study
 
 import android.annotation.SuppressLint
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
@@ -16,11 +21,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentStudyBinding
+import java.lang.ref.WeakReference
 
 @AndroidEntryPoint
 class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study),
     OnItemClickListener {
     private val viewModel by activityViewModels<StudyViewModel>()
+
+    private var homeworkDialog: WeakReference<Dialog>? = null
 
     private var _studyStudentAdapter: StudyAdapter? = null
     private val studyStudentAdapter
@@ -43,7 +51,7 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
         observeStudyList()
         observeToast()
         setToggleClickListener()
-        setAddStudyButtonClickListener()
+        setAddHomeworkButtonClickListener()
     }
 
     private fun setAdapter() {
@@ -86,9 +94,9 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
         }
     }
 
-    private fun setAddStudyButtonClickListener() {
-        binding.btnTeacherExercise.setOnClickListener {
-            setToggleState(false)
+    private fun setAddHomeworkButtonClickListener() {
+        binding.btnTeacherAddHomework.setOnClickListener {
+            showHomeworkDialog()
         }
     }
 
@@ -160,10 +168,37 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
         }
     }
 
+    private fun showHomeworkDialog() {
+        val dialog = Dialog(requireContext()).apply {
+            setContentView(R.layout.dialog_add_homework)
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            setCanceledOnTouchOutside(false)
+            setCancelable(true)
+
+            this.findViewById<TextView>(R.id.btn_study_dialog_cancel).setOnClickListener {
+                dismiss()
+            }
+
+            this.findViewById<TextView>(R.id.btn_study_dialog_save).setOnClickListener {
+                viewModel.addHomework(
+                    this.findViewById<TextView>(R.id.et_study_dialog).text.toString()
+                )
+                dismiss()
+            }
+
+            show()
+        }
+
+        homeworkDialog = WeakReference(dialog)
+    }
+
+
     override fun onDestroyView() {
         super.onDestroyView()
         _studyStudentAdapter = null
         _studyTeacherAdapter = null
+        homeworkDialog?.get()?.dismiss()
+        homeworkDialog = null
     }
 
     override fun onCheckboxClick(itemId: Int, description: String, completed: Boolean) {

@@ -166,7 +166,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="24dp"
                     android:src="@drawable/img_study_empty"
-                    app:layout_constraintBottom_toTopOf="@id/btn_teacher_exercise"
+                    app:layout_constraintBottom_toTopOf="@id/btn_teacher_add_homework"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -178,14 +178,14 @@
                     android:layout_marginBottom="12dp"
                     android:orientation="vertical"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintBottom_toTopOf="@id/btn_teacher_exercise"
+                    app:layout_constraintBottom_toTopOf="@id/btn_teacher_add_homework"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:listitem="@layout/item_study_check_string" />
 
                 <TextView
-                    android:id="@+id/btn_teacher_exercise"
+                    android:id="@+id/btn_teacher_add_homework"
                     style="@style/TextAppearance.Stempo.Body3"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

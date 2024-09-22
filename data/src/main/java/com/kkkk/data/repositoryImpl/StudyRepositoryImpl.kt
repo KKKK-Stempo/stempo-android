@@ -13,6 +13,10 @@ class StudyRepositoryImpl @Inject constructor(
         studyDataSource.getHomeworks(page, size).data.toModel()
     }
 
+    override suspend fun addHomework(description: String): Result<Int> = runCatching {
+        studyDataSource.addHomework(description).data
+    }
+
     override suspend fun deleteHomework(homeworkId: Int): Result<Int> = runCatching {
         studyDataSource.deleteHomework(homeworkId).data
     }
