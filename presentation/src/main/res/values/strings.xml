@@ -18,7 +18,7 @@
 
     <string name="menu_rhythm">리듬</string>
     <string name="menu_report">기록</string>
-    <string name="menu_study">학습</string>
+    <string name="menu_study">과제</string>
     <string name="menu_profile">마이</string>
 
     <string name="rhythm_tv_bit">%d비트</string>
@@ -55,5 +55,8 @@
     <string name="profile_btn_faq">FAQ</string>
     <string name="profile_btn_voice">불편한 점 얘기하기 (음성)</string>
     <string name="profile_btn_suggest">건의하기</string>
+
+    <string name="study_tv_my">진행해야 할 과제에요!</string>
+    <string name="study_tv_teacher">입력한 과제에요!</string>
 
 </resources>

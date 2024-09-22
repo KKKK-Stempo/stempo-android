@@ -1,6 +1,5 @@
 package com.kkkk.data.dto.response
 
-import com.kkkk.data.R
 import com.kkkk.domain.entity.response.StudyModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -26,21 +25,15 @@ data class StudyDto(
     data class StudyItemDto(
         @SerialName("id")
         val id: Int,
-        @SerialName("title")
-        val title: String,
-        @SerialName("content")
-        val content: String,
-        @SerialName("thumbnailUrl")
-        val thumbnailUrl: String?,
-        @SerialName("createdAt")
-        val createdAt: String,
-    ){
+        @SerialName("description")
+        val description: String,
+        @SerialName("completed")
+        val completed: Boolean,
+    ) {
         fun toModel() = StudyModel.StudyItemModel(
             id = id,
-            title = title,
-            content = content,
-            thumbnailUrl = thumbnailUrl,
-            createdAt = createdAt
+            description = description,
+            completed = completed
         )
     }
 

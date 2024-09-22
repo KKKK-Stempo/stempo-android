@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_white_fill_16_rect"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/tv_study_dialog_title"
+            style="@style/TextAppearance.Stempo.Head3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="32dp"
+            android:gravity="start"
+            android:lineSpacingMultiplier="1.3"
+            android:text="숙제를 추가해주세요"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/et_study_dialog"
+            style="@style/TextAppearance.Stempo.Body2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="20dp"
+            android:autofillHints="false"
+            android:backgroundTint="@color/purple_50"
+            android:inputType="textMultiLine"
+            android:textColorHighlight="@color/purple_50"
+            android:textSelectHandle="@color/purple_50"
+            android:textSelectHandleLeft="@color/purple_50"
+            android:textSelectHandleRight="@color/purple_50"
+            android:textCursorDrawable="@drawable/cursor_drawable"
+            app:layout_constraintBottom_toTopOf="@id/btn_study_dialog_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_study_dialog_title"
+            tools:text="과제" />
+
+        <TextView
+            android:id="@+id/btn_study_dialog_cancel"
+            style="@style/TextAppearance.Stempo.Head4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/shape_purple10_fill_12_rect"
+            android:gravity="center"
+            android:paddingHorizontal="36dp"
+            android:paddingVertical="6dp"
+            android:text="취소하기"
+            android:textColor="@color/purple_50"
+            app:layout_constraintEnd_toStartOf="@id/btn_study_dialog_save"
+            app:layout_constraintStart_toStartOf="@id/et_study_dialog"
+            app:layout_constraintTop_toBottomOf="@id/et_study_dialog" />
+
+        <TextView
+            android:id="@+id/btn_study_dialog_save"
+            style="@style/TextAppearance.Stempo.Head4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/shape_purple50_fill_12_rect"
+            android:gravity="center"
+            android:paddingHorizontal="36dp"
+            android:paddingVertical="6dp"
+            android:text="추가하기"
+            android:textColor="@color/purple_10"
+            app:layout_constraintEnd_toEndOf="@id/et_study_dialog"
+            app:layout_constraintStart_toEndOf="@id/btn_study_dialog_cancel"
+            app:layout_constraintTop_toBottomOf="@id/et_study_dialog" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
