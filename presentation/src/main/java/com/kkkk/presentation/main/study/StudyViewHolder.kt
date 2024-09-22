@@ -22,10 +22,8 @@ class StudyViewHolder(
             }
             if (isMe) {
                 ivDelete.visibility = View.GONE
-                etString.isEnabled = false
             } else {
                 ivDelete.visibility = View.VISIBLE
-                etString.isEnabled = true
 
                 ivDelete.setOnClickListener {
                     listener.onDeleteButtonClick(data.id)

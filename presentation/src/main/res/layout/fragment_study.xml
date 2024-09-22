@@ -47,39 +47,83 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_title">
 
-            <TextView
-                android:id="@+id/tv_exercise"
-                style="@style/TextAppearance.Stempo.Head4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="과제 진척도"
-                android:paddingHorizontal="16dp"
-                android:textColor="@color/white"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ProgressBar
-                android:id="@+id/progress_bar_homework"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="0dp"
-                android:layout_height="10dp"
-                android:layout_marginTop="12dp"
-                android:max="5"
-                android:layout_marginHorizontal="16dp"
-                android:progressDrawable="@drawable/layer_list_progressbar"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_homework_empty"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_exercise" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/iv_seekbar_thumb"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="8dp"
+                <TextView
+                    android:id="@+id/tv_homework_empty"
+                    style="@style/TextAppearance.Stempo.Head4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="스템포와 운동해볼까요?"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_homework_empty"
+                    app:layout_constraintEnd_toStartOf="@id/iv_homework_empty"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iv_homework_empty" />
+
+                <ImageView
+                    android:id="@+id/iv_homework_empty"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/ic_logo_illustration"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/tv_homework_empty"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_homework_valid"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/progress_bar_homework"
-                app:layout_constraintBottom_toBottomOf="@id/progress_bar_homework"
-                android:src="@drawable/shape_seekbar_thumb"/>
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_exercise"
+                    style="@style/TextAppearance.Stempo.Head4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:text="과제 진척도"
+                    android:textColor="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ProgressBar
+                    android:id="@+id/progress_bar_homework"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="10dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:max="5"
+                    android:progressDrawable="@drawable/layer_list_progressbar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_exercise" />
+
+                <ImageView
+                    android:id="@+id/iv_seekbar_thumb"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="8dp"
+                    android:src="@drawable/shape_seekbar_thumb"
+                    app:layout_constraintBottom_toBottomOf="@id/progress_bar_homework"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/progress_bar_homework" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Space

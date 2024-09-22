@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
@@ -76,9 +75,18 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
                 studyTeacherAdapter.submitList(studyList)
                 setToggleState(viewModel.typeIsMe.value)
 
-                binding.progressBarHomework.max = studyList.size
-                binding.progressBarHomework.progress = studyList.count { it.completed }
-                binding.ivSeekbarThumb.x = binding.progressBarHomework.width * binding.progressBarHomework.progress / binding.progressBarHomework.max.toFloat()
+                if (studyList.isEmpty()) {
+                    binding.layoutHomeworkEmpty.visibility = View.VISIBLE
+                    binding.layoutHomeworkValid.visibility = View.INVISIBLE
+                } else {
+                    binding.layoutHomeworkEmpty.visibility = View.INVISIBLE
+                    binding.layoutHomeworkValid.visibility = View.VISIBLE
+
+                    binding.progressBarHomework.max = studyList.size
+                    binding.progressBarHomework.progress = studyList.count { it.completed }
+                    binding.ivSeekbarThumb.x =
+                        binding.progressBarHomework.width * binding.progressBarHomework.progress / binding.progressBarHomework.max.toFloat()
+                }
             }.launchIn(lifecycleScope)
     }
 
