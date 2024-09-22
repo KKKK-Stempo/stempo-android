@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkkk.core.state.UiState
 import com.kkkk.domain.entity.request.RecordRequestModel
+import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -125,7 +126,7 @@ constructor(
     fun postToGetRhythmUrlFromServer() {
         _rhythmUrlState.value = UiState.Loading
         viewModelScope.launch {
-            rhythmRepository.postToGetRhythmUrl(bpm)
+            rhythmRepository.postToGetRhythmUrl(RhythmRequestModel(bpm, bit))
                 .onSuccess {
                     _rhythmUrlState.value = UiState.Success(it)
                 }
