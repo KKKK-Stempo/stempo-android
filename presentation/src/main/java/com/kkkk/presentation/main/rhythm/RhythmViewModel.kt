@@ -32,6 +32,8 @@ constructor(
     var isBpmMinusAvailable = MutableLiveData<Boolean>(false)
     var isBpmPlusAvailable = MutableLiveData<Boolean>(true)
 
+    var isLoading = false
+
     private val _isStretchView = MutableSharedFlow<Boolean>()
     val isStretchView: SharedFlow<Boolean> = _isStretchView
 

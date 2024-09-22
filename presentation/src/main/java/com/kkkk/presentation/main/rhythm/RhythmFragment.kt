@@ -90,12 +90,14 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun initPlayBtnListener() {
         binding.btnRhythmPlay.setOnSingleClickListener {
-            if (::mediaPlayer.isInitialized) {
-                mediaPlayer.start()
-                switchPlayingState(true)
-                requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            } else {
-                toast(stringOf(R.string.error_msg))
+            if (!viewModel.isLoading) {
+                if (::mediaPlayer.isInitialized) {
+                    mediaPlayer.start()
+                    switchPlayingState(true)
+                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                } else {
+                    toast(stringOf(R.string.error_msg))
+                }
             }
         }
     }
@@ -148,18 +150,18 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun observeRhythmChanged() {
-        viewModel.isRhythmChanged.flowWithLifecycle(lifecycle)
-            .onEach { isChanged ->
-                if (isChanged) {
-                    if (::mediaPlayer.isInitialized) {
-                        mediaPlayer.pause()
-                        switchPlayingState(false)
-                    }
-                    setUiWithCurrentRhythm()
-                    viewModel.resetRhythmChangedState()
-                    viewModel.postToGetRhythmUrlFromServer()
+        viewModel.isRhythmChanged.flowWithLifecycle(lifecycle).onEach { isChanged ->
+            if (isChanged) {
+                setLoadingView(true)
+                if (::mediaPlayer.isInitialized) {
+                    mediaPlayer.pause()
+                    switchPlayingState(false)
                 }
-            }.launchIn(lifecycleScope)
+                setUiWithCurrentRhythm()
+                viewModel.resetRhythmChangedState()
+                viewModel.postToGetRhythmUrlFromServer()
+            }
+        }.launchIn(lifecycleScope)
     }
 
     private fun setUiWithCurrentRhythm() {
@@ -201,6 +203,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 when (state) {
                     is UiState.Success -> {
                         if (File(requireContext().filesDir, viewModel.filename).exists()) {
+                            setLoadingView(false)
                             setMediaPlayer()
                         } else {
                             setLoadingView(true)
@@ -237,13 +240,11 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 outputStream.write(byteArray)
                 outputStream.flush()
             }
+        }.onSuccess {
+            setMediaPlayer()
+        }.onFailure {
+            toast(stringOf(R.string.error_msg))
         }
-            .onSuccess {
-                setMediaPlayer()
-            }
-            .onFailure {
-                toast(stringOf(R.string.error_msg))
-            }
     }
 
     private fun setMediaPlayer() {
@@ -260,6 +261,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun setLoadingView(isLoading: Boolean) {
         binding.layoutLoading.isVisible = isLoading
+        viewModel.isLoading = isLoading
         if (isLoading) {
             setStatusBarColor(R.color.transparent_50)
         } else {
