@@ -5,10 +5,16 @@ import com.kkkk.domain.entity.response.StudyModel
 interface StudyRepository {
     suspend fun getHomeworks(
         page: Int,
-        size: Int
+        size: Int,
     ): Result<StudyModel>
 
     suspend fun deleteHomework(
-        homeworkId: Int
+        homeworkId: Int,
+    ): Result<Int>
+
+    suspend fun updateHomework(
+        homeworkId: Int,
+        description: String,
+        completed: Boolean,
     ): Result<Int>
 }

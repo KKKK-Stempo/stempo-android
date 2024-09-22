@@ -18,7 +18,7 @@ class StudyViewHolder(
                 if (data.completed) R.drawable.ic_checkbox_checked else R.drawable.ic_checkbox_unchecked
             )
             ivCheckbox.setOnClickListener {
-                listener.onCheckboxClick(data.id, !data.completed)
+                listener.onCheckboxClick(data.id, data.description, !data.completed)
             }
             if (isMe) {
                 ivDelete.visibility = View.GONE
@@ -36,6 +36,6 @@ class StudyViewHolder(
 }
 
 interface OnItemClickListener {
-    fun onCheckboxClick(itemId: Int, isChecked: Boolean)
+    fun onCheckboxClick(itemId: Int, description: String, completed: Boolean)
     fun onDeleteButtonClick(itemId: Int)
 }

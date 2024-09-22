@@ -9,7 +9,6 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.setStatusBarColor
-import com.kkkk.core.extension.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
@@ -159,8 +158,8 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
         _studyTeacherAdapter = null
     }
 
-    override fun onCheckboxClick(itemId: Int, isChecked: Boolean) {
-        toast("Clicked item ID: $itemId + isChecked: $isChecked")
+    override fun onCheckboxClick(itemId: Int, description: String, completed: Boolean) {
+        viewModel.updateHomework(itemId, description, completed)
     }
 
     override fun onDeleteButtonClick(itemId: Int) {

@@ -46,4 +46,13 @@ class StudyViewModel @Inject constructor(
                 }.onFailure(Timber::e)
         }
     }
+
+    fun updateHomework(homeworkId: Int, description: String, completed: Boolean) {
+        viewModelScope.launch {
+            studyRepository.updateHomework(homeworkId, description, completed)
+                .onSuccess {
+                    getHomeworks()
+                }.onFailure(Timber::e)
+        }
+    }
 }
