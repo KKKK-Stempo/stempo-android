@@ -37,4 +37,13 @@ class StudyViewModel @Inject constructor(
     fun setTypeIsMe(isMe: Boolean) {
         _typeIsMe.value = isMe
     }
+
+    fun deleteHomework(homeworkId: Int) {
+        viewModelScope.launch {
+            studyRepository.deleteHomework(homeworkId)
+                .onSuccess {
+                    getHomeworks()
+                }.onFailure(Timber::e)
+        }
+    }
 }

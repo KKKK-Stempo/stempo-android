@@ -3,7 +3,6 @@ package com.kkkk.presentation.main.study
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.flowWithLifecycle
@@ -19,7 +18,8 @@ import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentStudyBinding
 
 @AndroidEntryPoint
-class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study), OnItemClickListener {
+class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study),
+    OnItemClickListener {
     private val viewModel by activityViewModels<StudyViewModel>()
 
     private var _studyStudentAdapter: StudyAdapter? = null
@@ -164,6 +164,6 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
     }
 
     override fun onDeleteButtonClick(itemId: Int) {
-        toast("Clicked item ID: $itemId")
+        viewModel.deleteHomework(itemId)
     }
 }

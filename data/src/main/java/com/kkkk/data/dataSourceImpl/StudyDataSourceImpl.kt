@@ -11,4 +11,7 @@ data class StudyDataSourceImpl @Inject constructor(
 ) : StudyDataSource {
     override suspend fun getHomeworks(page: Int, size: Int): BaseResponse<StudyDto> =
         studyService.getHomeworks(page, size)
+
+    override suspend fun deleteHomework(homeworkId: Int): BaseResponse<Int> =
+        studyService.deleteHomework(homeworkId)
 }
