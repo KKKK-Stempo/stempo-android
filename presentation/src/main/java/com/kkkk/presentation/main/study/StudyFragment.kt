@@ -27,7 +27,12 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
         super.onViewCreated(view, savedInstanceState)
 
         setStatusBarColor(R.color.gray_100)
+        observeTypeIsMe()
         setToggleClickListener()
+        setAddStudyButtonClickListener()
+    }
+
+    private fun observeTypeIsMe() {
         viewModel.typeIsMe.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { isMe ->
             setToggleState(isMe)
         }.launchIn(lifecycleScope)
@@ -40,6 +45,13 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
         }
         binding.itemToggle.tvTeacher.setOnClickListener {
             viewModel.setTypeIsMe(false)
+        }
+    }
+
+    private fun setAddStudyButtonClickListener() {
+        binding.btnTeacherExercise.setOnClickListener {
+            viewModel.addItems(listOf(1, 2, 3))
+            setToggleState(false)
         }
     }
 
