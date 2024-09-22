@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.entity.response.StudyModel
 import com.kkkk.domain.repository.StudyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -15,38 +17,65 @@ import javax.inject.Inject
 class StudyViewModel @Inject constructor(
     private val studyRepository: StudyRepository,
 ) : ViewModel() {
-    private val _videoState = MutableStateFlow(StudyModel())
-    val videoState: StateFlow<StudyModel>
-        get() = _videoState
+    private val _studyList = MutableStateFlow<List<StudyModel.StudyItemModel>>(emptyList())
+    val studyList: StateFlow<List<StudyModel.StudyItemModel>> = _studyList
 
-    private val _articleState = MutableStateFlow(StudyModel())
-    val articleState: StateFlow<StudyModel>
-        get() = _articleState
+    private val _typeIsMe = MutableStateFlow(true)
+    val typeIsMe: StateFlow<Boolean> = _typeIsMe
+
+    private val _toast = MutableSharedFlow<String>()
+    val toast: SharedFlow<String> = _toast
 
     init {
-        getVideos()
-        getArticles()
+        getHomeworks()
     }
 
-    fun getVideos(value: Int = 0) {
+    private fun getHomeworks() {
         viewModelScope.launch {
-            studyRepository.getVideos(
-                page = _videoState.value.currentPage + value,
-                size = 2
-            ).onSuccess {
-                _videoState.value = it
+            studyRepository.getHomeworks(0, 1000).onSuccess {
+                _studyList.value = it.items
             }.onFailure(Timber::e)
         }
     }
 
-    fun getArticles(value: Int = 0) {
+    fun setTypeIsMe(isMe: Boolean) {
+        _typeIsMe.value = isMe
+    }
+
+    fun addHomework(description: String) {
         viewModelScope.launch {
-            studyRepository.getArticles(
-                page = _articleState.value.currentPage + value,
-                size = 3
-            ).onSuccess {
-                _articleState.value = it
-            }.onFailure(Timber::e)
+            studyRepository.addHomework(description)
+                .onSuccess { id ->
+                    _toast.emit("추가되었습니다")
+                    _studyList.value += StudyModel.StudyItemModel(id, description, false)
+                    _studyList.value = _studyList.value.sortedBy { it.completed }
+                }.onFailure(Timber::e)
+        }
+    }
+
+    fun deleteHomework(homeworkId: Int) {
+        viewModelScope.launch {
+            studyRepository.deleteHomework(homeworkId)
+                .onSuccess {
+                    _toast.emit("삭제되었습니다")
+                    _studyList.value = _studyList.value.filter { it.id != homeworkId }
+                }.onFailure(Timber::e)
+        }
+    }
+
+    fun updateHomework(homeworkId: Int, description: String, completed: Boolean) {
+        viewModelScope.launch {
+            studyRepository.updateHomework(homeworkId, description, completed)
+                .onSuccess {
+                    _toast.emit("수정되었습니다")
+                    _studyList.value = _studyList.value.map {
+                        if (it.id == homeworkId) {
+                            it.copy(description = description, completed = completed)
+                        } else {
+                            it
+                        }
+                    }.sortedBy { it.completed }
+                }.onFailure(Timber::e)
         }
     }
 }
