@@ -61,6 +61,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     ) {
         super.onViewCreated(view, savedInstanceState)
 
+        setLoadingView(true)
         initChangeRhythmBtnListener()
         initStretchNavigateBtnListener()
         initPlayBtnListener()
@@ -72,7 +73,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         observeRhythmUrlState()
         observeDownloadState()
         observeRecordSaveState()
-        setStatusBarColor(R.color.white)
     }
 
     private fun initChangeRhythmBtnListener() {
