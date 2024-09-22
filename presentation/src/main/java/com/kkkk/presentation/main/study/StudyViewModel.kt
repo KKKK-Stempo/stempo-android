@@ -47,7 +47,7 @@ class StudyViewModel @Inject constructor(
             studyRepository.deleteHomework(homeworkId)
                 .onSuccess {
                     _toast.emit("삭제되었습니다")
-                    getHomeworks()
+                    _studyList.value = _studyList.value.filter { it.id != homeworkId }
                 }.onFailure(Timber::e)
         }
     }
@@ -57,7 +57,13 @@ class StudyViewModel @Inject constructor(
             studyRepository.updateHomework(homeworkId, description, completed)
                 .onSuccess {
                     _toast.emit("수정되었습니다")
-                    getHomeworks()
+                    _studyList.value = _studyList.value.map {
+                        if (it.id == homeworkId) {
+                            it.copy(description = description, completed = completed)
+                        } else {
+                            it
+                        }
+                    }.sortedBy { it.completed }
                 }.onFailure(Timber::e)
         }
     }
