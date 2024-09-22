@@ -20,6 +20,8 @@ import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.kkkk.core.base.BaseFragment
+import com.kkkk.core.extension.colorOf
+import com.kkkk.core.extension.drawableOf
 import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
@@ -59,33 +61,43 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        initChangeLevelBtnListener()
+        setLoadingView(true)
+        initChangeRhythmBtnListener()
+        initStretchNavigateBtnListener()
         initPlayBtnListener()
         initStopBtnListener()
         initWearableSyncBtnListener()
+        initExistingRhythm()
         observeStepCount()
         observeRhythmChanged()
         observeRhythmUrlState()
         observeDownloadState()
         observeRecordSaveState()
-        setStatusBarColor(R.color.white)
     }
 
-    private fun initChangeLevelBtnListener() {
+    private fun initChangeRhythmBtnListener() {
         binding.btnChangeLevel.setOnSingleClickListener {
             rhythmBottomSheet = RhythmBottomSheet()
             rhythmBottomSheet?.show(parentFragmentManager, BOTTOM_SHEET_CHANGE_LEVEL)
         }
     }
 
+    private fun initStretchNavigateBtnListener() {
+        binding.btnStretchMode.setOnSingleClickListener {
+            viewModel.navigateToStretchView(true)
+        }
+    }
+
     private fun initPlayBtnListener() {
         binding.btnRhythmPlay.setOnSingleClickListener {
-            if (::mediaPlayer.isInitialized) {
-                mediaPlayer.start()
-                switchPlayingState(true)
-                requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            } else {
-                toast(stringOf(R.string.error_msg))
+            if (!viewModel.isLoading) {
+                if (::mediaPlayer.isInitialized) {
+                    mediaPlayer.start()
+                    switchPlayingState(true)
+                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                } else {
+                    toast(stringOf(R.string.error_msg))
+                }
             }
         }
     }
@@ -99,6 +111,15 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             }
             rhythmSaveDialog = RhythmSaveDialog()
             rhythmSaveDialog?.show(parentFragmentManager, DIALOG_RHYTHM_SAVE)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (::mediaPlayer.isInitialized) {
+            mediaPlayer.pause()
+            switchPlayingState(false)
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 
@@ -116,29 +137,35 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
     }
 
+    private fun initExistingRhythm() {
+        setUiWithCurrentRhythm()
+        viewModel.postToGetRhythmUrlFromServer()
+    }
+
     private fun observeStepCount() {
-        viewModel.stepCount.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { level ->
-            binding.tvRhythmStep.text = viewModel.stepCount.value.toString()
+        viewModel.stepCount.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach {
+            binding.tvRhythmStep.text =
+                getString(R.string.rhythm_tv_step, viewModel.stepCount.value)
         }.launchIn(lifecycleScope)
     }
 
     private fun observeRhythmChanged() {
-        viewModel.isRhythmChanged.flowWithLifecycle(lifecycle).distinctUntilChanged()
-            .onEach { isChanged ->
-                if (isChanged) {
-                    if (::mediaPlayer.isInitialized) {
-                        mediaPlayer.pause()
-                        switchPlayingState(false)
-                    }
-                    setUiWithCurrentLevel()
-                    viewModel.resetRhythmChangedState()
-                    viewModel.postToGetRhythmUrlFromServer()
+        viewModel.isRhythmChanged.flowWithLifecycle(lifecycle).onEach { isChanged ->
+            if (isChanged) {
+                setLoadingView(true)
+                if (::mediaPlayer.isInitialized) {
+                    mediaPlayer.pause()
+                    switchPlayingState(false)
                 }
-            }.launchIn(lifecycleScope)
+                setUiWithCurrentRhythm()
+                viewModel.resetRhythmChangedState()
+                viewModel.postToGetRhythmUrlFromServer()
+            }
+        }.launchIn(lifecycleScope)
     }
 
-    private fun setUiWithCurrentLevel() {
-        val color = when (viewModel.bit.rem(3)) {
+    private fun setUiWithCurrentRhythm() {
+        val color = when (viewModel.bit) {
             2 -> COLOR_PURPLE
             3 -> COLOR_SKY
             4 -> COLOR_GREEN
@@ -146,25 +173,25 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             8 -> COLOR_SKY
             else -> return
         }
-//        with(binding) {
-//            tvRhythmLevel.apply {
-//                text = getString(R.string.rhythm_tv_level, viewModel.rhythmLevel.value)
-//                setTextColor(colorOf(getResource("${color}_50", COLOR)))
-//                background =
-//                    drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
-//            }
-//            tvRhythmStep.apply {
-//                setTextColor(colorOf(getResource("${color}_50", COLOR)))
-//                background =
-//                    drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
-//            }
-//            ivRhythmBg.setImageResource(getResource("img_rhythm_bg_$color", DRAWABLE))
-//            lottieRhythmBg.apply {
-//                setAnimation(getResource("stempo_rhythm_$color", RAW))
-//                speed = viewModel.bpm / FLOAT_120
-//                playAnimation()
-//            }
-//        }
+        with(binding) {
+            tvRhythmBpm.apply {
+                text = getString(R.string.rhythm_tv_bpm, viewModel.bpm)
+                setTextColor(colorOf(getResource("${color}_50", COLOR)))
+                background =
+                    drawableOf(getResource("shape_white_fill_${color}50_line_17_rect", DRAWABLE))
+            }
+            tvRhythmBit.apply {
+                text = getString(R.string.rhythm_tv_bit, viewModel.bit)
+                background =
+                    drawableOf(getResource("shape_${color}50_fill_17_rect", DRAWABLE))
+            }
+            ivRhythmBg.setImageResource(getResource("img_rhythm_bg_$color", DRAWABLE))
+            lottieRhythmBg.apply {
+                setAnimation(getResource("stempo_rhythm_$color", RAW))
+                speed = viewModel.bpm / FLOAT_120
+                playAnimation()
+            }
+        }
     }
 
     private fun getResource(name: String, defType: String) =
@@ -176,6 +203,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 when (state) {
                     is UiState.Success -> {
                         if (File(requireContext().filesDir, viewModel.filename).exists()) {
+                            setLoadingView(false)
                             setMediaPlayer()
                         } else {
                             setLoadingView(true)
@@ -212,24 +240,20 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                 outputStream.write(byteArray)
                 outputStream.flush()
             }
+        }.onSuccess {
+            setMediaPlayer()
+        }.onFailure {
+            toast(stringOf(R.string.error_msg))
         }
-            .onSuccess {
-                setMediaPlayer()
-            }
-            .onFailure {
-                toast(stringOf(R.string.error_msg))
-            }
     }
 
     private fun setMediaPlayer() {
         if (::mediaPlayer.isInitialized) mediaPlayer.release()
         mediaPlayer = MediaPlayer().apply {
             setDataSource(
-                File(
-                    requireContext().filesDir,
-                    viewModel.filename
-                ).absolutePath
+                File(requireContext().filesDir, viewModel.filename).absolutePath
             )
+            isLooping = true
             prepare()
         }
         setLoadingView(false)
@@ -237,6 +261,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun setLoadingView(isLoading: Boolean) {
         binding.layoutLoading.isVisible = isLoading
+        viewModel.isLoading = isLoading
         if (isLoading) {
             setStatusBarColor(R.color.transparent_50)
         } else {

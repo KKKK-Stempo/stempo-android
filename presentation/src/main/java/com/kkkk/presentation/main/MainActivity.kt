@@ -4,22 +4,34 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseActivity
 import com.kkkk.presentation.main.profile.ProfileFragment
 import com.kkkk.presentation.main.record.RecordFragment
 import com.kkkk.presentation.main.rhythm.RhythmFragment
+import com.kkkk.presentation.main.rhythm.RhythmViewModel
+import com.kkkk.presentation.main.rhythm.StretchFragment
 import com.kkkk.presentation.main.study.StudyFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.ActivityMainBinding
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
+
+    private lateinit var rhythmViewModel: RhythmViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         initBnvItemIconTintList()
         initBnvItemSelectedListener()
+        initViewModelProvider()
+        observeStretchViewNavigate()
     }
 
     private fun initBnvItemIconTintList() {
@@ -55,5 +67,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         supportFragmentManager.commit {
             replace<T>(R.id.fcv_main, T::class.java.canonicalName)
         }
+    }
+
+    private fun initViewModelProvider() {
+        rhythmViewModel = ViewModelProvider(this)[RhythmViewModel::class.java]
+    }
+
+    private fun observeStretchViewNavigate() {
+        rhythmViewModel.isStretchView.flowWithLifecycle(lifecycle).onEach { isStretch ->
+            if (isStretch) {
+                navigateTo<StretchFragment>()
+            } else {
+                navigateTo<RhythmFragment>()
+            }
+        }.launchIn(lifecycleScope)
     }
 }

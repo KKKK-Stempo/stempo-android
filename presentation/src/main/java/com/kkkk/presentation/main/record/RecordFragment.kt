@@ -18,7 +18,6 @@ import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.core.state.UiState
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kr.genti.presentation.R
@@ -39,6 +38,7 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
         observeReportMonth()
         observeChartEntry()
         setStatusBarColor(R.color.white)
+        viewModel.setGraphWithDate()
     }
 
     private fun observeReportMonth() {
@@ -53,11 +53,11 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
     }
 
     private fun observeChartEntry() {
-        viewModel.chartEntry.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach { state ->
+        viewModel.chartEntry.flowWithLifecycle(lifecycle).onEach { state ->
             when (state) {
                 is UiState.Success -> {
-                    binding.ivChartLoading.isVisible = false
-                    binding.layoutChart.isVisible = true
+                    setLoadingView(false)
+                    binding.ivChartEmpty.isVisible = false
                     binding.chartReport.apply {
                         data = LineData(LineDataSet(state.data, CHART_RECORD).setDataSettings())
                         invalidate()
@@ -66,16 +66,32 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
                 }
 
                 is UiState.Failure -> {
-                    binding.ivChartLoading.isVisible = true
+                    setLoadingView(false)
+                    binding.ivChartEmpty.isVisible = true
                     toast(stringOf(R.string.error_msg))
                 }
 
-                is UiState.Loading -> binding.ivChartLoading.isVisible = false
+                is UiState.Loading -> setLoadingView(true)
 
-                is UiState.Empty -> binding.ivChartLoading.isVisible = true
+                is UiState.Empty -> {
+                    setLoadingView(false)
+                    binding.ivChartEmpty.isVisible = true
+                }
             }
         }.launchIn(lifecycleScope)
     }
+
+    private fun setLoadingView(isLoading: Boolean) {
+        binding.layoutLoading.isVisible = isLoading
+        if (isLoading) {
+            binding.layoutChart.visibility = View.INVISIBLE
+            setStatusBarColor(R.color.transparent_50)
+        } else {
+            binding.layoutChart.visibility = View.VISIBLE
+            setStatusBarColor(R.color.white)
+        }
+    }
+
 
     private fun LineDataSet.setDataSettings(): LineDataSet {
         this.apply {

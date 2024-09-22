@@ -2,7 +2,9 @@ package com.kkkk.data.repositoryImpl
 
 import com.kkkk.data.dataSource.RhythmDataSource
 import com.kkkk.data.dto.request.RecordRequestDto.Companion.toDto
+import com.kkkk.data.dto.request.RhythmRequestDto.Companion.toDto
 import com.kkkk.domain.entity.request.RecordRequestModel
+import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import javax.inject.Inject
 
@@ -12,9 +14,9 @@ constructor(
     private val rhythmDataSource: RhythmDataSource,
 ) : RhythmRepository {
 
-    override suspend fun postToGetRhythmUrl(bpm: Int): Result<String> =
+    override suspend fun postToGetRhythmUrl(request: RhythmRequestModel): Result<String> =
         runCatching {
-            rhythmDataSource.postToGetRhythmUrl(bpm).data
+            rhythmDataSource.postToGetRhythmUrl(request.toDto()).data
         }
 
     override suspend fun getRhythmWav(url: String): Result<ByteArray> =

@@ -1,10 +1,11 @@
 package com.kkkk.domain.repository
 
 import com.kkkk.domain.entity.request.RecordRequestModel
+import com.kkkk.domain.entity.request.RhythmRequestModel
 
 interface RhythmRepository {
     suspend fun postToGetRhythmUrl(
-        bpm: Int
+        request: RhythmRequestModel
     ): Result<String>
 
     suspend fun getRhythmWav(

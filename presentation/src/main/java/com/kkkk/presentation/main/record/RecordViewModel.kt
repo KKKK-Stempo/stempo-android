@@ -34,10 +34,6 @@ constructor(
     var startDate = ""
     var endDate = ""
 
-    init {
-        setGraphWithDate()
-    }
-
     fun setIsChangingMonth() {
         isChangingMonth.value = isChangingMonth.value?.not() ?: false
     }
@@ -48,7 +44,7 @@ constructor(
         setGraphWithDate()
     }
 
-    private fun setGraphWithDate() {
+    fun setGraphWithDate() {
         endDate = DATE_FORMAT.format(Date())
         DATE_FORMAT.parse(endDate)?.let { date ->
             val postCalendar = Calendar.getInstance().apply {
