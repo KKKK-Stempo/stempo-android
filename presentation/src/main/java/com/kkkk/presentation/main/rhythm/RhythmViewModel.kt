@@ -60,6 +60,7 @@ constructor(
 
     init {
         initRhythmLevelFromDataStore()
+
     }
 
     private fun initRhythmLevelFromDataStore() {

@@ -66,7 +66,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         initPlayBtnListener()
         initStopBtnListener()
         initWearableSyncBtnListener()
-        setUiWithCurrentRhythm()
+        initExistingRhythm()
         observeStepCount()
         observeRhythmChanged()
         observeRhythmUrlState()
@@ -126,6 +126,11 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
     }
 
+    private fun initExistingRhythm() {
+        setUiWithCurrentRhythm()
+        viewModel.postToGetRhythmUrlFromServer()
+    }
+
     private fun observeStepCount() {
         viewModel.stepCount.flowWithLifecycle(lifecycle).distinctUntilChanged().onEach {
             binding.tvRhythmStep.text =
@@ -134,7 +139,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun observeRhythmChanged() {
-        viewModel.isRhythmChanged.flowWithLifecycle(lifecycle).distinctUntilChanged()
+        viewModel.isRhythmChanged.flowWithLifecycle(lifecycle)
             .onEach { isChanged ->
                 if (isChanged) {
                     if (::mediaPlayer.isInitialized) {
@@ -236,10 +241,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         if (::mediaPlayer.isInitialized) mediaPlayer.release()
         mediaPlayer = MediaPlayer().apply {
             setDataSource(
-                File(
-                    requireContext().filesDir,
-                    viewModel.filename
-                ).absolutePath
+                File(requireContext().filesDir, viewModel.filename).absolutePath
             )
             prepare()
         }
