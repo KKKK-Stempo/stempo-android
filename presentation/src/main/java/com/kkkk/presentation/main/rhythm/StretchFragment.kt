@@ -79,11 +79,11 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
     }
 
     private fun setMediaPlayer() {
-        if (File(requireContext().filesDir, STRETCH_WAV_FILE).exists()) {
+        if (File(requireContext().filesDir, viewModel.filename).exists()) {
             if (::mediaPlayer.isInitialized) mediaPlayer.release()
             mediaPlayer = MediaPlayer().apply {
                 setDataSource(
-                    File(requireContext().filesDir, STRETCH_WAV_FILE).absolutePath
+                    File(requireContext().filesDir, viewModel.filename).absolutePath
                 )
                 isLooping = true
                 prepare()
@@ -91,9 +91,5 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
         } else {
             toast(stringOf(R.string.error_msg))
         }
-    }
-
-    companion object {
-        const val STRETCH_WAV_FILE = "stempo_bpm_65_bit_2"
     }
 }
