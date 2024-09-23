@@ -85,14 +85,23 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
 
     private fun initStopBtnListener() {
         binding.btnStretchStop.setOnSingleClickListener {
-            lifecycleScope.launch {
-                listOf(
-                    async { if (beatStream != 0) soundPool.pause(beatStream) },
-                    async { mediaPlayer.pause() }
-                ).awaitAll()
-                switchPlayingState(false)
-                requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            }
+            pauseMusic()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        pauseMusic()
+    }
+
+    private fun pauseMusic() {
+        lifecycleScope.launch {
+            listOf(
+                async { if (beatStream != 0) soundPool.pause(beatStream) },
+                async { mediaPlayer.pause() }
+            ).awaitAll()
+            switchPlayingState(false)
+            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 

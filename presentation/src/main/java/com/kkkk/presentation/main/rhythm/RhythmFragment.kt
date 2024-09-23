@@ -138,7 +138,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
     }
 
-    private fun pauseMusic(isButton:Boolean) {
+    override fun onStop() {
+        super.onStop()
+        pauseMusic(true)
+    }
+
+    private fun pauseMusic(isButton: Boolean) {
         lifecycleScope.launch {
             listOf(
                 async { if (beatStream != 0) soundPool.pause(beatStream) },
@@ -275,6 +280,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun setMusicPlayer() {
         lifecycleScope.launch {
+            beatStream = 0
             listOf(
                 async { setSoundPoolAsync() },
                 async { setMediaPlayerAsync() }
