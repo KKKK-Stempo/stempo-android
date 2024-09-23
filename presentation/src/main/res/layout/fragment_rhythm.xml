@@ -15,7 +15,7 @@
             android:id="@+id/toggle_rhythm_mode"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="36dp"
+            android:layout_marginHorizontal="60dp"
             android:layout_marginTop="24dp"
             android:background="@drawable/shape_gray200_fill_26_rect"
             android:gravity="center"
@@ -46,6 +46,18 @@
                 android:textColor="@color/gray_600" />
 
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btn_watch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:padding="6dp"
+            android:src="@drawable/ic_watch"
+            app:layout_constraintBottom_toBottomOf="@id/toggle_rhythm_mode"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/toggle_rhythm_mode"
+            app:layout_constraintTop_toTopOf="@id/toggle_rhythm_mode" />
 
         <TextView
             android:id="@+id/tv_rhythm_title"
