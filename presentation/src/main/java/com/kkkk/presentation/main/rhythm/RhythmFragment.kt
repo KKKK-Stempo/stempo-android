@@ -140,7 +140,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     override fun onStop() {
         super.onStop()
-        pauseMusic(true)
+        pauseMusic(false)
     }
 
     private fun pauseMusic(isButton: Boolean) {
