@@ -108,6 +108,7 @@ constructor(
         filename = "stempo_bpm_${bpm}_bit_${bit}"
         userRepository.setBpm(bpm)
         userRepository.setBit(bit)
+        isPlayed = false
         viewModelScope.launch {
             _isRhythmChanged.emit(true)
         }
