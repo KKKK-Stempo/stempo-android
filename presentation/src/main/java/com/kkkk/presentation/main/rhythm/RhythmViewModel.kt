@@ -162,7 +162,7 @@ constructor(
         _beforeStepTime.value = System.currentTimeMillis()
     }
 
-    fun posRhythmRecordToSave() {
+    fun postRhythmRecordToSave() {
         val accuracy = calculateAccuracy(_oddStepTime.value, _evenStepTime.value)
 
         viewModelScope.launch {

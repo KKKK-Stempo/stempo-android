@@ -166,12 +166,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
     }
 
-    private fun initWearableSyncBtnListener() {
-        binding.tvRhythmTitle.setOnSingleClickListener {
-            phoneDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.bpm)
-        }
-    }
-
     private fun initExistingRhythm() {
         setUiWithCurrentRhythm()
         viewModel.postToGetRhythmUrlFromServer()
@@ -333,6 +327,17 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
     }
 
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
+            viewModel.addStepCount(1)
+        }
+    }
+
+    private fun initializeSensor() {
+        sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+    }
+
     private fun observeRecordSaveState() {
         viewModel.isRecordSaved.flowWithLifecycle(lifecycle).onEach { isSuccess ->
             if (isSuccess) {
@@ -351,6 +356,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         rhythmSaveDialog = null
     }
 
+    private fun initWearableSyncBtnListener() {
+        binding.btnWatch.setOnSingleClickListener {
+            phoneDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.bpm)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         stepDetectorSensor?.let {
@@ -367,17 +378,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
         Timber.tag("okhttp").d("LISTENER : REMOVED")
         Wearable.getDataClient(requireActivity()).removeListener(this)
-    }
-
-    override fun onSensorChanged(event: SensorEvent?) {
-        if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
-            viewModel.addStepCount(1)
-        }
-    }
-
-    private fun initializeSensor() {
-        sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
     }
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {

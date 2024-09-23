@@ -73,7 +73,7 @@ class WatchActivity : ComponentActivity(), DataClient.OnDataChangedListener {
                         DataMapItem.fromDataItem(item).dataMap.apply {
                             val bpm = getInt(KEY_BPM)
                             Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $bpm")
-                            VIBRATION_INTERVAL = (bpm/60.0).toLong()
+                            VIBRATION_INTERVAL = 60_000L / bpm
                         }
                     }
                 }
