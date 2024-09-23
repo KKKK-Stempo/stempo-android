@@ -32,8 +32,6 @@ constructor(
     var isBpmMinusAvailable = MutableLiveData<Boolean>(false)
     var isBpmPlusAvailable = MutableLiveData<Boolean>(true)
 
-    var isLoading = false
-
     private val _isStretchView = MutableSharedFlow<Boolean>()
     val isStretchView: SharedFlow<Boolean> = _isStretchView
 
@@ -222,8 +220,8 @@ constructor(
     }
 
     companion object {
-        const val MIN_BPM = 65
-        const val MAX_BPM = 115
+        const val MIN_BPM = 60
+        const val MAX_BPM = 120
         const val MIN_BIT = 2
         const val MAX_BIT = 8
 
