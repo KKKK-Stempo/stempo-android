@@ -262,7 +262,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         soundPool = SoundPool.Builder().setMaxStreams(2).build()
         beatSound =
             soundPool.load(File(requireContext().filesDir, viewModel.filename).absolutePath, 1)
-        musicSound = soundPool.load(requireContext(), R.raw.music_bpm_100, 1)
+        musicSound = soundPool.load(requireContext(), findMusicByBpm(viewModel.bpm), 1)
         soundPool.setOnLoadCompleteListener { _, sampleId, status ->
             if (status == 0 && (sampleId == musicSound || sampleId == beatSound)) {
                 viewModel.isSoundLoaded = true
@@ -363,5 +363,16 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         private const val FLOAT_120 = 120.00000000000000000000F
 
         private const val SUCCESS_CODE = 200
+
+        fun findMusicByBpm(bpm: Int) =
+            when (bpm) {
+                60, 65 -> R.raw.music_bpm_60
+                70, 75 -> R.raw.music_bpm_70
+                80, 85 -> R.raw.music_bpm_80
+                90, 95 -> R.raw.music_bpm_90
+                100, 105 -> R.raw.music_bpm_100
+                110, 115 -> R.raw.music_bpm_110
+                else -> R.raw.music_bpm_120
+            }
     }
 }

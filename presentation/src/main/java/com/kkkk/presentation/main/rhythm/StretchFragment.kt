@@ -10,6 +10,7 @@ import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
+import com.kkkk.presentation.main.rhythm.RhythmFragment.Companion.findMusicByBpm
 import dagger.hilt.android.AndroidEntryPoint
 import kr.genti.presentation.R
 import kr.genti.presentation.databinding.FragmentStretchBinding
@@ -94,7 +95,7 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
             soundPool = SoundPool.Builder().setMaxStreams(2).build()
             beatSound =
                 soundPool.load(File(requireContext().filesDir, viewModel.filename).absolutePath, 1)
-            musicSound = soundPool.load(requireContext(), R.raw.music_bpm_100, 1)
+            musicSound = soundPool.load(requireContext(), findMusicByBpm(viewModel.bpm), 1)
             soundPool.setOnLoadCompleteListener { _, sampleId, status ->
                 if (status == 0 && (sampleId == musicSound || sampleId == beatSound)) {
                     isSoundLoaded = true
