@@ -1,7 +1,6 @@
 package com.kkkk.presentation.main.rhythm
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -68,6 +67,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         initStopBtnListener()
         initWearableSyncBtnListener()
         initExistingRhythm()
+        initializeSensor()
         observeStepCount()
         observeRhythmChanged()
         observeRhythmUrlState()
@@ -285,22 +285,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         rhythmSaveDialog = null
         if (::mediaPlayer.isInitialized) {
             mediaPlayer.release()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == SUCCESS_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                initializeSensor()
-            } else {
-                // 사용자가 권한을 거부한 경우 처리
-                // 예: 사용자에게 권한의 필요성을 설명하는 다이얼로그 표시
-            }
         }
     }
 

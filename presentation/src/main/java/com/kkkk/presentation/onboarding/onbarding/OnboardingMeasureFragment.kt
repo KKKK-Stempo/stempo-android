@@ -58,22 +58,6 @@ class OnboardingMeasureFragment :
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == SUCCESS_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                initializeSensor()
-            } else {
-                // 사용자가 권한을 거부한 경우 처리
-                // 예: 사용자에게 권한의 필요성을 설명하는 다이얼로그 표시
-            }
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         stepDetectorSensor?.let {

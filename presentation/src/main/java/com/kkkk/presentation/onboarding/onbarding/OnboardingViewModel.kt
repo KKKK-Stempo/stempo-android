@@ -48,6 +48,7 @@ class OnboardingViewModel @Inject constructor(
 
         viewModelScope.launch {
             authRepository.signup(deviceTag).onSuccess {
+                userRepository.setTokens(it.accessToken, it.refreshToken)
                 userRepository.setBpm(bpm.toInt())
             }.onFailure(Timber::e)
         }
