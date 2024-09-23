@@ -5,7 +5,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.media.MediaPlayer
+import android.media.SoundPool
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -49,7 +49,10 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     private val viewModel by activityViewModels<RhythmViewModel>()
     private var rhythmBottomSheet: RhythmBottomSheet? = null
     private var rhythmSaveDialog: RhythmSaveDialog? = null
-    private lateinit var mediaPlayer: MediaPlayer
+
+    private lateinit var soundPool: SoundPool
+    private var beatSound: Int = 0
+    private var musicSound: Int = 0
 
     @Inject
     lateinit var phoneDataManager: PhoneDataManager
@@ -90,23 +93,28 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun initPlayBtnListener() {
         binding.btnRhythmPlay.setOnSingleClickListener {
-            if (!viewModel.isLoading) {
-                if (::mediaPlayer.isInitialized) {
-                    mediaPlayer.seekTo(0)
-                    mediaPlayer.start()
-                    switchPlayingState(true)
-                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            if (::soundPool.isInitialized && viewModel.isSoundLoaded) {
+                if (!viewModel.isPlayed) {
+                    with(soundPool) {
+                        play(musicSound, 1f, 1f, 1, -1, 1f)
+                        play(beatSound, 1f, 1f, 1, -1, 1f)
+                    }
+                    viewModel.isPlayed = true
                 } else {
-                    toast(stringOf(R.string.error_msg))
+                    soundPool.autoResume()
                 }
+                switchPlayingState(true)
+                requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            } else {
+                toast(stringOf(R.string.error_msg))
             }
         }
     }
 
     private fun initStopBtnListener() {
         binding.btnRhythmStop.setOnSingleClickListener {
-            if (::mediaPlayer.isInitialized) {
-                mediaPlayer.pause()
+            if (::soundPool.isInitialized && viewModel.isSoundLoaded) {
+                soundPool.autoPause()
                 switchPlayingState(false)
                 requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             }
@@ -117,8 +125,8 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     override fun onStop() {
         super.onStop()
-        if (::mediaPlayer.isInitialized) {
-            mediaPlayer.pause()
+        if (::soundPool.isInitialized && viewModel.isSoundLoaded) {
+            soundPool.autoPause()
             switchPlayingState(false)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
@@ -154,9 +162,10 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         viewModel.isRhythmChanged.flowWithLifecycle(lifecycle).onEach { isChanged ->
             if (isChanged) {
                 setLoadingView(true)
-                if (::mediaPlayer.isInitialized) {
-                    mediaPlayer.pause()
+                if (::soundPool.isInitialized && viewModel.isSoundLoaded) {
+                    soundPool.autoPause()
                     switchPlayingState(false)
+                    requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 }
                 setUiWithCurrentRhythm()
                 viewModel.resetRhythmChangedState()
@@ -249,23 +258,21 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun setMediaPlayer() {
-        if (::mediaPlayer.isInitialized) mediaPlayer.release()
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(
-                File(requireContext().filesDir, viewModel.filename).absolutePath
-            )
-            setOnCompletionListener {
-                seekTo(0)
-                start()
+        if (::soundPool.isInitialized) soundPool.release()
+        soundPool = SoundPool.Builder().setMaxStreams(2).build()
+        beatSound =
+            soundPool.load(File(requireContext().filesDir, viewModel.filename).absolutePath, 1)
+        musicSound = soundPool.load(requireContext(), R.raw.music_bpm_100, 1)
+        soundPool.setOnLoadCompleteListener { _, sampleId, status ->
+            if (status == 0 && (sampleId == musicSound || sampleId == beatSound)) {
+                viewModel.isSoundLoaded = true
+                setLoadingView(false)
             }
-            prepare()
         }
-        setLoadingView(false)
     }
 
     private fun setLoadingView(isLoading: Boolean) {
         binding.layoutLoading.isVisible = isLoading
-        viewModel.isLoading = isLoading
         if (isLoading) {
             setStatusBarColor(R.color.transparent_50)
         } else {
@@ -287,9 +294,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         super.onDestroyView()
         rhythmBottomSheet = null
         rhythmSaveDialog = null
-        if (::mediaPlayer.isInitialized) {
-            mediaPlayer.release()
-        }
     }
 
     override fun onResume() {

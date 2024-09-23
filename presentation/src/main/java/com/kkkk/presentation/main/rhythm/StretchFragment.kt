@@ -1,6 +1,6 @@
 package com.kkkk.presentation.main.rhythm
 
-import android.media.MediaPlayer
+import android.media.SoundPool
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -19,7 +19,11 @@ import java.io.File
 class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_stretch) {
 
     private val viewModel by activityViewModels<RhythmViewModel>()
-    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var soundPool: SoundPool
+    private var beatSound: Int = 0
+    private var musicSound: Int = 0
+    private var isSoundLoaded = false
+    private var isPlayed = false
 
     override fun onViewCreated(
         view: View,
@@ -41,21 +45,26 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
 
     private fun initPlayBtnListener() {
         binding.btnStretchPlay.setOnSingleClickListener {
-            if (::mediaPlayer.isInitialized) {
-                mediaPlayer.seekTo(0)
-                mediaPlayer.start()
+            if (::soundPool.isInitialized && isSoundLoaded) {
+                if (!isPlayed) {
+                    with(soundPool) {
+                        play(musicSound, 1f, 1f, 1, -1, 1f)
+                        play(beatSound, 1f, 1f, 1, -1, 1f)
+                    }
+                    isPlayed = true
+                } else {
+                    soundPool.autoResume()
+                }
                 switchPlayingState(true)
                 requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            } else {
-                toast(stringOf(R.string.error_msg))
             }
         }
     }
 
     private fun initStopBtnListener() {
         binding.btnStretchStop.setOnSingleClickListener {
-            if (::mediaPlayer.isInitialized) {
-                mediaPlayer.pause()
+            if (::soundPool.isInitialized && isSoundLoaded) {
+                soundPool.autoPause()
                 switchPlayingState(false)
                 requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             }
@@ -64,8 +73,8 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
 
     override fun onStop() {
         super.onStop()
-        if (::mediaPlayer.isInitialized) {
-            mediaPlayer.pause()
+        if (::soundPool.isInitialized && isSoundLoaded) {
+            soundPool.autoPause()
             switchPlayingState(false)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
@@ -81,16 +90,15 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
 
     private fun setMediaPlayer() {
         if (File(requireContext().filesDir, viewModel.filename).exists()) {
-            if (::mediaPlayer.isInitialized) mediaPlayer.release()
-            mediaPlayer = MediaPlayer().apply {
-                setDataSource(
-                    File(requireContext().filesDir, viewModel.filename).absolutePath
-                )
-                setOnCompletionListener {
-                    seekTo(0)
-                    start()
+            if (::soundPool.isInitialized) soundPool.release()
+            soundPool = SoundPool.Builder().setMaxStreams(2).build()
+            beatSound =
+                soundPool.load(File(requireContext().filesDir, viewModel.filename).absolutePath, 1)
+            musicSound = soundPool.load(requireContext(), R.raw.music_bpm_100, 1)
+            soundPool.setOnLoadCompleteListener { _, sampleId, status ->
+                if (status == 0 && (sampleId == musicSound || sampleId == beatSound)) {
+                    isSoundLoaded = true
                 }
-                prepare()
             }
         } else {
             toast(stringOf(R.string.error_msg))
