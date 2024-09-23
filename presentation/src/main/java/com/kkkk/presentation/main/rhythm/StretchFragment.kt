@@ -42,6 +42,7 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
     private fun initPlayBtnListener() {
         binding.btnStretchPlay.setOnSingleClickListener {
             if (::mediaPlayer.isInitialized) {
+                mediaPlayer.seekTo(0)
                 mediaPlayer.start()
                 switchPlayingState(true)
                 requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -85,7 +86,10 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
                 setDataSource(
                     File(requireContext().filesDir, viewModel.filename).absolutePath
                 )
-                isLooping = true
+                setOnCompletionListener {
+                    seekTo(0)
+                    start()
+                }
                 prepare()
             }
         } else {

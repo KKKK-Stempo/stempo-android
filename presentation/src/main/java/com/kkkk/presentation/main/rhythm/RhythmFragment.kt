@@ -92,6 +92,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         binding.btnRhythmPlay.setOnSingleClickListener {
             if (!viewModel.isLoading) {
                 if (::mediaPlayer.isInitialized) {
+                    mediaPlayer.seekTo(0)
                     mediaPlayer.start()
                     switchPlayingState(true)
                     requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -253,7 +254,10 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             setDataSource(
                 File(requireContext().filesDir, viewModel.filename).absolutePath
             )
-            isLooping = true
+            setOnCompletionListener {
+                seekTo(0)
+                start()
+            }
             prepare()
         }
         setLoadingView(false)
