@@ -57,6 +57,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private var rhythmBottomSheet: RhythmBottomSheet? = null
     private var rhythmSaveDialog: RhythmSaveDialog? = null
+    private var watchSyncDialog: WatchSyncDialog? = null
 
     private lateinit var soundPool: SoundPool
     private lateinit var mediaPlayer: MediaPlayer
@@ -64,9 +65,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     private var beatSound: Int = 0
     private var beatStream: Int = 0
     private var isLoaded = false
-
-    @Inject
-    lateinit var phoneDataManager: PhoneDataManager
 
     override fun onViewCreated(
         view: View,
@@ -355,11 +353,13 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         if (::soundPool.isInitialized) soundPool.release()
         rhythmBottomSheet = null
         rhythmSaveDialog = null
+        watchSyncDialog = null
     }
 
     private fun initWearableSyncBtnListener() {
         binding.btnWatch.setOnSingleClickListener {
-            phoneDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.bpm)
+            watchSyncDialog = WatchSyncDialog()
+            watchSyncDialog?.show(parentFragmentManager, DIALOG_WATCH_SYNC)
         }
     }
 
@@ -425,6 +425,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     companion object {
         private const val BOTTOM_SHEET_CHANGE_LEVEL = "BOTTOM_SHEET_CHANGE_LEVEL"
         private const val DIALOG_RHYTHM_SAVE = "DIALOG_RHYTHM_SAVE"
+        private const val DIALOG_WATCH_SYNC = "DIALOG_WATCH_SYNC"
 
         private const val COLOR_PURPLE = "purple"
         private const val COLOR_SKY = "sky"
