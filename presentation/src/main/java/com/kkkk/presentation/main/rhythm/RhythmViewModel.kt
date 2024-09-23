@@ -194,6 +194,7 @@ constructor(
     fun posRhythmRecordToSaveWatch(
         accuracy: Double,
     ) {
+        if (accuracy == 0.0) return
         viewModelScope.launch {
             rhythmRepository.postRhythmRecord(
                 RecordRequestModel(
