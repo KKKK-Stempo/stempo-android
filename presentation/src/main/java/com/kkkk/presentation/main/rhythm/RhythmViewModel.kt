@@ -27,9 +27,6 @@ constructor(
     var bit = MAX_BIT
     var filename: String = "stempo_bpm_${bpm}_bit_${bit}"
 
-    var isSoundLoaded = false
-    var isPlayed = false
-
     var tempBpm = MutableLiveData<Int>(MIN_BPM)
     var tempBit = MutableLiveData<Int>(MIN_BIT)
     var isBpmMinusAvailable = MutableLiveData<Boolean>(false)
@@ -108,7 +105,6 @@ constructor(
         filename = "stempo_bpm_${bpm}_bit_${bit}"
         userRepository.setBpm(bpm)
         userRepository.setBit(bit)
-        isPlayed = false
         viewModelScope.launch {
             _isRhythmChanged.emit(true)
         }
