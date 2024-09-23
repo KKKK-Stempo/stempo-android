@@ -113,12 +113,12 @@ fun HomeScreen(
             when (sideEffect) {
                 is HomeSideEffect.Vibrate -> {
                     if (!state.isPlayingMusic) return@collect
-                    vibrator.vibrate(
-                        VibrationEffect.createOneShot(
-                            VIBRATION_DURATION,
-                            VibrationEffect.DEFAULT_AMPLITUDE
-                        )
-                    )
+//                    vibrator.vibrate(
+//                        VibrationEffect.createOneShot(
+//                            VIBRATION_DURATION,
+//                            VibrationEffect.DEFAULT_AMPLITUDE
+//                        )
+//                    )
                 }
 
                 is HomeSideEffect.EndCount -> {
@@ -138,7 +138,6 @@ fun HomeScreen(
             .background(MaterialTheme.colors.background),
     ) {
         MusicButton(isPlayingMusic = state.isPlayingMusic) {
-            // TODO: 여기에서 전송 완료가 확인되면 진동을 시작하고 싶음. 일단 진동을 뺼까?
             viewModel.controlMusic()
             wearableDataManager.sendDoubleToPhone(
                 PATH_START,

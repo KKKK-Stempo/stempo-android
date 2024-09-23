@@ -1,5 +1,6 @@
 package com.kkkk.presentation.main.rhythm
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -35,7 +36,9 @@ class RhythmSaveDialog :
     }
 
     private fun initPauseBtnListener() {
-        binding.btnPause.setOnSingleClickListener { dismiss() }
+        binding.btnPause.setOnSingleClickListener {
+            dismiss()
+        }
     }
 
     private fun initSaveBtnListener() {
@@ -43,5 +46,10 @@ class RhythmSaveDialog :
             viewModel.postRhythmRecordToSave()
             dismiss()
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        viewModel.watchAccuracy = 0.0
     }
 }

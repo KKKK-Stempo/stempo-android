@@ -390,7 +390,8 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                         DataMapItem.fromDataItem(item).dataMap.apply {
                             val record = getDouble(KEY_RECORD)
                             Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $record")
-                            viewModel.posRhythmRecordToSaveWatch(record)
+                            viewModel.watchAccuracy = record
+                            pauseMusic(true)
                         }
                     }
                     if (item.uri.path?.compareTo(PATH_START) == 0) {
