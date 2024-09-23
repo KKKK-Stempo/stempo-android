@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.DataMap
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.kkkk.core.base.BaseFragment
@@ -367,7 +368,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         stepDetectorSensor?.let {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
         }
-        Timber.tag("okhttp").d("LISTENER : ADDED")
         Wearable.getDataClient(requireActivity()).addListener(this)
     }
 
@@ -376,7 +376,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         if (::sensorManager.isInitialized) {
             sensorManager.unregisterListener(this)
         }
-        Timber.tag("okhttp").d("LISTENER : REMOVED")
         Wearable.getDataClient(requireActivity()).removeListener(this)
     }
 
@@ -386,30 +385,39 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         dataEvents.forEach { event ->
             if (event.type == DataEvent.TYPE_CHANGED) {
                 event.dataItem.also { item ->
-                    if (item.uri.path?.compareTo(PATH_RECORD) == 0) {
-                        DataMapItem.fromDataItem(item).dataMap.apply {
-                            val record = getDouble(KEY_RECORD)
-                            Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $record")
-                            viewModel.watchAccuracy = record
-                            pauseMusic(true)
-                        }
-                    }
-                    if (item.uri.path?.compareTo(PATH_START) == 0) {
-                        DataMapItem.fromDataItem(item).dataMap.apply {
-                            val record = getDouble(KEY_START)
-                            Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $record")
-                            if (::soundPool.isInitialized && ::mediaPlayer.isInitialized && isLoaded) {
-                                lifecycleScope.launch {
-                                    playSoundPoolAndMediaPlayer()
-                                }
-                            } else {
-                                toast(stringOf(R.string.error_msg))
-                            }
-                        }
+                    val dataMap = DataMapItem.fromDataItem(item).dataMap
+                    when (item.uri.path) {
+                        PATH_START -> handleStart(dataMap)
+                        PATH_RECORD -> handleRecord(dataMap)
+                        PATH_END -> handleEnd(dataMap)
+                        else -> Timber.tag("okhttp").d("LISTENER : Unknown path received")
                     }
                 }
             }
         }
+    }
+
+    private fun handleStart(dataMap: DataMap) {
+        Timber.tag("okhttp").d("LISTENER : START DATA RECEIVED : ${dataMap.getDouble(KEY_START)}")
+        if (::soundPool.isInitialized && ::mediaPlayer.isInitialized && isLoaded) {
+            lifecycleScope.launch {
+                playSoundPoolAndMediaPlayer()
+            }
+        } else {
+            toast(stringOf(R.string.error_msg))
+        }
+    }
+
+    private fun handleRecord(dataMap: DataMap) {
+        val record = dataMap.getDouble(KEY_RECORD)
+        Timber.tag("okhttp").d("LISTENER : RECORD DATA RECEIVED : $record")
+        viewModel.watchAccuracy = record
+        pauseMusic(true)
+    }
+
+    private fun handleEnd(dataMap: DataMap) {
+        Timber.tag("okhttp").d("LISTENER : END DATA RECEIVED : ${dataMap.getDouble(KEY_END)}")
+        pauseMusic(false)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
@@ -428,9 +436,11 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
         const val KEY_RECORD = "KEY_RECORD"
         const val KEY_START = "KEY_START"
+        const val KEY_END = "KEY_END"
 
         const val PATH_RECORD = "/record"
         const val PATH_START = "/start"
+        const val PATH_END = "/end"
 
         private const val FLOAT_80 = 80.00000000000000000000F
 

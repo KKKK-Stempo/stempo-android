@@ -171,6 +171,7 @@ constructor(
             watchAccuracy
         }
         watchAccuracy = 0.0
+        if (accuracy == 0.0) return
 
         viewModelScope.launch {
             rhythmRepository.postRhythmRecord(
