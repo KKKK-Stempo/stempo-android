@@ -40,7 +40,10 @@ import com.kkkk.stempo.R
 import com.kkkk.stempo.presentation.LocalWearableDataManager
 import com.kkkk.stempo.presentation.home.HomeViewModel.Companion.VIBRATION_DURATION
 import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.KEY_RECORD
+import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.KEY_START
 import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.PATH_RECORD
+import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.PATH_START
+import kotlin.random.Random
 
 @Composable
 fun HomeScreen(
@@ -135,7 +138,13 @@ fun HomeScreen(
             .background(MaterialTheme.colors.background),
     ) {
         MusicButton(isPlayingMusic = state.isPlayingMusic) {
+            // TODO: 여기에서 전송 완료가 확인되면 진동을 시작하고 싶음. 일단 진동을 뺼까?
             viewModel.controlMusic()
+            wearableDataManager.sendDoubleToPhone(
+                PATH_START,
+                KEY_START,
+                Random.nextDouble(1.0, 10000.0)
+            )
         }
 
         if (state.isPlayingMusic) {

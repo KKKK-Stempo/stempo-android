@@ -393,6 +393,19 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
                             viewModel.posRhythmRecordToSaveWatch(record)
                         }
                     }
+                    if (item.uri.path?.compareTo(PATH_START) == 0) {
+                        DataMapItem.fromDataItem(item).dataMap.apply {
+                            val record = getDouble(KEY_START)
+                            Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $record")
+                            if (::soundPool.isInitialized && ::mediaPlayer.isInitialized && isLoaded) {
+                                lifecycleScope.launch {
+                                    playSoundPoolAndMediaPlayer()
+                                }
+                            } else {
+                                toast(stringOf(R.string.error_msg))
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -413,7 +426,10 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         private const val RAW = "raw"
 
         const val KEY_RECORD = "KEY_RECORD"
+        const val KEY_START = "KEY_START"
+
         const val PATH_RECORD = "/record"
+        const val PATH_START = "/start"
 
         private const val FLOAT_80 = 80.00000000000000000000F
 

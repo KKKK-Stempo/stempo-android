@@ -27,7 +27,9 @@ class WearableDataManager(private val dataClient: DataClient) {
 
     companion object {
         const val KEY_RECORD = "KEY_RECORD"
+        const val KEY_START = "KEY_START"
 
         const val PATH_RECORD = "/record"
+        const val PATH_START = "/start"
     }
 }
