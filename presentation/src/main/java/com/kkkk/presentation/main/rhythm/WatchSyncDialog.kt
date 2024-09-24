@@ -1,18 +1,24 @@
 package com.kkkk.presentation.main.rhythm
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
 import com.kkkk.core.base.BaseDialog
 import com.kkkk.core.extension.setOnSingleClickListener
+import com.kkkk.presentation.manager.PhoneDataManager
+import dagger.hilt.android.AndroidEntryPoint
 import kr.genti.presentation.R
-import kr.genti.presentation.databinding.DialogRhythmSaveBinding
+import kr.genti.presentation.databinding.DialogWatchSyncBinding
+import javax.inject.Inject
 
-class RhythmSaveDialog :
-    BaseDialog<DialogRhythmSaveBinding>(R.layout.dialog_rhythm_save) {
+@AndroidEntryPoint
+class WatchSyncDialog :
+    BaseDialog<DialogWatchSyncBinding>(R.layout.dialog_watch_sync) {
     private val viewModel by activityViewModels<RhythmViewModel>()
+
+    @Inject
+    lateinit var phoneDataManager: PhoneDataManager
 
     override fun onStart() {
         super.onStart()
@@ -31,25 +37,17 @@ class RhythmSaveDialog :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        initPauseBtnListener()
-        initSaveBtnListener()
+        initWatchSyncBtnListener()
     }
 
-    private fun initPauseBtnListener() {
-        binding.btnPause.setOnSingleClickListener {
+    private fun initWatchSyncBtnListener() {
+        binding.btnWatchSync.setOnSingleClickListener {
+            phoneDataManager.sendIntToWearable(
+                PhoneDataManager.PATH_BPM,
+                PhoneDataManager.KEY_BPM,
+                viewModel.bpm
+            )
             dismiss()
         }
-    }
-
-    private fun initSaveBtnListener() {
-        binding.btnSave.setOnSingleClickListener {
-            viewModel.postRhythmRecordToSave()
-            dismiss()
-        }
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        viewModel.watchAccuracy = 0.0
     }
 }

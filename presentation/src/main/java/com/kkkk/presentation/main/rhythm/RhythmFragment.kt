@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.DataMap
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.kkkk.core.base.BaseFragment
@@ -56,6 +57,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private var rhythmBottomSheet: RhythmBottomSheet? = null
     private var rhythmSaveDialog: RhythmSaveDialog? = null
+    private var watchSyncDialog: WatchSyncDialog? = null
 
     private lateinit var soundPool: SoundPool
     private lateinit var mediaPlayer: MediaPlayer
@@ -63,9 +65,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     private var beatSound: Int = 0
     private var beatStream: Int = 0
     private var isLoaded = false
-
-    @Inject
-    lateinit var phoneDataManager: PhoneDataManager
 
     override fun onViewCreated(
         view: View,
@@ -140,7 +139,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     override fun onStop() {
         super.onStop()
-        pauseMusic(true)
+        pauseMusic(false)
     }
 
     private fun pauseMusic(isButton: Boolean) {
@@ -163,12 +162,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             btnRhythmPlay.isVisible = !start
             btnRhythmStop.isVisible = start
             lottieRhythmBg.isVisible = start
-        }
-    }
-
-    private fun initWearableSyncBtnListener() {
-        binding.tvRhythmTitle.setOnSingleClickListener {
-            phoneDataManager.sendIntToWearable(PATH_BPM, KEY_BPM, viewModel.bpm)
         }
     }
 
@@ -333,6 +326,17 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         }
     }
 
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
+            viewModel.addStepCount(1)
+        }
+    }
+
+    private fun initializeSensor() {
+        sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+    }
+
     private fun observeRecordSaveState() {
         viewModel.isRecordSaved.flowWithLifecycle(lifecycle).onEach { isSuccess ->
             if (isSuccess) {
@@ -349,6 +353,14 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         if (::soundPool.isInitialized) soundPool.release()
         rhythmBottomSheet = null
         rhythmSaveDialog = null
+        watchSyncDialog = null
+    }
+
+    private fun initWearableSyncBtnListener() {
+        binding.btnWatch.setOnSingleClickListener {
+            watchSyncDialog = WatchSyncDialog()
+            watchSyncDialog?.show(parentFragmentManager, DIALOG_WATCH_SYNC)
+        }
     }
 
     override fun onResume() {
@@ -356,7 +368,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         stepDetectorSensor?.let {
             sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
         }
-        Timber.tag("okhttp").d("LISTENER : ADDED")
         Wearable.getDataClient(requireActivity()).addListener(this)
     }
 
@@ -365,19 +376,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         if (::sensorManager.isInitialized) {
             sensorManager.unregisterListener(this)
         }
-        Timber.tag("okhttp").d("LISTENER : REMOVED")
         Wearable.getDataClient(requireActivity()).removeListener(this)
-    }
-
-    override fun onSensorChanged(event: SensorEvent?) {
-        if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
-            viewModel.addStepCount(1)
-        }
-    }
-
-    private fun initializeSensor() {
-        sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
     }
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {
@@ -386,16 +385,39 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         dataEvents.forEach { event ->
             if (event.type == DataEvent.TYPE_CHANGED) {
                 event.dataItem.also { item ->
-                    if (item.uri.path?.compareTo(PATH_RECORD) == 0) {
-                        DataMapItem.fromDataItem(item).dataMap.apply {
-                            val record = getDouble(KEY_RECORD)
-                            Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $record")
-                            viewModel.posRhythmRecordToSaveWatch(record)
-                        }
+                    val dataMap = DataMapItem.fromDataItem(item).dataMap
+                    when (item.uri.path) {
+                        PATH_START -> handleStart(dataMap)
+                        PATH_RECORD -> handleRecord(dataMap)
+                        PATH_END -> handleEnd(dataMap)
+                        else -> Timber.tag("okhttp").d("LISTENER : Unknown path received")
                     }
                 }
             }
         }
+    }
+
+    private fun handleStart(dataMap: DataMap) {
+        Timber.tag("okhttp").d("LISTENER : START DATA RECEIVED : ${dataMap.getDouble(KEY_START)}")
+        if (::soundPool.isInitialized && ::mediaPlayer.isInitialized && isLoaded) {
+            lifecycleScope.launch {
+                playSoundPoolAndMediaPlayer()
+            }
+        } else {
+            toast(stringOf(R.string.error_msg))
+        }
+    }
+
+    private fun handleRecord(dataMap: DataMap) {
+        val record = dataMap.getDouble(KEY_RECORD)
+        Timber.tag("okhttp").d("LISTENER : RECORD DATA RECEIVED : $record")
+        viewModel.watchAccuracy = record
+        pauseMusic(true)
+    }
+
+    private fun handleEnd(dataMap: DataMap) {
+        Timber.tag("okhttp").d("LISTENER : END DATA RECEIVED : ${dataMap.getDouble(KEY_END)}")
+        pauseMusic(false)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
@@ -403,6 +425,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     companion object {
         private const val BOTTOM_SHEET_CHANGE_LEVEL = "BOTTOM_SHEET_CHANGE_LEVEL"
         private const val DIALOG_RHYTHM_SAVE = "DIALOG_RHYTHM_SAVE"
+        private const val DIALOG_WATCH_SYNC = "DIALOG_WATCH_SYNC"
 
         private const val COLOR_PURPLE = "purple"
         private const val COLOR_SKY = "sky"
@@ -413,7 +436,12 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         private const val RAW = "raw"
 
         const val KEY_RECORD = "KEY_RECORD"
+        const val KEY_START = "KEY_START"
+        const val KEY_END = "KEY_END"
+
         const val PATH_RECORD = "/record"
+        const val PATH_START = "/start"
+        const val PATH_END = "/end"
 
         private const val FLOAT_80 = 80.00000000000000000000F
 

@@ -32,6 +32,8 @@ constructor(
     var isBpmMinusAvailable = MutableLiveData<Boolean>(false)
     var isBpmPlusAvailable = MutableLiveData<Boolean>(true)
 
+    var watchAccuracy: Double = 0.0
+
     private val _isStretchView = MutableSharedFlow<Boolean>()
     val isStretchView: SharedFlow<Boolean> = _isStretchView
 
@@ -162,8 +164,14 @@ constructor(
         _beforeStepTime.value = System.currentTimeMillis()
     }
 
-    fun posRhythmRecordToSave() {
-        val accuracy = calculateAccuracy(_oddStepTime.value, _evenStepTime.value)
+    fun postRhythmRecordToSave() {
+        val accuracy = if (watchAccuracy == 0.0) {
+            calculateAccuracy(_oddStepTime.value, _evenStepTime.value)
+        } else {
+            watchAccuracy
+        }
+        watchAccuracy = 0.0
+        if (accuracy == 0.0) return
 
         viewModelScope.launch {
             rhythmRepository.postRhythmRecord(
@@ -188,25 +196,6 @@ constructor(
             difference == 0L -> 100.0
             difference >= MAX_ALLOWED_DIFFERENCE -> 0.0
             else -> (1 - difference.toDouble() / MAX_ALLOWED_DIFFERENCE) * 100
-        }
-    }
-
-    fun posRhythmRecordToSaveWatch(
-        accuracy: Double,
-    ) {
-        viewModelScope.launch {
-            rhythmRepository.postRhythmRecord(
-                RecordRequestModel(
-                    accuracy,
-                    0,
-                    stepCount.value
-                )
-            ).onSuccess {
-                resetStepInfo()
-                _isRecordSaved.emit(true)
-            }.onFailure {
-                _isRecordSaved.emit(false)
-            }
         }
     }
 

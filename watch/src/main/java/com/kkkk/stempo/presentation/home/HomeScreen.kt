@@ -39,8 +39,13 @@ import androidx.wear.compose.material.Text
 import com.kkkk.stempo.R
 import com.kkkk.stempo.presentation.LocalWearableDataManager
 import com.kkkk.stempo.presentation.home.HomeViewModel.Companion.VIBRATION_DURATION
+import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.KEY_END
 import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.KEY_RECORD
+import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.KEY_START
+import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.PATH_END
 import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.PATH_RECORD
+import com.kkkk.stempo.presentation.manager.WearableDataManager.Companion.PATH_START
+import kotlin.random.Random
 
 @Composable
 fun HomeScreen(
@@ -110,12 +115,12 @@ fun HomeScreen(
             when (sideEffect) {
                 is HomeSideEffect.Vibrate -> {
                     if (!state.isPlayingMusic) return@collect
-                    vibrator.vibrate(
-                        VibrationEffect.createOneShot(
-                            VIBRATION_DURATION,
-                            VibrationEffect.DEFAULT_AMPLITUDE
-                        )
-                    )
+//                    vibrator.vibrate(
+//                        VibrationEffect.createOneShot(
+//                            VIBRATION_DURATION,
+//                            VibrationEffect.DEFAULT_AMPLITUDE
+//                        )
+//                    )
                 }
 
                 is HomeSideEffect.EndCount -> {
@@ -123,6 +128,11 @@ fun HomeScreen(
                         PATH_RECORD,
                         KEY_RECORD,
                         sideEffect.accuracy
+                    )
+                    wearableDataManager.sendDoubleToPhone(
+                        PATH_END,
+                        KEY_END,
+                        Random.nextDouble(1.0, 10000.0)
                     )
                 }
             }
@@ -136,6 +146,11 @@ fun HomeScreen(
     ) {
         MusicButton(isPlayingMusic = state.isPlayingMusic) {
             viewModel.controlMusic()
+            wearableDataManager.sendDoubleToPhone(
+                PATH_START,
+                KEY_START,
+                Random.nextDouble(1.0, 10000.0)
+            )
         }
 
         if (state.isPlayingMusic) {
