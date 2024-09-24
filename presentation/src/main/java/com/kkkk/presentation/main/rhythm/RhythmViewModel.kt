@@ -166,7 +166,10 @@ constructor(
 
     fun postRhythmRecordToSave() {
         val accuracy = if (watchAccuracy == 0.0) {
-            calculateAccuracy(_oddStepTime.value, _evenStepTime.value)
+            calculateAccuracy(
+                _oddStepTime.value / _stepCount.value,
+                _evenStepTime.value / _stepCount.value
+            )
         } else {
             watchAccuracy
         }
@@ -194,7 +197,7 @@ constructor(
 
         return when {
             difference == 0L -> 100.0
-            difference >= MAX_ALLOWED_DIFFERENCE -> 0.0
+            difference >= MAX_ALLOWED_DIFFERENCE -> 0.1
             else -> (1 - difference.toDouble() / MAX_ALLOWED_DIFFERENCE) * 100
         }
     }
