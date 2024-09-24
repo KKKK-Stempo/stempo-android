@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.max
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -31,7 +30,15 @@ class HomeViewModel @Inject constructor(
 
     private var vibrationJob: Job? = null
 
-    private val _firstStepTime = MutableStateFlow(0L)
+    private val _stepCount = MutableStateFlow(0)
+
+    private val _oddStepCount = MutableStateFlow(0)
+    private val _oddStepTime = MutableStateFlow(0L)
+
+    private val _evenStepCount = MutableStateFlow(0)
+    private val _evenStepTime = MutableStateFlow(0L)
+
+    private val _beforeStepTime = MutableStateFlow(0L)
 
     fun controlMusic() {
         _state.value = _state.value.copy(isPlayingMusic = !_state.value.isPlayingMusic)
@@ -53,18 +60,17 @@ class HomeViewModel @Inject constructor(
                 delay(VIBRATION_INTERVAL)
             }
         }
-        _firstStepTime.value = System.currentTimeMillis()
+        _beforeStepTime.value = System.currentTimeMillis()
     }
 
     private fun stopVibration() {
         vibrationJob?.cancel()
         vibrationJob = null
 
-        var accuracy =
-            (_state.value.stepCount.toDouble() / (VIBRATION_INTERVAL / 60 * ((System.currentTimeMillis() - _firstStepTime.value) / 10000)))
-        if (accuracy > 1) {
-            accuracy = max(2 - accuracy, 0.0)
-        }
+        val accuracy = calculateAccuracy(
+            _oddStepTime.value / _stepCount.value,
+            _evenStepTime.value / _stepCount.value
+        )
 
         viewModelScope.launch {
             _sideEffect.emit(
@@ -77,11 +83,30 @@ class HomeViewModel @Inject constructor(
         _state.value = _state.value.copy(stepCount = 0)
     }
 
-    fun addStep() {
-        _state.value = _state.value.copy(stepCount = _state.value.stepCount + 1)
+    private fun calculateAccuracy(time1: Long, time2: Long): Double {
+        val difference = kotlin.math.abs(time1 - time2)
+
+        return when {
+            difference == 0L -> 100.0
+            difference >= MAX_ALLOWED_DIFFERENCE -> 0.1
+            else -> (1 - difference.toDouble() / MAX_ALLOWED_DIFFERENCE) * 100
+        }
+    }
+
+    fun addStep(newStepCount: Int = 1) {
+        if ((_oddStepCount.value + _evenStepCount.value) % 2 == 0) {
+            _oddStepCount.value += newStepCount
+            _oddStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
+        } else {
+            _evenStepCount.value += newStepCount
+            _evenStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
+        }
+        _stepCount.value += newStepCount
+        _beforeStepTime.value = System.currentTimeMillis()
     }
 
     companion object {
         const val VIBRATION_DURATION = 50L
+        const val MAX_ALLOWED_DIFFERENCE = 3600L
     }
 }
