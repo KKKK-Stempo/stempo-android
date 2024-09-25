@@ -111,8 +111,8 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     private suspend fun playSoundPoolAndMediaPlayer() {
         lifecycleScope.launch {
             listOf(
+                async { mediaPlayer.start() },
                 async { playOrResumeSoundPool() },
-                async { mediaPlayer.start() }
             ).awaitAll()
             switchPlayingState(true)
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -135,7 +135,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     override fun onStop() {
         super.onStop()
-        pauseMusic(false)
+        if (::mediaPlayer.isInitialized && ::soundPool.isInitialized) pauseMusic(false)
     }
 
     private fun pauseMusic(isButton: Boolean) {
@@ -305,6 +305,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         mediaPlayer = MediaPlayer.create(requireContext(), findMusicByBpm(viewModel.bpm)).apply {
             isLooping = true
             setVolume(0.1f, 0.1f)
+            // setPlaybackParams(PlaybackParams().setSpeed(1.5f))
             setOnPreparedListener {
                 continuation.resume(Unit)
             }
