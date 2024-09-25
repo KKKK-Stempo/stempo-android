@@ -28,9 +28,6 @@ import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.core.state.UiState
-import com.kkkk.presentation.manager.PhoneDataManager
-import com.kkkk.presentation.manager.PhoneDataManager.Companion.KEY_BPM
-import com.kkkk.presentation.manager.PhoneDataManager.Companion.PATH_BPM
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -44,7 +41,6 @@ import kr.genti.presentation.databinding.FragmentRhythmBinding
 import timber.log.Timber
 import java.io.File
 import java.nio.file.Files
-import javax.inject.Inject
 import kotlin.coroutines.resume
 
 @AndroidEntryPoint
@@ -127,7 +123,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         if (beatStream != 0) {
             soundPool.resume(beatStream)
         } else {
-            beatStream = soundPool.play(beatSound, 1f, 1f, 1, -1, 1f)
+            beatStream = soundPool.play(beatSound, 10f, 10f, 1, -1, 1f)
         }
     }
 
@@ -308,6 +304,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         if (::mediaPlayer.isInitialized) mediaPlayer.release()
         mediaPlayer = MediaPlayer.create(requireContext(), findMusicByBpm(viewModel.bpm)).apply {
             isLooping = true
+            setVolume(0.1f, 0.1f)
             setOnPreparedListener {
                 continuation.resume(Unit)
             }
