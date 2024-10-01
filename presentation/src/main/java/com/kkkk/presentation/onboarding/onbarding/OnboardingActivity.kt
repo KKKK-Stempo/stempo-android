@@ -110,7 +110,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
         Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 
     companion object {
-        private const val TIME = 6000L
+        private const val TIME = 60000L
         private const val INTERVAL = 1000L
         private const val VIBRATION_TIME = 2000L
         private const val VIBRATION_AMPLITUDE = 200
