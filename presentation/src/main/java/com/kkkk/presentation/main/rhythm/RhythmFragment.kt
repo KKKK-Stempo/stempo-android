@@ -28,9 +28,8 @@ import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.core.state.UiState
-import com.kkkk.presentation.manager.PhoneDataManager
-import com.kkkk.presentation.manager.PhoneDataManager.Companion.KEY_BPM
-import com.kkkk.presentation.manager.PhoneDataManager.Companion.PATH_BPM
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.FragmentRhythmBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -39,12 +38,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.FragmentRhythmBinding
 import timber.log.Timber
 import java.io.File
 import java.nio.file.Files
-import javax.inject.Inject
 import kotlin.coroutines.resume
 
 @AndroidEntryPoint

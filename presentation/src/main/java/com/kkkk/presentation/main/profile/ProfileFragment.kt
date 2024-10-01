@@ -1,17 +1,18 @@
 package com.kkkk.presentation.main.profile
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import com.kkkk.core.base.BaseFragment
-import com.kkkk.core.extension.colorOf
 import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.toast
+import com.kkkk.stempo.presentation.BuildConfig
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.FragmentProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.FragmentProfileBinding
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_profile) {
@@ -23,6 +24,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_p
 
         initWebBtnListener()
         initReportBtnListener()
+        initVersionListener()
         setStatusBarColor(R.color.gray_100)
     }
 
@@ -40,6 +42,14 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_p
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun initVersionListener() {
+        with(binding) {
+            tvVersionCode.text = "v ${BuildConfig.VERSION_NAME}"
+
+        }
+    }
+
     private fun navigateToWeb(url: String) {
         Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
             startActivity(this)
@@ -47,7 +57,9 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_p
     }
 
     companion object {
-        private const val URL_ANNOUNCE ="https://field-colt-189.notion.site/Stempo-e8252a5094eb4351819809dc3abd6623?pvs=4"
-        private const val URL_FAQ = "https://field-colt-189.notion.site/FAQ-3e01b4b00b0c4b2c84aaacd79b2b6045?pvs=4"
+        private const val URL_ANNOUNCE =
+            "https://field-colt-189.notion.site/Stempo-e8252a5094eb4351819809dc3abd6623?pvs=4"
+        private const val URL_FAQ =
+            "https://field-colt-189.notion.site/FAQ-3e01b4b00b0c4b2c84aaacd79b2b6045?pvs=4"
     }
 }

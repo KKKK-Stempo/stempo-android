@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.kkkk.core.base.BaseFragment
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.FragmentOnboardingStartBinding
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.FragmentOnboardingStartBinding
 
 class OnboardingStartFragment :
     BaseFragment<FragmentOnboardingStartBinding>(R.layout.fragment_onboarding_start) {

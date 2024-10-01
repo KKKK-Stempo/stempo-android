@@ -22,14 +22,13 @@ import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.core.extension.setNavigationBarColorFromResource
 import com.kkkk.core.extension.setStatusBarColorFromResource
-import com.kkkk.core.extension.toast
 import com.kkkk.presentation.main.MainActivity
 import com.kkkk.presentation.onboarding.onbarding.OnboardingActivity
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.ActivitySplashBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.ActivitySplashBinding
 
 @AndroidEntryPoint
 class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_splash) {

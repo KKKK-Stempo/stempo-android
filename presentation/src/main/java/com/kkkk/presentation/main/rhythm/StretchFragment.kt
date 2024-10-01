@@ -14,13 +14,13 @@ import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.presentation.main.rhythm.RhythmFragment.Companion.findMusicByBpm
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.FragmentStretchBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.FragmentStretchBinding
 import java.io.File
 import kotlin.coroutines.resume
 

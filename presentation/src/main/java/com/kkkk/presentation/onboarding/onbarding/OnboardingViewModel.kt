@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.math.max
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
@@ -44,7 +45,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun setBpmLevel(deviceTag: String) {
-        val bpm = _speed.value / (_stepCount.value / SPEED_CALC_INTERVAL)
+        val bpm = max(_speed.value / (_stepCount.value / SPEED_CALC_INTERVAL), 60.0f)
 
         viewModelScope.launch {
             authRepository.signup(deviceTag).onSuccess {

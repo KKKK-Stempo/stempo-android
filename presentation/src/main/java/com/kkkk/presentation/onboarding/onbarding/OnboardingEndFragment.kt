@@ -1,14 +1,11 @@
 package com.kkkk.presentation.onboarding.onbarding
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.kkkk.core.base.BaseFragment
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.FragmentOnboardingEndBinding
-import kr.genti.presentation.databinding.FragmentOnboardingStartBinding
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.FragmentOnboardingEndBinding
 
 class OnboardingEndFragment :
     BaseFragment<FragmentOnboardingEndBinding>(R.layout.fragment_onboarding_end) {

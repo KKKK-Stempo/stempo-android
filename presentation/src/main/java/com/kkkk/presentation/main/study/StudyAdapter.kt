@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.kkkk.core.util.ItemDiffCallback
 import com.kkkk.domain.entity.response.StudyModel
-import kr.genti.presentation.databinding.ItemStudyCheckStringBinding
+import com.kkkk.stempo.presentation.databinding.ItemStudyCheckStringBinding
 
 class StudyAdapter(context: Context, private val listener: OnItemClickListener, private val isMe: Boolean) :
     ListAdapter<StudyModel.StudyItemModel, StudyViewHolder>(

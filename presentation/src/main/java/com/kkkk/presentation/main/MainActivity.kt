@@ -14,11 +14,11 @@ import com.kkkk.presentation.main.rhythm.RhythmFragment
 import com.kkkk.presentation.main.rhythm.RhythmViewModel
 import com.kkkk.presentation.main.rhythm.StretchFragment
 import com.kkkk.presentation.main.study.StudyFragment
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.ActivityMainBinding
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {

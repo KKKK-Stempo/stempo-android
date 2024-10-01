@@ -3,8 +3,8 @@ package com.kkkk.presentation.main.study
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.kkkk.domain.entity.response.StudyModel
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.ItemStudyCheckStringBinding
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.ItemStudyCheckStringBinding
 
 class StudyViewHolder(
     private val binding: ItemStudyCheckStringBinding,

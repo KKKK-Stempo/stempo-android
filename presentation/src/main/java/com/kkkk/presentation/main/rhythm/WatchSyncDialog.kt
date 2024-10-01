@@ -7,9 +7,9 @@ import androidx.fragment.app.activityViewModels
 import com.kkkk.core.base.BaseDialog
 import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.presentation.manager.PhoneDataManager
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.DialogWatchSyncBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.DialogWatchSyncBinding
 import javax.inject.Inject
 
 @AndroidEntryPoint

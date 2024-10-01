@@ -8,8 +8,8 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kkkk.core.base.BaseBottomSheet
 import com.kkkk.core.extension.setOnSingleClickListener
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.BottomSheetRhythmBinding
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.BottomSheetRhythmBinding
 
 class RhythmBottomSheet :
     BaseBottomSheet<BottomSheetRhythmBinding>(R.layout.bottom_sheet_rhythm) {

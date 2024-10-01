@@ -15,8 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.presentation.onboarding.onbarding.OnboardingViewModel.Companion.SPEED_CALC_INTERVAL
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.FragmentOnboardingMeasureBinding
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.FragmentOnboardingMeasureBinding
 
 class OnboardingMeasureFragment :
     BaseFragment<FragmentOnboardingMeasureBinding>(R.layout.fragment_onboarding_measure),

@@ -7,8 +7,8 @@ import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
 import com.kkkk.core.base.BaseDialog
 import com.kkkk.core.extension.setOnSingleClickListener
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.DialogRhythmSaveBinding
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.DialogRhythmSaveBinding
 
 class RhythmSaveDialog :
     BaseDialog<DialogRhythmSaveBinding>(R.layout.dialog_rhythm_save) {

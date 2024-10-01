@@ -55,6 +55,7 @@
     <string name="profile_btn_faq">FAQ</string>
     <string name="profile_btn_voice">불편한 점 얘기하기 (음성)</string>
     <string name="profile_btn_suggest">건의하기</string>
+    <string name="profile_btn_withdraw">탈퇴하기</string>
 
     <string name="study_tv_my">진행해야 할 과제에요!</string>
     <string name="study_tv_teacher">입력한 과제에요!</string>

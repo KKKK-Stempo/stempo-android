@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "kr.genti.presentation"
+    namespace = "com.kkkk.stempo.presentation"
     compileSdk = Constants.compileSdk
 
     defaultConfig {
@@ -15,6 +15,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "VERSION_NAME", "\"${Constants.versionName}\"")
     }
 
     compileOptions {
