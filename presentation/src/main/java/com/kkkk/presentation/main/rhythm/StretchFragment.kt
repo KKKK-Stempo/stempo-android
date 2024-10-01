@@ -11,8 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.core.extension.setStatusBarColor
-import com.kkkk.core.extension.stringOf
-import com.kkkk.core.extension.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -123,21 +121,15 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
     }
 
     private suspend fun setSoundPoolAsync() = suspendCancellableCoroutine { continuation ->
-        if (File(requireContext().filesDir, STRETCH_BIT_FILE).exists()) {
-            if (::soundPool.isInitialized) soundPool.release()
-            soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
-                setOnLoadCompleteListener { _, sampleId, status ->
-                    if (status == 0 && sampleId == beatSound) {
-                        continuation.resume(Unit)
-                    }
+        if (::soundPool.isInitialized) soundPool.release()
+        soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
+            setOnLoadCompleteListener { _, sampleId, status ->
+                if (status == 0 && sampleId == beatSound) {
+                    continuation.resume(Unit)
                 }
             }
-            beatSound =
-                soundPool.load(File(requireContext().filesDir, STRETCH_BIT_FILE).absolutePath, 1)
-        } else {
-            toast(stringOf(R.string.error_msg))
-            continuation.resume(Unit)
         }
+        beatSound = soundPool.load(requireContext(), R.raw.rhythm_stretch, 1)
         continuation.invokeOnCancellation {
             if (::soundPool.isInitialized) soundPool.release()
         }
@@ -161,9 +153,5 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
         super.onDestroyView()
         if (::mediaPlayer.isInitialized) mediaPlayer.release()
         if (::soundPool.isInitialized) soundPool.release()
-    }
-
-    companion object {
-        const val STRETCH_BIT_FILE = "stempo_bpm_60_bit_4"
     }
 }
