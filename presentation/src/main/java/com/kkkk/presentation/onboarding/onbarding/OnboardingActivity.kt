@@ -1,8 +1,13 @@
 package com.kkkk.presentation.onboarding.onbarding
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
+import android.os.CombinedVibration
 import android.os.CountDownTimer
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.provider.Settings
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
@@ -13,15 +18,23 @@ import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.presentation.main.MainActivity
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.ActivityOnboardingBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.ActivityOnboardingBinding
 
 @AndroidEntryPoint
 class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.activity_onboarding) {
     private lateinit var timer: CountDownTimer
+    private val vibrator by lazy {
+        if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.S) {
+            this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        } else{
+            this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+        }
+    }
+
     private val viewModel by viewModels<OnboardingViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +59,10 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
                         startTimer()
                     }
 
-                    OnboardingState.END -> navigateTo<OnboardingEndFragment>()
+                    OnboardingState.END -> {
+                        vibrate()
+                        navigateTo<OnboardingEndFragment>()
+                    }
                     OnboardingState.DONE -> navigateToScreenClear<MainActivity>()
                 }
             }.launchIn(lifecycleScope)
@@ -63,6 +79,17 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
                 }
             }
         }.start()
+    }
+
+    private fun vibrate() {
+        if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.S) {
+            val effect = VibrationEffect.createOneShot(VIBRATION_TIME, VIBRATION_AMPLITUDE)
+            (vibrator as Vibrator).vibrate(effect)
+        } else {
+            val vibrationEffect = VibrationEffect.createOneShot(VIBRATION_TIME, VIBRATION_AMPLITUDE)
+            val combinedVibration = CombinedVibration.createParallel(vibrationEffect)
+            (vibrator as VibratorManager).vibrate(combinedVibration)
+        }
     }
 
     override fun onDestroy() {
@@ -83,7 +110,9 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
         Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
 
     companion object {
-        private const val TIME = 60000L
+        private const val TIME = 6000L
         private const val INTERVAL = 1000L
+        private const val VIBRATION_TIME = 2000L
+        private const val VIBRATION_AMPLITUDE = 200
     }
 }
