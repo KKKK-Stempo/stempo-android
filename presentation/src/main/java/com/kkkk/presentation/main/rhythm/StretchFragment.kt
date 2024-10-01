@@ -13,7 +13,6 @@ import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
-import com.kkkk.presentation.main.rhythm.RhythmFragment.Companion.findMusicByBpm
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -146,7 +145,7 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
 
     private suspend fun setMediaPlayerAsync() = suspendCancellableCoroutine { continuation ->
         if (::mediaPlayer.isInitialized) mediaPlayer.release()
-        mediaPlayer = MediaPlayer.create(requireContext(), findMusicByBpm(viewModel.bpm)).apply {
+        mediaPlayer = MediaPlayer.create(requireContext(), R.raw.music_stretch).apply {
             isLooping = true
             setOnPreparedListener {
                 continuation.resume(Unit)

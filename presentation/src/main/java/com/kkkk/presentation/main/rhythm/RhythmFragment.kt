@@ -6,6 +6,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.media.MediaPlayer
+import android.media.PlaybackParams
 import android.media.SoundPool
 import android.os.Bundle
 import android.view.View
@@ -111,12 +112,18 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     private suspend fun playSoundPoolAndMediaPlayer() {
         lifecycleScope.launch {
             listOf(
-                async { mediaPlayer.start() },
+                async { playMediaPlayerWithSpeed() },
                 async { playOrResumeSoundPool() },
             ).awaitAll()
             switchPlayingState(true)
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
+    }
+
+    private fun playMediaPlayerWithSpeed() {
+        mediaPlayer.apply {
+            setPlaybackParams(PlaybackParams().setSpeed(findSpeedByBpm(viewModel.bpm)))
+        }.start()
     }
 
     private fun playOrResumeSoundPool() {
@@ -305,7 +312,6 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         mediaPlayer = MediaPlayer.create(requireContext(), findMusicByBpm(viewModel.bpm)).apply {
             isLooping = true
             setVolume(0.1f, 0.1f)
-            // setPlaybackParams(PlaybackParams().setSpeed(1.5f))
             setOnPreparedListener {
                 continuation.resume(Unit)
             }
@@ -453,15 +459,20 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
         private const val SUCCESS_CODE = 200
 
-        fun findMusicByBpm(bpm: Int) =
-            when (bpm) {
-                60, 65 -> R.raw.music_bpm_60
-                70, 75 -> R.raw.music_bpm_70
-                80, 85 -> R.raw.music_bpm_80
-                90, 95 -> R.raw.music_bpm_90
-                100, 105 -> R.raw.music_bpm_100
-                110, 115 -> R.raw.music_bpm_110
-                else -> R.raw.music_bpm_120
-            }
+        fun findMusicByBpm(bpm: Int) = when (bpm / 20) {
+            3 -> R.raw.music_bpm_60
+            4 -> R.raw.music_bpm_80
+            5 -> R.raw.music_bpm_100
+            6 -> R.raw.music_bpm_120
+            else -> R.raw.music_bpm_60
+        }
+
+        fun findSpeedByBpm(bpm: Int) = when (bpm % 20) {
+            0 -> 1.0f
+            5 -> 1.08f
+            10 -> 1.16f
+            15 -> 1.25f
+            else -> 1.0f
+        }
     }
 }
