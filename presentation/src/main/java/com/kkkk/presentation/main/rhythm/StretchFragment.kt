@@ -123,7 +123,7 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
     }
 
     private suspend fun setSoundPoolAsync() = suspendCancellableCoroutine { continuation ->
-        if (File(requireContext().filesDir, viewModel.filename).exists()) {
+        if (File(requireContext().filesDir, STRETCH_BIT_FILE).exists()) {
             if (::soundPool.isInitialized) soundPool.release()
             soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
                 setOnLoadCompleteListener { _, sampleId, status ->
@@ -133,7 +133,7 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
                 }
             }
             beatSound =
-                soundPool.load(File(requireContext().filesDir, viewModel.filename).absolutePath, 1)
+                soundPool.load(File(requireContext().filesDir, STRETCH_BIT_FILE).absolutePath, 1)
         } else {
             toast(stringOf(R.string.error_msg))
             continuation.resume(Unit)
@@ -147,6 +147,7 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
         if (::mediaPlayer.isInitialized) mediaPlayer.release()
         mediaPlayer = MediaPlayer.create(requireContext(), R.raw.music_stretch).apply {
             isLooping = true
+            setVolume(0.1f, 0.1f)
             setOnPreparedListener {
                 continuation.resume(Unit)
             }
@@ -160,5 +161,9 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
         super.onDestroyView()
         if (::mediaPlayer.isInitialized) mediaPlayer.release()
         if (::soundPool.isInitialized) soundPool.release()
+    }
+
+    companion object {
+        const val STRETCH_BIT_FILE = "stempo_bpm_60_bit_4"
     }
 }

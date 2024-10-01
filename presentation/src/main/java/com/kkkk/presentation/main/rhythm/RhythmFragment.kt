@@ -85,10 +85,16 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun initChangeRhythmBtnListener() {
-        binding.btnChangeLevel.setOnSingleClickListener {
-            rhythmBottomSheet = RhythmBottomSheet()
-            rhythmBottomSheet?.show(parentFragmentManager, BOTTOM_SHEET_CHANGE_LEVEL)
-        }
+       with(binding) {
+           btnChangeLevel.setOnSingleClickListener { startRhythmBottomSheet()}
+           tvRhythmBpm.setOnSingleClickListener { startRhythmBottomSheet()}
+           tvRhythmBit.setOnSingleClickListener { startRhythmBottomSheet()}
+       }
+    }
+
+    private fun startRhythmBottomSheet() {
+        rhythmBottomSheet = RhythmBottomSheet()
+        rhythmBottomSheet?.show(parentFragmentManager, BOTTOM_SHEET_CHANGE_LEVEL)
     }
 
     private fun initStretchNavigateBtnListener() {

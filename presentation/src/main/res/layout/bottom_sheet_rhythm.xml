@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="14dp"
-            android:text="비트 선택"
+            android:text="박자 선택"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_handler" />
@@ -64,7 +64,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.setTempBit(2)}"
                 android:paddingVertical="12dp"
-                android:text="2 비트"
+                android:text="2 박자"
                 android:textColor="@{vm.tempBit == 2 ? @color/white : @color/gray_600}"
                 tools:background="@drawable/shape_gray200_fill_17_rect" />
 
@@ -79,7 +79,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.setTempBit(3)}"
                 android:paddingVertical="12dp"
-                android:text="3 비트"
+                android:text="3 박자"
                 android:textColor="@{vm.tempBit == 3 ? @color/white : @color/gray_600}"
                 tools:background="@drawable/shape_gray200_fill_17_rect" />
 
@@ -94,7 +94,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.setTempBit(4)}"
                 android:paddingVertical="12dp"
-                android:text="4 비트"
+                android:text="4 박자"
                 android:textColor="@{vm.tempBit == 4 ? @color/white : @color/gray_600}"
                 tools:background="@drawable/shape_gray200_fill_17_rect" />
 
@@ -109,7 +109,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.setTempBit(6)}"
                 android:paddingVertical="12dp"
-                android:text="6 비트"
+                android:text="6 박자"
                 android:textColor="@{vm.tempBit == 6 ? @color/white : @color/gray_600}"
                 tools:background="@drawable/shape_gray200_fill_17_rect" />
 
@@ -124,7 +124,7 @@
                 android:gravity="center"
                 android:onClick="@{() -> vm.setTempBit(8)}"
                 android:paddingVertical="12dp"
-                android:text="8 비트"
+                android:text="8 박자"
                 android:textColor="@{vm.tempBit == 8 ? @color/white : @color/gray_600}"
                 tools:background="@drawable/shape_gray200_fill_17_rect" />
 
@@ -149,7 +149,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="8dp"
-            android:text="BPM 선택"
+            android:text="빠르기 선택"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/border_rhythm" />

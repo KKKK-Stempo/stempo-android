@@ -21,8 +21,8 @@
     <string name="menu_study">과제</string>
     <string name="menu_profile">마이</string>
 
-    <string name="rhythm_tv_bit">%d비트</string>
-    <string name="rhythm_tv_bpm">%dbpm</string>
+    <string name="rhythm_tv_bit">%d박자</string>
+    <string name="rhythm_tv_bpm">%d빠르기</string>
     <string name="rhythm_tv_step">%03d걸음</string>
     <string name="rhythm_tv_title">리듬에 맞춰 걸어주세요!</string>
     <string name="rhythm_btn_change_level">단계 변경하기</string>
