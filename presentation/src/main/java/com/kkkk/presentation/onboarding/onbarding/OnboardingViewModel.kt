@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.math.round
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
@@ -45,8 +46,9 @@ class OnboardingViewModel @Inject constructor(
 
     fun setBpmLevel(deviceTag: String) {
         val bpm =
-            maxOf((_speed.value / (_stepCount.value / SPEED_CALC_INTERVAL)).takeIf { !it.isNaN() }
-                ?: 60.0f, 60.0f)
+            round(maxOf((_speed.value / (_stepCount.value / SPEED_CALC_INTERVAL)).takeIf { !it.isNaN() }
+                ?: 60.0f, 60.0f) / 10) * 10
+
 
         viewModelScope.launch {
             authRepository.signup(deviceTag).onSuccess {
