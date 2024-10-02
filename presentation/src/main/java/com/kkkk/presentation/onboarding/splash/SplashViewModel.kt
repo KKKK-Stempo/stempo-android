@@ -26,7 +26,6 @@ class SplashViewModel @Inject constructor(
 
     fun checkTokenState() {
         viewModelScope.launch {
-            userRepository.clearInfo()
             delay(DELAY_TIME)
             _isValidToken.emit(userRepository.getAccessToken().isNotBlank())
         }

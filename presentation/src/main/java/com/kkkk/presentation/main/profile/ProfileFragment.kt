@@ -5,6 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.jakewharton.processphoenix.ProcessPhoenix
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.core.extension.setStatusBarColor
@@ -13,19 +16,30 @@ import com.kkkk.stempo.presentation.BuildConfig
 import com.kkkk.stempo.presentation.R
 import com.kkkk.stempo.presentation.databinding.FragmentProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_profile) {
+    private val viewModel by viewModels<ProfileViewModel>()
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
 
+        observeRebirthEvent()
         initWebBtnListener()
         initReportBtnListener()
         initVersionListener()
         setStatusBarColor(R.color.gray_100)
+    }
+
+    private fun observeRebirthEvent() {
+        viewModel.rebirth.onEach {
+            ProcessPhoenix.triggerRebirth(context)
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
     private fun initWebBtnListener() {
@@ -46,7 +60,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_p
     private fun initVersionListener() {
         with(binding) {
             tvVersionCode.text = "v ${BuildConfig.VERSION_NAME}"
-
+            btnWithdraw.setOnSingleClickListener { viewModel.withdraw() }
         }
     }
 
