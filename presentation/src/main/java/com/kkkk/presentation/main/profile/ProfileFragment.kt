@@ -53,7 +53,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_p
     private fun initReportBtnListener() {
         with(binding) {
             btnVoice.setOnSingleClickListener { toast("다음 업데이트 때 사용 가능해요!") }
-            btnSuggest.setOnSingleClickListener { toast("다음 업데이트 때 사용 가능해요!") }
+            btnSuggest.setOnSingleClickListener { navigateToWeb(URL_SUGGEST) }
         }
     }
 
@@ -82,5 +82,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_p
             "https://field-colt-189.notion.site/Stempo-e8252a5094eb4351819809dc3abd6623?pvs=4"
         private const val URL_FAQ =
             "https://field-colt-189.notion.site/FAQ-3e01b4b00b0c4b2c84aaacd79b2b6045?pvs=4"
+        private const val URL_SUGGEST =
+            "https://docs.google.com/forms/d/e/1FAIpQLSfTyRUJzIURmSvIJOgJlqqLCRECVPtTHWj8xCNsBrIIuzwBRA/viewform"
     }
 }

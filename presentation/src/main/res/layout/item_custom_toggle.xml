@@ -27,7 +27,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/shape_toggle_selected"
                 android:gravity="center"
-                android:paddingVertical="3dp"
+                android:paddingVertical="5dp"
                 android:paddingStart="16dp"
                 android:paddingLeft="15dp"
                 android:paddingEnd="14dp"
@@ -41,7 +41,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:paddingHorizontal="9dp"
-                android:paddingVertical="3dp"
+                android:paddingVertical="5dp"
                 android:text="선생님"
                 android:textColor="@color/white" />
         </LinearLayout>
