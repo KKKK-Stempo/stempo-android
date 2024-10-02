@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_white_fill_16_rect"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/tv_rhythm_save_title"
+            style="@style/TextAppearance.Stempo.Head3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="32dp"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.3"
+            android:text="모든 기록이 사라져요!\n정말로 기록을 삭제할까요?"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/btn_cancel"
+            style="@style/TextAppearance.Stempo.Head4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/shape_purple10_fill_12_rect"
+            android:gravity="center"
+            android:paddingHorizontal="36dp"
+            android:paddingVertical="15dp"
+            android:text="취소하기"
+            android:textColor="@color/purple_50"
+            app:layout_constraintEnd_toStartOf="@id/btn_delete"
+            app:layout_constraintStart_toStartOf="@id/tv_rhythm_save_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_rhythm_save_title" />
+
+        <TextView
+            android:id="@+id/btn_delete"
+            style="@style/TextAppearance.Stempo.Head4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/shape_purple50_fill_12_rect"
+            android:gravity="center"
+            android:paddingHorizontal="36dp"
+            android:paddingVertical="15dp"
+            android:text="삭제하기"
+            android:textColor="@color/purple_10"
+            app:layout_constraintEnd_toEndOf="@id/tv_rhythm_save_title"
+            app:layout_constraintStart_toEndOf="@id/btn_cancel"
+            app:layout_constraintTop_toBottomOf="@id/tv_rhythm_save_title" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

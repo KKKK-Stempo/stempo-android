@@ -24,6 +24,7 @@ class ProfileViewModel @Inject constructor(
             authRepository.unregister(
                 authorization = BEARER + " " + userRepository.getRefreshToken()
             ).onSuccess {
+                userRepository.clearInfo()
                 _rebirth.emit(Unit)
             }
         }
