@@ -1,5 +1,6 @@
 package com.kkkk.presentation.onboarding.onbarding
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.repository.AuthRepository
@@ -30,6 +31,7 @@ class OnboardingViewModel @Inject constructor(
 
     fun addStepCount(newStepCount: Int) {
         _stepCount.value += newStepCount
+        Log.e("TAG", "addStepCount: ${_stepCount.value}")
     }
 
     fun setSpeed(newSpeed: Float) {
@@ -45,10 +47,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun setBpmLevel(deviceTag: String) {
-        val bpm =
-            round(maxOf((_speed.value / (_stepCount.value / SPEED_CALC_INTERVAL)).takeIf { !it.isNaN() }
-                ?: 60.0f, 60.0f) / 10) * 10
-
+        val bpm = round(_stepCount.value.coerceIn(60, 120) / 10.0) * 10
 
         viewModelScope.launch {
             authRepository.signup(deviceTag).onSuccess {
