@@ -317,7 +317,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
         if (::mediaPlayer.isInitialized) mediaPlayer.release()
         mediaPlayer = MediaPlayer.create(requireContext(), findMusicByBpm(viewModel.bpm)).apply {
             isLooping = true
-            setVolume(0.1f, 0.1f)
+            setVolume(0.2f, 0.2f)
             setOnPreparedListener {
                 continuation.resume(Unit)
             }

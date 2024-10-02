@@ -64,8 +64,8 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
     private suspend fun playSoundPoolAndMediaPlayer() {
         lifecycleScope.launch {
             listOf(
+                async { mediaPlayer.start() },
                 async { playOrResumeSoundPool() },
-                async { mediaPlayer.start() }
             ).awaitAll()
             switchPlayingState(true)
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -139,11 +139,12 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
         if (::mediaPlayer.isInitialized) mediaPlayer.release()
         mediaPlayer = MediaPlayer.create(requireContext(), R.raw.music_stretch).apply {
             isLooping = true
-            setVolume(0.1f, 0.1f)
+            setVolume(0.2f, 0.2f)
             setOnPreparedListener {
                 continuation.resume(Unit)
             }
         }
+        binding.lottieStretchBg.speed = 0.75f
         continuation.invokeOnCancellation {
             if (::mediaPlayer.isInitialized) mediaPlayer.release()
         }
