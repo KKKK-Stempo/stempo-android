@@ -14,4 +14,8 @@ interface AuthRepository {
     suspend fun signup(
         deviceTag: String
     ): Result<AuthTokenModel>
+
+    suspend fun unregister(
+        authorization: String
+    ): Result<Unit>
 }

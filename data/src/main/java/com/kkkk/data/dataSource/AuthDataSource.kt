@@ -16,4 +16,8 @@ interface AuthDataSource {
     suspend fun postSignUp(
         auth: AuthRequestDto,
     ): BaseResponse<AuthTokenDto>
+
+    suspend fun deleteUnregister(
+        authorization: String,
+    ): BaseResponse<String>
 }
