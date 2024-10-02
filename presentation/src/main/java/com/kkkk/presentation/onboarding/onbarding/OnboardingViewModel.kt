@@ -22,24 +22,9 @@ class OnboardingViewModel @Inject constructor(
     val state: StateFlow<OnboardingState> = _state
 
     private val _stepCount = MutableStateFlow(0)
-    val stepCount: StateFlow<Int> = _stepCount
-
-    private val _speed = MutableStateFlow(0f)
-
-    private val _lastStepTime = MutableStateFlow(0L)
-    val lastStepTime: StateFlow<Long> = _lastStepTime
 
     fun addStepCount(newStepCount: Int) {
         _stepCount.value += newStepCount
-        Log.e("TAG", "addStepCount: ${_stepCount.value}")
-    }
-
-    fun setSpeed(newSpeed: Float) {
-        _speed.value = newSpeed
-    }
-
-    fun setLastStepTime(newLastStepTime: Long) {
-        _lastStepTime.value = newLastStepTime
     }
 
     fun setState(newState: OnboardingState) {
@@ -55,9 +40,5 @@ class OnboardingViewModel @Inject constructor(
                 userRepository.setBpm(bpm.toInt())
             }.onFailure(Timber::e)
         }
-    }
-
-    companion object {
-        const val SPEED_CALC_INTERVAL = 10
     }
 }
