@@ -7,6 +7,7 @@
 package com.kkkk.stempo.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
@@ -74,6 +75,8 @@ class WatchActivity : ComponentActivity(), DataClient.OnDataChangedListener {
                             val bpm = getInt(KEY_BPM)
                             Timber.tag("okhttp").d("LISTENER : DATA RECEIVED : $bpm")
                             VIBRATION_INTERVAL = 60_000L / bpm
+                            Toast.makeText(this@WatchActivity, "동기화에 성공했습니다.", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 }
