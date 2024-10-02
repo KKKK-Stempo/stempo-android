@@ -86,6 +86,7 @@ dependencies {
         implementation(lottie)
         implementation(circularProgressBar)
         implementation(circleIndicator)
+        implementation(phoenix)
     }
 
     JitPackDependencies.run {
