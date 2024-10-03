@@ -68,8 +68,8 @@ class HomeViewModel @Inject constructor(
         vibrationJob = null
 
         val accuracy = calculateAccuracy(
-            _oddStepTime.value / _stepCount.value,
-            _evenStepTime.value / _stepCount.value
+            _oddStepTime.value / _oddStepCount.value,
+            _evenStepTime.value / _evenStepCount.value
         )
 
         viewModelScope.launch {
@@ -86,22 +86,25 @@ class HomeViewModel @Inject constructor(
     private fun calculateAccuracy(time1: Long, time2: Long): Double {
         val difference = kotlin.math.abs(time1 - time2)
 
-        return when {
-            difference == 0L -> 100.0
-            difference >= MAX_ALLOWED_DIFFERENCE -> 0.1
-            else -> (1 - difference.toDouble() / MAX_ALLOWED_DIFFERENCE) * 100
-        }
+        return (1.0 - difference.toDouble() / (time1 + time2)) * 100
     }
 
     fun addStep(newStepCount: Int = 1) {
-        if ((_oddStepCount.value + _evenStepCount.value) % 2 == 0) {
+        _stepCount.value += newStepCount
+
+        if (_stepCount.value < 2) {
+            _beforeStepTime.value = System.currentTimeMillis()
+            return
+        }
+
+        if (_stepCount.value % 2 == 0) {
             _oddStepCount.value += newStepCount
-            _oddStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
+            _oddStepTime.value += System.currentTimeMillis() - _beforeStepTime.value
         } else {
             _evenStepCount.value += newStepCount
-            _evenStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
+            _evenStepTime.value += System.currentTimeMillis() - _beforeStepTime.value
         }
-        _stepCount.value += newStepCount
+
         _beforeStepTime.value = System.currentTimeMillis()
     }
 
