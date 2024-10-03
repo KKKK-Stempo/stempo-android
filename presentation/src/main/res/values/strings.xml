@@ -60,4 +60,6 @@
     <string name="study_tv_my">진행해야 할 과제에요!</string>
     <string name="study_tv_teacher">입력한 과제에요!</string>
 
+   <string name="statistics_counter">%d회</string>
+
 </resources>
