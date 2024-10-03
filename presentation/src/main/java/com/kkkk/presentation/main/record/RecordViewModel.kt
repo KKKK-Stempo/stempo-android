@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.Entry
 import com.kkkk.core.state.UiState
+import com.kkkk.domain.entity.response.StatisticsModel
 import com.kkkk.domain.repository.RecordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +21,7 @@ import javax.inject.Inject
 class RecordViewModel
 @Inject
 constructor(
-    private val recordRepository: RecordRepository
+    private val recordRepository: RecordRepository,
 ) : ViewModel() {
 
     val isChangingMonth = MutableLiveData<Boolean>(false)
@@ -29,10 +30,30 @@ constructor(
     private val _chartEntry = MutableStateFlow<UiState<MutableList<Entry>>>(UiState.Empty)
     val chartEntry: StateFlow<UiState<MutableList<Entry>>> = _chartEntry
 
+    private val _statistics = MutableStateFlow<UiState<StatisticsModel>>(UiState.Empty)
+    val statistics: StateFlow<UiState<StatisticsModel>> = _statistics
+
     var dateList = listOf<String>()
 
     var startDate = ""
     var endDate = ""
+
+    init {
+        setGraphWithDate()
+        getStatistics()
+    }
+
+    private fun getStatistics() {
+        viewModelScope.launch {
+            recordRepository.getRecordStatistics()
+                .onSuccess { statistics ->
+                    _statistics.value = UiState.Success(statistics)
+                }
+                .onFailure {
+                    _chartEntry.value = UiState.Failure(it.message.toString())
+                }
+        }
+    }
 
     fun setIsChangingMonth() {
         isChangingMonth.value = isChangingMonth.value?.not() ?: false

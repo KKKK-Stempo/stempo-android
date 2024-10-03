@@ -1,5 +1,6 @@
 package com.kkkk.presentation.main.record
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -37,8 +38,8 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
         binding.vm = viewModel
         observeReportMonth()
         observeChartEntry()
+        observeStatistics()
         setStatusBarColor(R.color.white)
-        viewModel.setGraphWithDate()
     }
 
     private fun observeReportMonth() {
@@ -77,6 +78,33 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
                     setLoadingView(false)
                     binding.ivChartEmpty.isVisible = true
                 }
+            }
+        }.launchIn(lifecycleScope)
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun observeStatistics() {
+        viewModel.statistics.flowWithLifecycle(lifecycle).onEach { state ->
+            when (state) {
+                is UiState.Success -> {
+                    binding.tvStatisticsToday.text =
+                        getString(R.string.statistics_counter, state.data.todayWalkTrainingCount)
+                    binding.tvStatisticsWeek.text =
+                        getString(R.string.statistics_counter, state.data.weeklyWalkTrainingCount)
+                    binding.tvStatisticsSequence.text = getString(
+                        R.string.statistics_counter,
+                        state.data.consecutiveWalkTrainingDays
+                    )
+                }
+
+                is UiState.Failure -> {
+                    toast(stringOf(R.string.error_msg))
+                }
+
+                is UiState.Loading -> {
+                }
+
+                is UiState.Empty -> {}
             }
         }.launchIn(lifecycleScope)
     }
