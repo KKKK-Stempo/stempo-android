@@ -1,5 +1,6 @@
 package com.kkkk.presentation.onboarding.onbarding
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.repository.AuthRepository
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.math.round
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
@@ -20,23 +22,9 @@ class OnboardingViewModel @Inject constructor(
     val state: StateFlow<OnboardingState> = _state
 
     private val _stepCount = MutableStateFlow(0)
-    val stepCount: StateFlow<Int> = _stepCount
-
-    private val _speed = MutableStateFlow(0f)
-
-    private val _lastStepTime = MutableStateFlow(0L)
-    val lastStepTime: StateFlow<Long> = _lastStepTime
 
     fun addStepCount(newStepCount: Int) {
         _stepCount.value += newStepCount
-    }
-
-    fun setSpeed(newSpeed: Float) {
-        _speed.value = newSpeed
-    }
-
-    fun setLastStepTime(newLastStepTime: Long) {
-        _lastStepTime.value = newLastStepTime
     }
 
     fun setState(newState: OnboardingState) {
@@ -44,7 +32,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun setBpmLevel(deviceTag: String) {
-        val bpm = _speed.value / (_stepCount.value / SPEED_CALC_INTERVAL)
+        val bpm = round(_stepCount.value.coerceIn(60, 120) / 10.0) * 10
 
         viewModelScope.launch {
             authRepository.signup(deviceTag).onSuccess {
@@ -52,9 +40,5 @@ class OnboardingViewModel @Inject constructor(
                 userRepository.setBpm(bpm.toInt())
             }.onFailure(Timber::e)
         }
-    }
-
-    companion object {
-        const val SPEED_CALC_INTERVAL = 10
     }
 }

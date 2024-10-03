@@ -5,6 +5,7 @@ import com.kkkk.data.dto.request.AuthRequestDto
 import com.kkkk.data.dto.request.TokenRequestDto
 import com.kkkk.data.dto.response.AuthTokenDto
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.Header
 import retrofit2.http.POST
 
@@ -23,4 +24,9 @@ interface AuthService {
     suspend fun postSignUp(
         @Body auth: AuthRequestDto,
     ): BaseResponse<AuthTokenDto>
+
+    @DELETE("api/v1/auth/unregister")
+    suspend fun deleteUnregister(
+        @Header("Authorization") authorization: String
+    ): BaseResponse<String>
 }

@@ -15,12 +15,12 @@ import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.toast
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.FragmentStudyBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.FragmentStudyBinding
 import java.lang.ref.WeakReference
 
 @AndroidEntryPoint

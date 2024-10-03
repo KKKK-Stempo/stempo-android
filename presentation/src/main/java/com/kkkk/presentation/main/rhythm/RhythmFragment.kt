@@ -29,6 +29,8 @@ import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.core.state.UiState
+import com.kkkk.stempo.presentation.R
+import com.kkkk.stempo.presentation.databinding.FragmentRhythmBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -37,8 +39,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kr.genti.presentation.R
-import kr.genti.presentation.databinding.FragmentRhythmBinding
 import timber.log.Timber
 import java.io.File
 import java.nio.file.Files
@@ -108,6 +108,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             if (::soundPool.isInitialized && ::mediaPlayer.isInitialized && isLoaded) {
                 lifecycleScope.launch {
                     playSoundPoolAndMediaPlayer()
+                    viewModel.resetStepInfo()
                 }
             } else {
                 toast(stringOf(R.string.error_msg))

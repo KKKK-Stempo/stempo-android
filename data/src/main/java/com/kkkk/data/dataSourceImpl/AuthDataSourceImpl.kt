@@ -22,4 +22,8 @@ constructor(
 
     override suspend fun postSignUp(auth: AuthRequestDto): BaseResponse<AuthTokenDto> =
         authService.postSignUp(auth)
+
+    override suspend fun deleteUnregister(
+        authorization: String,
+    ): BaseResponse<String> = authService.deleteUnregister(authorization)
 }

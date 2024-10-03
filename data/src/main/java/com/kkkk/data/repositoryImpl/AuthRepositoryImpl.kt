@@ -36,4 +36,12 @@ class AuthRepositoryImpl @Inject constructor(
             )
         ).data.toModel()
     }
+
+    override suspend fun unregister(
+        authorization: String,
+    ): Result<Unit> = runCatching {
+        authDataSource.deleteUnregister(
+            authorization,
+        )
+    }
 }

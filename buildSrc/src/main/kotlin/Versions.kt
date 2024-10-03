@@ -34,6 +34,7 @@ object Versions {
     const val circularProgressBar = "3.1.0"
     const val circleIndicatorVersion = "2.1.6"
     const val shimmerVersion = "0.5.0"
+    const val phoenix = "3.0.0"
 
     const val mpChartVersion = "v3.1.0"
 

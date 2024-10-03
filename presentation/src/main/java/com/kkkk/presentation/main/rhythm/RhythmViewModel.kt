@@ -153,27 +153,38 @@ constructor(
     }
 
     fun addStepCount(newStepCount: Int) {
-        if ((_oddStepCount.value + _evenStepCount.value) % 2 == 0) {
+        _stepCount.value += newStepCount
+
+
+        if (_stepCount.value < 2) {
+            _beforeStepTime.value = System.currentTimeMillis()
+            return
+        }
+
+        if (_stepCount.value % 2 == 0) {
             _oddStepCount.value += newStepCount
-            _oddStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
+            _oddStepTime.value += System.currentTimeMillis() - _beforeStepTime.value
         } else {
             _evenStepCount.value += newStepCount
-            _evenStepTime.value = System.currentTimeMillis() - _beforeStepTime.value
+            _evenStepTime.value += System.currentTimeMillis() - _beforeStepTime.value
         }
-        _stepCount.value += newStepCount
+
         _beforeStepTime.value = System.currentTimeMillis()
     }
 
     fun postRhythmRecordToSave() {
+        if (_oddStepCount.value == 0 || _evenStepCount.value == 0) return
+
         val accuracy = if (watchAccuracy == 0.0) {
             calculateAccuracy(
-                _oddStepTime.value / _stepCount.value,
-                _evenStepTime.value / _stepCount.value
+                _oddStepTime.value / _oddStepCount.value,
+                _evenStepTime.value / _evenStepCount.value
             )
         } else {
             watchAccuracy
         }
         watchAccuracy = 0.0
+
         if (accuracy == 0.0) return
 
         viewModelScope.launch {
@@ -195,20 +206,16 @@ constructor(
     private fun calculateAccuracy(time1: Long, time2: Long): Double {
         val difference = kotlin.math.abs(time1 - time2)
 
-        return when {
-            difference == 0L -> 100.0
-            difference >= MAX_ALLOWED_DIFFERENCE -> 0.1
-            else -> (1 - difference.toDouble() / MAX_ALLOWED_DIFFERENCE) * 100
-        }
+        return (1.0 - difference.toDouble() / (time1 + time2)) * 100
     }
 
-    private fun resetStepInfo() {
+    fun resetStepInfo() {
         _oddStepCount.value = 0
         _evenStepCount.value = 0
         _stepCount.value = 0
         _oddStepTime.value = 0L
         _evenStepTime.value = 0L
-        _beforeStepTime.value = 0L
+        _beforeStepTime.value = System.currentTimeMillis()
     }
 
     companion object {
@@ -216,7 +223,5 @@ constructor(
         const val MAX_BPM = 120
         const val MIN_BIT = 2
         const val MAX_BIT = 8
-
-        const val MAX_ALLOWED_DIFFERENCE = 3600L
     }
 }
