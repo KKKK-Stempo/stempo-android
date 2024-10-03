@@ -5,7 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.kkkk.core.base.BaseFragment
@@ -21,7 +22,7 @@ import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_profile) {
-    private val viewModel by viewModels<ProfileViewModel>()
+    private val viewModel by activityViewModels<ProfileViewModel>()
     private var profileWithDrawDialog: ProfileWithDrawDialog? = null
 
     override fun onViewCreated(
