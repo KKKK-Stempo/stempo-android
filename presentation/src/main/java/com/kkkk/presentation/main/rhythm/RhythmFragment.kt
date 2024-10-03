@@ -101,6 +101,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             if (::soundPool.isInitialized && ::mediaPlayer.isInitialized && isLoaded) {
                 lifecycleScope.launch {
                     playSoundPoolAndMediaPlayer()
+                    viewModel.resetStepInfo()
                 }
             } else {
                 toast(stringOf(R.string.error_msg))
