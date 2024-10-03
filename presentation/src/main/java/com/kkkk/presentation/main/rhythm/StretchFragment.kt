@@ -67,8 +67,8 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
     private suspend fun playSoundPoolAndMediaPlayer() {
         lifecycleScope.launch {
             listOf(
+                async { mediaPlayer.start() },
                 async { playOrResumeSoundPool() },
-                async { mediaPlayer.start() }
             ).awaitAll()
             switchPlayingState(true)
             requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -124,21 +124,15 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
     }
 
     private suspend fun setSoundPoolAsync() = suspendCancellableCoroutine { continuation ->
-        if (File(requireContext().filesDir, viewModel.filename).exists()) {
-            if (::soundPool.isInitialized) soundPool.release()
-            soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
-                setOnLoadCompleteListener { _, sampleId, status ->
-                    if (status == 0 && sampleId == beatSound) {
-                        continuation.resume(Unit)
-                    }
+        if (::soundPool.isInitialized) soundPool.release()
+        soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
+            setOnLoadCompleteListener { _, sampleId, status ->
+                if (status == 0 && sampleId == beatSound) {
+                    continuation.resume(Unit)
                 }
             }
-            beatSound =
-                soundPool.load(File(requireContext().filesDir, viewModel.filename).absolutePath, 1)
-        } else {
-            toast(stringOf(R.string.error_msg))
-            continuation.resume(Unit)
         }
+        beatSound = soundPool.load(requireContext(), R.raw.rhythm_stretch, 1)
         continuation.invokeOnCancellation {
             if (::soundPool.isInitialized) soundPool.release()
         }
@@ -146,12 +140,14 @@ class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_s
 
     private suspend fun setMediaPlayerAsync() = suspendCancellableCoroutine { continuation ->
         if (::mediaPlayer.isInitialized) mediaPlayer.release()
-        mediaPlayer = MediaPlayer.create(requireContext(), findMusicByBpm(viewModel.bpm)).apply {
+        mediaPlayer = MediaPlayer.create(requireContext(), R.raw.music_stretch).apply {
             isLooping = true
+            setVolume(0.2f, 0.2f)
             setOnPreparedListener {
                 continuation.resume(Unit)
             }
         }
+        binding.lottieStretchBg.speed = 0.75f
         continuation.invokeOnCancellation {
             if (::mediaPlayer.isInitialized) mediaPlayer.release()
         }

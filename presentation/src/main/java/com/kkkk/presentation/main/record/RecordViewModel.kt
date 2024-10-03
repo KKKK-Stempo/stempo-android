@@ -69,9 +69,15 @@ constructor(
                         DATE_FORMAT.parse(record.date)?.let { DISPLAY_DATE_FORMAT.format(it) } ?: ""
                     }
                     _chartEntry.value = UiState.Success(
-                        recordList.mapIndexed { index, record ->
-                            Entry(index.toFloat(), record.accuracy.toFloat())
-                        }.toMutableList()
+                        (if (recordList.size == 1) {
+                            listOf(Entry(0f, 0f)) + recordList.mapIndexed { index, record ->
+                                Entry((index + 1).toFloat(), record.accuracy.toFloat())
+                            }
+                        } else {
+                            recordList.mapIndexed { index, record ->
+                                Entry(index.toFloat(), record.accuracy.toFloat())
+                            }
+                        }).toMutableList()
                     )
                 }
                 .onFailure {
