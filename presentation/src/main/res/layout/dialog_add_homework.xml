@@ -35,7 +35,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="20dp"
             android:autofillHints="false"
-            android:backgroundTint="@color/purple_50"
+            android:backgroundTint="@color/transparent"
             android:inputType="textMultiLine"
             android:textColorHighlight="@color/purple_50"
             android:textSelectHandle="@color/purple_50"
@@ -47,6 +47,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_study_dialog_title"
             tools:text="과제" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintStart_toStartOf="@id/et_study_dialog"
+            app:layout_constraintEnd_toEndOf="@id/et_study_dialog"
+            app:layout_constraintTop_toBottomOf="@id/et_study_dialog"
+            android:background="@color/purple_50"
+            />
 
         <TextView
             android:id="@+id/btn_study_dialog_cancel"
