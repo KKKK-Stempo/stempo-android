@@ -39,7 +39,6 @@ constructor(
     var endDate = ""
 
     init {
-        setGraphWithDate()
         getStatistics()
     }
 

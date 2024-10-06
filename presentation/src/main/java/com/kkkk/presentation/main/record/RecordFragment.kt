@@ -40,6 +40,7 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
         observeChartEntry()
         observeStatistics()
         setStatusBarColor(R.color.white)
+        viewModel.setGraphWithDate()
     }
 
     private fun observeReportMonth() {
