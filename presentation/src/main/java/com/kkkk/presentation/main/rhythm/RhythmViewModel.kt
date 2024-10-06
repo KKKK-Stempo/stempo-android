@@ -173,7 +173,7 @@ constructor(
     }
 
     fun postRhythmRecordToSave() {
-        if (_oddStepCount.value == 0 || _evenStepCount.value == 0) return
+        if ((_oddStepCount.value == 0 || _evenStepCount.value == 0) && watchAccuracy == 0.0) return
 
         val accuracy = if (watchAccuracy == 0.0) {
             calculateAccuracy(
