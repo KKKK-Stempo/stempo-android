@@ -91,6 +91,7 @@ class HomeViewModel @Inject constructor(
 
     fun addStep(newStepCount: Int = 1) {
         _stepCount.value += newStepCount
+        _state.value = _state.value.copy(stepCount = _stepCount.value)
 
         if (_stepCount.value < 2) {
             _beforeStepTime.value = System.currentTimeMillis()
