@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.setStatusBarColor
 import com.kkkk.core.extension.toast
+import com.kkkk.domain.entity.response.StudyModel
 import com.kkkk.stempo.presentation.R
 import com.kkkk.stempo.presentation.databinding.FragmentStudyBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -84,14 +85,24 @@ class StudyFragment : BaseFragment<FragmentStudyBinding>(R.layout.fragment_study
                         layoutHomeworkEmpty.visibility = View.INVISIBLE
                         layoutHomeworkValid.visibility = View.VISIBLE
 
-                        progressBarHomework.max = studyList.size
-                        progressBarHomework.progress = studyList.count { it.completed }
-                        ivSeekbarThumb.x =
-                            progressBarHomework.width * progressBarHomework.progress / progressBarHomework.max.toFloat()
+                        setProgressBar(studyList)
                     }
                 }
             }.launchIn(lifecycleScope)
     }
+
+    private fun setProgressBar(studyList: List<StudyModel.StudyItemModel>) {
+        with(binding) {
+            progressBarHomework.max = studyList.size
+            progressBarHomework.progress = studyList.count { it.completed }
+
+            progressBarHomework.post {
+                ivSeekbarThumb.x =
+                    progressBarHomework.width * progressBarHomework.progress / progressBarHomework.max.toFloat()
+            }
+        }
+    }
+
 
     private fun observeToast() {
         viewModel.toast.flowWithLifecycle(lifecycle).onEach {
