@@ -81,7 +81,7 @@ constructor(
         viewModelScope.launch {
             recordRepository.getRecordList(startDate, endDate)
                 .onSuccess { recordList ->
-                    if (recordList.isEmpty()) {
+                    if (recordList.isEmpty() || recordList.size == 1) {
                         _chartEntry.value = UiState.Empty
                         return@launch
                     }
@@ -89,15 +89,9 @@ constructor(
                         DATE_FORMAT.parse(record.date)?.let { DISPLAY_DATE_FORMAT.format(it) } ?: ""
                     }
                     _chartEntry.value = UiState.Success(
-                        (if (recordList.size == 1) {
-                            listOf(Entry(0f, 0f)) + recordList.mapIndexed { index, record ->
-                                Entry((index + 1).toFloat(), record.accuracy.toFloat())
-                            }
-                        } else {
-                            recordList.mapIndexed { index, record ->
-                                Entry(index.toFloat(), record.accuracy.toFloat())
-                            }
-                        }).toMutableList()
+                        recordList.mapIndexed { index, record ->
+                            Entry(index.toFloat(), record.accuracy.toFloat())
+                        }.toMutableList()
                     )
                 }
                 .onFailure {
