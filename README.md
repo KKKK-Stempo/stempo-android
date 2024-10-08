@@ -25,7 +25,45 @@
 
 <br>
 
-### Contributors
+<br>
+
+## 🗂️ Module & Package Convention
+```
+🗃️app
+
+🗃️buildSrc
+
+🗃️core-ui
+ ┣ 📂base
+ ┗ 📂extension
+
+🗃️core-di
+
+🗃️data
+ ┣ 📂dto
+ ┃ ┣ 📂response
+ ┃ ┣ 📂request
+ ┣ 📂datasource
+ ┣ 📂datasourceImpl
+ ┣ 📂local
+ ┣ 📂repositoryImpl
+ ┗ 📂service
+
+🗃️domain
+ ┣ 📂entity
+ ┃ ┣ 📂response
+ ┃ ┣ 📂request
+ ┗ 📂repository
+
+🗃️presentation
+ ┗ 📂기능 별 패키징
+
+🗃️watch
+ ┗ 📂기능 별 패키징
+```
+<br>
+
+## 👨‍💻 Contributors
 
 [![contributors](https://contrib.rocks/image?repo=KKKK-Stempo/stempo-android)](https://github.com/KKKK-Stempo/stempo-android/contributors)
 
