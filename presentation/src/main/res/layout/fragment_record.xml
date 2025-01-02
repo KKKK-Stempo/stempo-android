@@ -98,6 +98,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_report_month" />
 
+        <TextView
+            android:id="@+id/tv_accuracy_average"
+            style="@style/TextAppearance.Stempo.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="@string/report_tv_accuracy_average"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@id/tv_report_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_report_month"
+            app:layout_constraintTop_toTopOf="@id/tv_report_title" />
+
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_chart"
             android:layout_width="0dp"

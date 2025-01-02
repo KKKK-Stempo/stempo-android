@@ -23,7 +23,7 @@ class AuthRepositoryImpl @Inject constructor(
         authDataSource.postLogin(
             AuthRequestDto(
                 deviceTag = deviceTag,
-                password = ""
+                password = "P@ssw0rd"
             )
         ).data.toModel()
     }

@@ -34,6 +34,7 @@ constructor(
     val statistics: StateFlow<UiState<StatisticsModel>> = _statistics
 
     var dateList = listOf<String>()
+    var accuracyAverage = 0
 
     var startDate = ""
     var endDate = ""
@@ -81,15 +82,16 @@ constructor(
         viewModelScope.launch {
             recordRepository.getRecordList(startDate, endDate)
                 .onSuccess { recordList ->
-                    if (recordList.isEmpty() || recordList.size == 1) {
+                    if (recordList.records.isEmpty() || recordList.records.size == 1) {
                         _chartEntry.value = UiState.Empty
                         return@launch
                     }
-                    dateList = recordList.map { record ->
+                    dateList = recordList.records.map { record ->
                         DATE_FORMAT.parse(record.date)?.let { DISPLAY_DATE_FORMAT.format(it) } ?: ""
                     }
+                    accuracyAverage = recordList.accuracyAverage
                     _chartEntry.value = UiState.Success(
-                        recordList.mapIndexed { index, record ->
+                        recordList.records.mapIndexed { index, record ->
                             Entry(index.toFloat(), record.accuracy.toFloat())
                         }.toMutableList()
                     )

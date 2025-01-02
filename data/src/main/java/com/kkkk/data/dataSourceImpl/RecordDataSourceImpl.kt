@@ -3,8 +3,10 @@ package com.kkkk.data.dataSourceImpl
 import com.kkkk.data.dataSource.RecordDataSource
 import com.kkkk.data.dto.BaseResponse
 import com.kkkk.data.dto.response.RecordDto
+import com.kkkk.data.dto.response.RecordListDto
 import com.kkkk.data.dto.response.StatisticsDto
 import com.kkkk.data.service.RecordService
+import com.kkkk.domain.entity.response.RecordList
 import javax.inject.Inject
 
 data class RecordDataSourceImpl
@@ -16,7 +18,7 @@ constructor(
     override suspend fun getRecordList(
         startDate: String,
         endDate: String,
-    ): BaseResponse<List<RecordDto>> = recordService.getRecordList(startDate, endDate)
+    ): BaseResponse<RecordListDto> = recordService.getRecordList(startDate, endDate)
 
     override suspend fun getRecordStatistics(): BaseResponse<StatisticsDto> =
         recordService.getRecordStatistics()
