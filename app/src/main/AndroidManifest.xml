@@ -29,6 +29,11 @@
         </activity>
 
         <activity
+            android:name="com.kkkk.presentation.onboarding.terms.TermsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name="com.kkkk.presentation.main.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
