@@ -10,6 +10,8 @@
     <string name="manager_not_initialized_error_msg">Billing Manager is not initialized</string>
     <string name="view_type_error_msg">Unknown View Type : %d</string>
 
+    <string name="agree">모두 동의합니다</string>
+
     <string name="getting_start">시작하기</string>
     <string name="ing">측정 중...</string>
     <string name="before_page">이전페이지</string>
@@ -33,6 +35,7 @@
     <string name="rhythm_stop_btn_save">종료하기</string>
     <string name="rhythm_stop_btn_pause">정지하기</string>
 
+    <string name="report_tv_accuracy_average">정확도 평균 %d%%</string>
     <string name="report_tv_title">동안의 성과에요!</string>
     <string name="report_tv_achieve_title">달성한 업적</string>
     <string name="report_btn_achieve_full">전체보기</string>
@@ -60,6 +63,6 @@
     <string name="study_tv_my">진행해야 할 과제에요!</string>
     <string name="study_tv_teacher">입력한 과제에요!</string>
 
-   <string name="statistics_counter">%d회</string>
+    <string name="statistics_counter">%d회</string>
 
 </resources>

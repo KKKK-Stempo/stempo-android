@@ -64,10 +64,14 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
                         data = LineData(LineDataSet(state.data, CHART_RECORD).setDataSettings())
                         invalidate()
                     }
+                    binding.tvAccuracyAverage.isVisible = true
+                    binding.tvAccuracyAverage.text =
+                        getString(R.string.report_tv_accuracy_average, viewModel.accuracyAverage)
                     setGraphSettings()
                 }
 
                 is UiState.Failure -> {
+                    binding.tvAccuracyAverage.isVisible = false
                     setLoadingView(false)
                     binding.ivChartEmpty.isVisible = true
                     toast(stringOf(R.string.error_msg))
@@ -76,6 +80,7 @@ class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_rec
                 is UiState.Loading -> setLoadingView(true)
 
                 is UiState.Empty -> {
+                    binding.tvAccuracyAverage.isVisible = false
                     setLoadingView(false)
                     binding.ivChartEmpty.isVisible = true
                 }

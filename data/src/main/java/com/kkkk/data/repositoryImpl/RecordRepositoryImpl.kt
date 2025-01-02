@@ -1,7 +1,7 @@
 package com.kkkk.data.repositoryImpl
 
 import com.kkkk.data.dataSource.RecordDataSource
-import com.kkkk.domain.entity.response.RecordModel
+import com.kkkk.domain.entity.response.RecordList
 import com.kkkk.domain.entity.response.StatisticsModel
 import com.kkkk.domain.repository.RecordRepository
 import javax.inject.Inject
@@ -15,9 +15,9 @@ constructor(
     override suspend fun getRecordList(
         startDate: String,
         endDate: String,
-    ): Result<List<RecordModel>> =
+    ): Result<RecordList> =
         runCatching {
-            recordDataSource.getRecordList(startDate, endDate).data.map { it.toModel() }
+            recordDataSource.getRecordList(startDate, endDate).data.toModel()
         }
 
     override suspend fun getRecordStatistics(): Result<StatisticsModel> =
