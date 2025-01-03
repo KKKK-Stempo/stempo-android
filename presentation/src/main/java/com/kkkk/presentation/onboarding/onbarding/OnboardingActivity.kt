@@ -17,6 +17,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
+import com.kkkk.presentation.main.MainActivity
 import com.kkkk.presentation.xmlmain.XmlMainActivity
 import com.kkkk.stempo.presentation.R
 import com.kkkk.stempo.presentation.databinding.ActivityOnboardingBinding
@@ -63,7 +64,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
                         vibrate()
                         navigateTo<OnboardingEndFragment>()
                     }
-                    OnboardingState.DONE -> navigateToScreenClear<XmlMainActivity>()
+                    OnboardingState.DONE -> navigateToScreenClear<MainActivity>()
                 }
             }.launchIn(lifecycleScope)
     }
