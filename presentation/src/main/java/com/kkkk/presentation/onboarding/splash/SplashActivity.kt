@@ -22,8 +22,7 @@ import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.core.extension.setNavigationBarColorFromResource
 import com.kkkk.core.extension.setStatusBarColorFromResource
-import com.kkkk.presentation.main.MainActivity
-import com.kkkk.presentation.onboarding.onbarding.OnboardingActivity
+import com.kkkk.presentation.xmlmain.XmlMainActivity
 import com.kkkk.presentation.onboarding.terms.TermsActivity
 import com.kkkk.stempo.presentation.R
 import com.kkkk.stempo.presentation.databinding.ActivitySplashBinding
@@ -63,7 +62,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
     private fun observeTokenState() {
         viewModel.isValidToken.flowWithLifecycle(lifecycle).onEach { isValidToken ->
             if (isValidToken) {
-                navigateToScreenClear<MainActivity>()
+                navigateToScreenClear<XmlMainActivity>()
             } else {
                 login()
             }
@@ -73,7 +72,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
     private fun observeUserState() {
         viewModel.userState.flowWithLifecycle(lifecycle).onEach { isSuccess ->
             if (isSuccess) {
-                navigateToScreenClear<MainActivity>()
+                navigateToScreenClear<XmlMainActivity>()
             } else {
                 navigateToScreenClear<TermsActivity>()
             }

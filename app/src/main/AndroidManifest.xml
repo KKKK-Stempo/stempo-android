@@ -34,7 +34,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.kkkk.presentation.main.MainActivity"
+            android:name="com.kkkk.presentation.xmlmain.XmlMainActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 

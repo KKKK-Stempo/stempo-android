@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.rhythm
+package com.kkkk.presentation.xmlmain.xmlrhythm
 
 import android.content.Context
 import android.hardware.Sensor
@@ -45,16 +45,16 @@ import java.nio.file.Files
 import kotlin.coroutines.resume
 
 @AndroidEntryPoint
-class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhythm),
+class XmlRhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhythm),
     SensorEventListener, DataClient.OnDataChangedListener {
     private lateinit var sensorManager: SensorManager
     private var stepDetectorSensor: Sensor? = null
 
-    private val viewModel by activityViewModels<RhythmViewModel>()
+    private val viewModel by activityViewModels<XmlRhythmViewModel>()
 
-    private var rhythmBottomSheet: RhythmBottomSheet? = null
-    private var rhythmSaveDialog: RhythmSaveDialog? = null
-    private var watchSyncDialog: WatchSyncDialog? = null
+    private var rhythmBottomSheet: XmlRhythmBottomSheet? = null
+    private var rhythmSaveDialog: XmlRhythmSaveDialog? = null
+    private var watchSyncDialog: XmlWatchSyncDialog? = null
 
     private lateinit var soundPool: SoundPool
     private lateinit var mediaPlayer: MediaPlayer
@@ -93,7 +93,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
     }
 
     private fun startRhythmBottomSheet() {
-        rhythmBottomSheet = RhythmBottomSheet()
+        rhythmBottomSheet = XmlRhythmBottomSheet()
         rhythmBottomSheet?.show(parentFragmentManager, BOTTOM_SHEET_CHANGE_LEVEL)
     }
 
@@ -161,7 +161,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
             switchPlayingState(false)
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             if (isButton) {
-                rhythmSaveDialog = RhythmSaveDialog()
+                rhythmSaveDialog = XmlRhythmSaveDialog()
                 rhythmSaveDialog?.show(parentFragmentManager, DIALOG_RHYTHM_SAVE)
             }
         }
@@ -377,7 +377,7 @@ class RhythmFragment : BaseFragment<FragmentRhythmBinding>(R.layout.fragment_rhy
 
     private fun initWearableSyncBtnListener() {
         binding.btnWatch.setOnSingleClickListener {
-            watchSyncDialog = WatchSyncDialog()
+            watchSyncDialog = XmlWatchSyncDialog()
             watchSyncDialog?.show(parentFragmentManager, DIALOG_WATCH_SYNC)
         }
     }

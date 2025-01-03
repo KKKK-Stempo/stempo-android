@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.rhythm
+package com.kkkk.presentation.xmlmain.xmlrhythm
 
 import android.os.Bundle
 import android.view.View
@@ -13,9 +13,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class WatchSyncDialog :
+class XmlWatchSyncDialog :
     BaseDialog<DialogWatchSyncBinding>(R.layout.dialog_watch_sync) {
-    private val viewModel by activityViewModels<RhythmViewModel>()
+    private val viewModel by activityViewModels<XmlRhythmViewModel>()
 
     @Inject
     lateinit var phoneDataManager: PhoneDataManager

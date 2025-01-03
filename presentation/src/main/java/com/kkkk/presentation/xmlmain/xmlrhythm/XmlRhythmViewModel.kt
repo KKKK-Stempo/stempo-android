@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.rhythm
+package com.kkkk.presentation.xmlmain.xmlrhythm
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RhythmViewModel
+class XmlRhythmViewModel
 @Inject
 constructor(
     private val rhythmRepository: RhythmRepository,

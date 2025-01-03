@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.record
+package com.kkkk.presentation.xmlmain.xmlrecord
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -25,9 +25,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class RecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_record) {
+class XmlRecordFragment : BaseFragment<FragmentRecordBinding>(R.layout.fragment_record) {
 
-    private val viewModel by activityViewModels<RecordViewModel>()
+    private val viewModel by activityViewModels<XmlRecordViewModel>()
 
     override fun onViewCreated(
         view: View,

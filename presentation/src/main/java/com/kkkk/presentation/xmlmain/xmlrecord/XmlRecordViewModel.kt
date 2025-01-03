@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.record
+package com.kkkk.presentation.xmlmain.xmlrecord
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,7 +18,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class RecordViewModel
+class XmlRecordViewModel
 @Inject
 constructor(
     private val recordRepository: RecordRepository,

@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.profile
+package com.kkkk.presentation.xmlmain.xmlprofile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(
+class XmlProfileViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
 ) : ViewModel() {
