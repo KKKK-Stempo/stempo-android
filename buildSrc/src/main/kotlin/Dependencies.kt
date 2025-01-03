@@ -87,3 +87,19 @@ object ClassPathPlugins {
     const val hilt = "com.google.dagger:hilt-android-gradle-plugin:${Versions.hiltVersion}"
     const val oss = "com.google.android.gms:oss-licenses-plugin:${Versions.ossPluginVersion}"
 }
+
+object ComposeDependencies {
+    const val androidxComposeBom = "androidx.compose:compose-bom:${Versions.androidxComposeBom}"
+    const val androidxComposeMaterial3 = "androidx.compose.material:material:${Versions.androidxComposeMaterial3}"
+    const val androidxComposeUi = "androidx.compose.ui:ui:${Versions.androidxComposeCompiler}"
+    const val androidxComposeUiTooling = "androidx.compose.ui:ui-tooling:${Versions.androidxComposeCompiler}"
+    const val androidxComposeUiToolingPreview = "androidx.compose.ui:ui-tooling-preview:${Versions.androidxComposeCompiler}"
+    const val androidxComposeNavigation = "androidx.navigation:navigation-compose:${Versions.androidxComposeNavigation}"
+    const val androidxComposePreview = "androidx.compose.ui:ui-tooling-preview:${Versions.androidxComposeCompiler}"
+    const val hiltNavigationCompose = "androidx.hilt:hilt-navigation-compose:${Versions.hiltNavigationCompose}"
+    const val androidxUiGraphics = "androidx.compose.ui:ui-graphics:${Versions.androidxComposeCompiler}"
+}
+
+object ComposePlugins {
+    const val composeCompiler = "org.jetbrains.compose:compose-gradle-plugin:${Versions.composePluginVersion}"
+}
