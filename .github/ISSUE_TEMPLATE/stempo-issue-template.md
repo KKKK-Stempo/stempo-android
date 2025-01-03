@@ -3,7 +3,7 @@ name: STEMPO issue template
 about: STEMPO issue template
 title: "[TAG] where / what"
 labels: ''
-assignees: Marchbreeze
+assignees: ''
 
 ---
 

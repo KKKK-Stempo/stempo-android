@@ -4,6 +4,7 @@ plugins {
     kotlin("kapt")
     id("kotlin-parcelize")
     id("dagger.hilt.android.plugin")
+    id("org.jetbrains.compose")
 }
 
 android {
@@ -27,10 +28,15 @@ android {
         jvmTarget = Versions.jvmVersion
     }
 
+    composeOptions {
+        kotlinCompilerExtensionVersion = Versions.composePluginVersion
+    }
+
     buildFeatures {
         buildConfig = true
         dataBinding = true
         viewBinding = true
+        compose = true
     }
 }
 
@@ -91,5 +97,17 @@ dependencies {
 
     JitPackDependencies.run {
         implementation(mpChart)
+    }
+
+    ComposeDependencies.run {
+        implementation(androidxComposeBom)
+        implementation(androidxComposeMaterial3)
+        implementation(androidxComposeUi)
+        implementation(androidxComposeUiTooling)
+        implementation(androidxComposeUiToolingPreview)
+        implementation(androidxComposeNavigation)
+        implementation(androidxComposePreview)
+        implementation(hiltNavigationCompose)
+        implementation(androidxUiGraphics)
     }
 }

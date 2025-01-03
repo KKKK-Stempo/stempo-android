@@ -44,4 +44,12 @@ object Versions {
 
     val javaVersion = JavaVersion.VERSION_17
     const val jvmVersion = "17"
+
+    // compose
+    const val androidxComposeBom = "2024.05.00"
+    const val androidxComposeCompiler = "1.5.14"
+    const val androidxComposeNavigation = "2.8.0"
+    const val androidxComposeMaterial3 = "1.2.1"
+    const val hiltNavigationCompose = "1.2.0"
+    const val composePluginVersion = "1.5.3"
 }
