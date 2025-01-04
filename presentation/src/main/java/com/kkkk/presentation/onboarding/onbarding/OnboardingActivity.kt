@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.presentation.main.MainActivity
+import com.kkkk.presentation.xmlmain.XmlMainActivity
 import com.kkkk.stempo.presentation.R
 import com.kkkk.stempo.presentation.databinding.ActivityOnboardingBinding
 import dagger.hilt.android.AndroidEntryPoint

@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.profile
+package com.kkkk.presentation.main.result
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,16 +8,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ProfileRoute() {
-    ProfileScreen()
+fun ResultRoute() {
+    ResultScreen()
 }
 
 @Composable
-private fun ProfileScreen() {
+private fun ResultScreen() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Profile Screen")
+        Text(text = "Result Screen")
     }
 }

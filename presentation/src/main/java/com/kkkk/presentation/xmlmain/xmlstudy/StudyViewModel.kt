@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.study
+package com.kkkk.presentation.xmlmain.xmlstudy
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

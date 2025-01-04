@@ -1,21 +1,18 @@
-package com.kkkk.presentation.main.profile
+package com.kkkk.presentation.xmlmain.xmlrhythm
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import com.jakewharton.processphoenix.ProcessPhoenix
+import androidx.fragment.app.activityViewModels
 import com.kkkk.core.base.BaseDialog
 import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.stempo.presentation.R
-import com.kkkk.stempo.presentation.databinding.DialogProfileWithDrawBinding
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import com.kkkk.stempo.presentation.databinding.DialogRhythmSaveBinding
 
-class ProfileWithDrawDialog :
-    BaseDialog<DialogProfileWithDrawBinding>(R.layout.dialog_profile_with_draw) {
-    private val viewModel by lazy { ViewModelProvider(requireActivity())[ProfileViewModel::class.java] }
+class XmlRhythmSaveDialog :
+    BaseDialog<DialogRhythmSaveBinding>(R.layout.dialog_rhythm_save) {
+    private val viewModel by activityViewModels<XmlRhythmViewModel>()
 
     override fun onStart() {
         super.onStart()
@@ -39,15 +36,20 @@ class ProfileWithDrawDialog :
     }
 
     private fun initPauseBtnListener() {
-        binding.btnCancel.setOnSingleClickListener {
+        binding.btnPause.setOnSingleClickListener {
             dismiss()
         }
     }
 
     private fun initSaveBtnListener() {
-        binding.btnDelete.setOnSingleClickListener {
-            viewModel.withdraw()
+        binding.btnSave.setOnSingleClickListener {
+            viewModel.postRhythmRecordToSave()
             dismiss()
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        viewModel.watchAccuracy = 0.0
     }
 }

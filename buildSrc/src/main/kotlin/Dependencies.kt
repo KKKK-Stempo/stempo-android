@@ -90,7 +90,7 @@ object ClassPathPlugins {
 
 object ComposeDependencies {
     const val androidxComposeBom = "androidx.compose:compose-bom:${Versions.androidxComposeBom}"
-    const val androidxComposeMaterial3 = "androidx.compose.material:material:${Versions.androidxComposeMaterial3}"
+    const val androidxComposeMaterial3 = "androidx.compose.material3:material3:${Versions.androidxComposeMaterial3}"
     const val androidxComposeUi = "androidx.compose.ui:ui:${Versions.androidxComposeCompiler}"
     const val androidxComposeUiTooling = "androidx.compose.ui:ui-tooling:${Versions.androidxComposeCompiler}"
     const val androidxComposeUiToolingPreview = "androidx.compose.ui:ui-tooling-preview:${Versions.androidxComposeCompiler}"
@@ -98,6 +98,7 @@ object ComposeDependencies {
     const val androidxComposePreview = "androidx.compose.ui:ui-tooling-preview:${Versions.androidxComposeCompiler}"
     const val hiltNavigationCompose = "androidx.hilt:hilt-navigation-compose:${Versions.hiltNavigationCompose}"
     const val androidxUiGraphics = "androidx.compose.ui:ui-graphics:${Versions.androidxComposeCompiler}"
+    const val androidxImmutableList = "org.jetbrains.kotlinx:kotlinx-collections-immutable:${Versions.kotlinxImmutable}"
 }
 
 object ComposePlugins {

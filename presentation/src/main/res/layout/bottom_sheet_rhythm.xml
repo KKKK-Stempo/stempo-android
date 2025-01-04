@@ -9,7 +9,7 @@
 
         <variable
             name="vm"
-            type="com.kkkk.presentation.main.rhythm.RhythmViewModel" />
+            type="com.kkkk.presentation.xmlmain.xmlrhythm.XmlRhythmViewModel" />
 
     </data>
 

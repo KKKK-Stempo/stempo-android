@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.study
+package com.kkkk.presentation.xmlmain.xmlstudy
 
 import android.annotation.SuppressLint
 import android.app.Dialog

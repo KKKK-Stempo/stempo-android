@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.profile
+package com.kkkk.presentation.xmlmain.xmlprofile
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -20,9 +20,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @AndroidEntryPoint
-class ProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_profile) {
-    private val viewModel by activityViewModels<ProfileViewModel>()
-    private var profileWithDrawDialog: ProfileWithDrawDialog? = null
+class XmlProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_profile) {
+    private val viewModel by activityViewModels<XmlProfileViewModel>()
+    private var profileWithDrawDialog: XmlProfileWithDrawDialog? = null
 
     override fun onViewCreated(
         view: View,
@@ -62,10 +62,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(R.layout.fragment_p
         with(binding) {
             tvVersionCode.text = "v ${BuildConfig.VERSION_NAME}"
             btnWithdraw.setOnSingleClickListener {
-                profileWithDrawDialog = ProfileWithDrawDialog()
+                profileWithDrawDialog = XmlProfileWithDrawDialog()
                 profileWithDrawDialog?.show(
                     parentFragmentManager,
-                    ProfileWithDrawDialog::class.java.simpleName
+                    XmlProfileWithDrawDialog::class.java.simpleName
                 )
             }
         }

@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.rhythm
+package com.kkkk.presentation.xmlmain.xmlrhythm
 
 import android.os.Bundle
 import android.view.View
@@ -11,10 +11,10 @@ import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.stempo.presentation.R
 import com.kkkk.stempo.presentation.databinding.BottomSheetRhythmBinding
 
-class RhythmBottomSheet :
+class XmlRhythmBottomSheet :
     BaseBottomSheet<BottomSheetRhythmBinding>(R.layout.bottom_sheet_rhythm) {
 
-    private val viewModel by activityViewModels<RhythmViewModel>()
+    private val viewModel by activityViewModels<XmlRhythmViewModel>()
 
     override fun onStart() {
         super.onStart()

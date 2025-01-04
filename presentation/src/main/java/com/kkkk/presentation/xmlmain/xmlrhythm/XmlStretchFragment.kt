@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.rhythm
+package com.kkkk.presentation.xmlmain.xmlrhythm
 
 import android.media.MediaPlayer
 import android.media.SoundPool
@@ -11,9 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseFragment
 import com.kkkk.core.extension.setOnSingleClickListener
 import com.kkkk.core.extension.setStatusBarColor
-import com.kkkk.core.extension.stringOf
-import com.kkkk.core.extension.toast
-import com.kkkk.presentation.main.rhythm.RhythmFragment.Companion.findMusicByBpm
 import com.kkkk.stempo.presentation.R
 import com.kkkk.stempo.presentation.databinding.FragmentStretchBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,13 +18,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import java.io.File
 import kotlin.coroutines.resume
 
 @AndroidEntryPoint
-class StretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_stretch) {
+class XmlStretchFragment : BaseFragment<FragmentStretchBinding>(R.layout.fragment_stretch) {
 
-    private val viewModel by activityViewModels<RhythmViewModel>()
+    private val viewModel by activityViewModels<XmlRhythmViewModel>()
     private lateinit var soundPool: SoundPool
     private lateinit var mediaPlayer: MediaPlayer
 
