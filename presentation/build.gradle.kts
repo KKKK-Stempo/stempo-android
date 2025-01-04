@@ -110,5 +110,6 @@ dependencies {
         implementation(androidxComposePreview)
         implementation(hiltNavigationCompose)
         implementation(androidxUiGraphics)
+        implementation(androidxImmutableList)
     }
 }

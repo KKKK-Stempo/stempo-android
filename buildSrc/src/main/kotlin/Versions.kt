@@ -52,4 +52,6 @@ object Versions {
     const val androidxComposeMaterial3 = "1.2.1"
     const val hiltNavigationCompose = "1.2.0"
     const val composePluginVersion = "1.5.3"
+
+    const val kotlinxImmutable = "0.3.7"
 }
