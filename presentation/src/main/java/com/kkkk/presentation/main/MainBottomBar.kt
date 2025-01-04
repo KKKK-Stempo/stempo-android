@@ -1,6 +1,5 @@
 package com.kkkk.presentation.main
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -13,11 +12,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -64,7 +61,7 @@ fun MainBottomBar(
             Spacer(modifier = Modifier.height(11.dp))
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(), // 사이즈 손보기
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
@@ -73,9 +70,8 @@ fun MainBottomBar(
                         tab = tab,
                         selected = (tab == currentTab),
                         onClick = {
-                            Log.e("TAG", "MainBottomBar: $tab", )
                             onTabSelected(tab)
-                                  },
+                        },
                     )
                 }
             }
