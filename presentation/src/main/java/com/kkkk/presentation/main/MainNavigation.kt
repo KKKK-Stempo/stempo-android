@@ -45,10 +45,10 @@ class MainNavigator(
         }
 
         when (tab) {
-            BottomTabItem.RECORD -> navController.navigateToRecord()
-            BottomTabItem.RHYTHM -> navController.navigateToRhythm()
-            BottomTabItem.RESULT -> navController.navigateToResult()
-            BottomTabItem.PROFILE -> navController.navigateToProfile()
+            BottomTabItem.RECORD -> navController.navigateToRecord(navOptions)
+            BottomTabItem.RHYTHM -> navController.navigateToRhythm(navOptions)
+            BottomTabItem.RESULT -> navController.navigateToResult(navOptions)
+            BottomTabItem.PROFILE -> navController.navigateToProfile(navOptions)
         }
     }
 }
