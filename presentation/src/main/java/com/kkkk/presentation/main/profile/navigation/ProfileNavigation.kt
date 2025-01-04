@@ -3,19 +3,16 @@ package com.kkkk.presentation.main.profile.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.kkkk.presentation.main.navigation.MainTabRoute
 import com.kkkk.presentation.main.profile.ProfileRoute
-import kotlinx.serialization.Serializable
 
 fun NavController.navigateToProfile() {
-    navigate(Profile)
+    navigate(MainTabRoute.Profile)
 }
 
 fun NavGraphBuilder.profileNavGraph(
 ) {
-    composable<Profile> {
+    composable<MainTabRoute.Profile> {
         ProfileRoute()
     }
 }
-
-@Serializable
-private data object Profile

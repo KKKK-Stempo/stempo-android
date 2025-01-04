@@ -16,8 +16,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
+            val navigator = rememberMainNavigator()
+
             StempoTheme {
-                MainScreen()
+                MainScreen(navigator)
             }
         }
     }
