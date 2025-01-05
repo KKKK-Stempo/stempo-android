@@ -46,7 +46,7 @@ object StempoTheme {
 }
 
 @Composable
-fun ProvideStempoTypography(typography: StempoTypography, content: @Composable () -> Unit) {
+private fun ProvideStempoTypography(typography: StempoTypography, content: @Composable () -> Unit) {
     val provideTypography = remember { typography.copy() }
     provideTypography.update(typography)
 
