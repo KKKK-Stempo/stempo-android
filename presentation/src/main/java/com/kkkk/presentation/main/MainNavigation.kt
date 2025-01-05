@@ -35,8 +35,7 @@ class MainNavigator(
     fun navigate(tab: BottomTabItem) {
         val navOptions = navOptions {
             navController.currentDestination?.route?.let {
-                popUpTo(it) {
-                    inclusive = true
+                popUpTo(startDestination) {
                     saveState = true
                 }
             }

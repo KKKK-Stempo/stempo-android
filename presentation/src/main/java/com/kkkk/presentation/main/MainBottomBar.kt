@@ -34,6 +34,7 @@ import com.kkkk.presentation.main.navigation.Route
 import com.kkkk.presentation.main.theme.Dark
 import com.kkkk.presentation.main.theme.Gray300
 import com.kkkk.presentation.main.theme.Gray500
+import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
 import kotlinx.collections.immutable.ImmutableList
@@ -115,7 +116,8 @@ private fun MainBottomBarItem(
                 Dark
             } else {
                 Gray500
-            }
+            },
+            style = StempoTheme.typography.caption1
         )
     }
 }
