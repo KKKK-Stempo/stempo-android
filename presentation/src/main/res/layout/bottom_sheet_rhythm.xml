@@ -55,6 +55,7 @@
 
             <TextView
                 style="@style/TextAppearance.Stempo.Head2"
+                android:layout_height="wrap_content"
                 android:layout_row="0"
                 android:layout_rowWeight="1"
                 android:layout_column="0"
