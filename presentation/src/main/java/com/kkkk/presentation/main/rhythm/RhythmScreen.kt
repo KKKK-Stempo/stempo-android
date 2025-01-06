@@ -106,7 +106,7 @@ internal fun RhythmScreen(
             )
             Text(
                 text = stringResource(id = R.string.rhythm_btn_change_level),
-                style = StempoTheme.typography.head3,
+                style = StempoTheme.typography.head4,
                 color = White
             )
         }
