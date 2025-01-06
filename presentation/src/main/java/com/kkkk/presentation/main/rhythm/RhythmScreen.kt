@@ -2,12 +2,12 @@ package com.kkkk.presentation.main.rhythm
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -35,6 +36,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.kkkk.presentation.main.rhythm.component.RhythmChip
 import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
+import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Dark
 import com.kkkk.presentation.main.theme.Purple50
 import com.kkkk.presentation.main.theme.StempoTheme
@@ -71,6 +73,39 @@ internal fun RhythmScreen(
     onStopBtnClick: () -> Unit = {},
     onChangeBtnClick: () -> Unit = {}
 ) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.img_rhythm_bg_purple),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(horizontal = 40.dp)
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .padding(bottom = 10.dp)
+        )
+        Image(
+            imageVector = ImageVector.vectorResource(id = if (!isPlaying) R.drawable.ic_play else R.drawable.ic_stop),
+            contentDescription = null,
+            modifier = Modifier
+                .size(120.dp)
+                .padding(bottom = 10.dp)
+                .clickableWithoutRipple { if (isPlaying) onStopBtnClick() else onPlayBtnClick() }
+        )
+        if (isPlaying) {
+            LottieAnimation(
+                composition = lottieComposition,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .scale(1.5f)
+            )
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -89,7 +124,7 @@ internal fun RhythmScreen(
                     contentDescription = null,
                     modifier = Modifier
                         .padding(end = 8.dp)
-                        .clickable { onWatchBtnClick() }
+                        .clickableWithoutRipple { onWatchBtnClick() }
                         .padding(6.dp)
                 )
             }
@@ -114,7 +149,8 @@ internal fun RhythmScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 34.dp),
+                    .padding(bottom = 34.dp)
+                    .clickableWithoutRipple { onChangeBtnClick() },
                 horizontalArrangement = Arrangement.Center
             ) {
                 RhythmChip(
@@ -140,7 +176,7 @@ internal fun RhythmScreen(
                 .padding(bottom = 24.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(Dark)
-                .clickable { onChangeBtnClick() }
+                .clickableWithoutRipple { onChangeBtnClick() }
                 .padding(vertical = 15.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
@@ -154,35 +190,6 @@ internal fun RhythmScreen(
                 text = stringResource(id = R.string.rhythm_btn_change_level),
                 style = StempoTheme.typography.head4,
                 color = White
-            )
-        }
-    }
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.img_rhythm_bg_purple),
-            contentDescription = null,
-            modifier = Modifier
-                .size(320.dp)
-                .padding(bottom = 10.dp)
-                .background(White)
-        )
-        Image(
-            imageVector = ImageVector.vectorResource(id = if (!isPlaying) R.drawable.ic_play else R.drawable.ic_stop),
-            contentDescription = null,
-            modifier = Modifier
-                .size(120.dp)
-                .padding(bottom = 10.dp)
-                .clickable { if (isPlaying) onStopBtnClick() else onPlayBtnClick() }
-        )
-        if (isPlaying) {
-            LottieAnimation(
-                composition = lottieComposition,
-                iterations = LottieConstants.IterateForever,
-                modifier = Modifier.fillMaxSize()
             )
         }
     }

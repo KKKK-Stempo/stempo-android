@@ -2,7 +2,6 @@ package com.kkkk.presentation.main.rhythm.component
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -65,7 +64,7 @@ fun RhythmModeToggleItem(
         modifier = modifier
             .clip(RoundedCornerShape(26.dp))
             .background(if (selectedMode == mode) White else Transparent)
-            .clickable { onToggleClick(mode) }
+            .clickableWithoutRipple { onToggleClick(mode) }
             .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
