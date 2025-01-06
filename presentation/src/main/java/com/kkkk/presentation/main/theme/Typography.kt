@@ -19,22 +19,22 @@ val PretendardMedium = FontFamily(Font(R.font.pretendard_medium, FontWeight.Medi
 
 @Stable
 class StempoTypography internal constructor(
-    head0: TextStyle,
     head1: TextStyle,
     head2: TextStyle,
     head3: TextStyle,
+    head4: TextStyle,
     body1: TextStyle,
     body2: TextStyle,
     body3: TextStyle,
     caption1: TextStyle,
 ) {
-    var head0: TextStyle by mutableStateOf(head0)
-        private set
     var head1: TextStyle by mutableStateOf(head1)
         private set
     var head2: TextStyle by mutableStateOf(head2)
         private set
     var head3: TextStyle by mutableStateOf(head3)
+        private set
+    var head4: TextStyle by mutableStateOf(head4)
         private set
     var body1: TextStyle by mutableStateOf(body1)
         private set
@@ -46,10 +46,10 @@ class StempoTypography internal constructor(
         private set
 
     fun copy(
-        head0: TextStyle = this.head0,
-        head1: TextStyle = this.head1,
-        head2: TextStyle = this.head2,
-        head3: TextStyle = this.head3,
+        head0: TextStyle = this.head1,
+        head1: TextStyle = this.head2,
+        head2: TextStyle = this.head3,
+        head3: TextStyle = this.head4,
         body1: TextStyle = this.body1,
         body2: TextStyle = this.body2,
         body3: TextStyle = this.body3,
@@ -66,10 +66,10 @@ class StempoTypography internal constructor(
     )
 
     fun update(other: StempoTypography) {
-        head0 = other.head0
         head1 = other.head1
         head2 = other.head2
         head3 = other.head3
+        head4 = other.head4
         body1 = other.body1
         body2 = other.body2
         body3 = other.body3
@@ -96,22 +96,22 @@ fun stempoTextStyle(
 @Composable
 fun stempoTypography(): StempoTypography {
     return StempoTypography(
-        head0 = stempoTextStyle(
+        head1 = stempoTextStyle(
             fontFamily = PretendardSemiBold,
             fontSize = 26.sp,
             lineHeight = 44.sp
         ),
-        head1 = stempoTextStyle(
+        head2 = stempoTextStyle(
             fontFamily = PretendardSemiBold,
             fontSize = 24.sp,
             lineHeight = 38.sp
         ),
-        head2 = stempoTextStyle(
+        head3 = stempoTextStyle(
             fontFamily = PretendardSemiBold,
             fontSize = 20.sp,
             lineHeight = 28.sp
         ),
-        head3 = stempoTextStyle(
+        head4 = stempoTextStyle(
             fontFamily = PretendardSemiBold,
             fontSize = 18.sp,
             lineHeight = 26.sp,

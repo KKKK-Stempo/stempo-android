@@ -54,4 +54,5 @@ object Versions {
     const val composePluginVersion = "1.5.3"
 
     const val kotlinxImmutable = "0.3.7"
+    const val accompanistVersion = "0.31.3-beta"
 }

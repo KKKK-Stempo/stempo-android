@@ -6,8 +6,11 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -66,12 +69,39 @@ fun StempoTheme(
     // darkTheme을 지원하지 않기에 현재는 LightColorScheme만 사용합니다.
     val colorScheme = LightColorScheme
 
+    SetSystemBarsColor(
+        statusBarColor = Color.White,
+        navigationBarColor = Color.White,
+        darkIcons = true
+    )
+
     val typography = stempoTypography()
 
     ProvideStempoTypography(typography) {
         MaterialTheme(
             colorScheme = colorScheme,
             content = content
+        )
+    }
+}
+
+@Composable
+fun SetSystemBarsColor(
+    statusBarColor: Color = Color.White,
+    navigationBarColor: Color = Color.White,
+    darkIcons: Boolean = true
+) {
+    val systemUiController = rememberSystemUiController()
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = statusBarColor,
+            darkIcons = darkIcons
+        )
+
+        systemUiController.setNavigationBarColor(
+            color = navigationBarColor,
+            darkIcons = darkIcons
         )
     }
 }
