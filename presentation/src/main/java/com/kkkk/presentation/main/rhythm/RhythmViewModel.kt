@@ -36,4 +36,12 @@ constructor(
             it.copy(isPlaying = !_rhythmState.value.isPlaying)
         }
     }
+
+    fun showBottomSheet(show: Boolean) {
+        _rhythmState.update { it.copy(isBottomSheetVisible = show) }
+    }
+
+    fun updateRhythm(bit: Int, bpm: Int) {
+        _rhythmState.update { it.copy(bit = bit, bpm = bpm) }
+    }
 }

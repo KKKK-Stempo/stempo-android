@@ -33,6 +33,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.kkkk.presentation.main.rhythm.component.RhythmBottomSheet
 import com.kkkk.presentation.main.rhythm.component.RhythmChip
 import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
 import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
@@ -57,7 +58,19 @@ fun RhythmRoute(
         onToggleSelected = viewModel::changeSelectedMode,
         onPlayBtnClick = viewModel::changeIsPlaying,
         onStopBtnClick = viewModel::changeIsPlaying,
+        onChangeBtnClick = { viewModel.showBottomSheet(true) }
     )
+
+    if (rhythmState.isBottomSheetVisible) {
+        RhythmBottomSheet(
+            rhythmState = rhythmState,
+            onDismissRequest = { viewModel.showBottomSheet(false) },
+            onSubmitBtnClick = { bit, bpm ->
+                viewModel.updateRhythm(bit, bpm)
+                viewModel.showBottomSheet(false)
+            }
+        )
+    }
 }
 
 @Composable
