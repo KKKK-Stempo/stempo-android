@@ -111,5 +111,6 @@ dependencies {
         implementation(hiltNavigationCompose)
         implementation(androidxUiGraphics)
         implementation(androidxImmutableList)
+        implementation(lottieCompose)
     }
 }

@@ -99,6 +99,7 @@ object ComposeDependencies {
     const val hiltNavigationCompose = "androidx.hilt:hilt-navigation-compose:${Versions.hiltNavigationCompose}"
     const val androidxUiGraphics = "androidx.compose.ui:ui-graphics:${Versions.androidxComposeCompiler}"
     const val androidxImmutableList = "org.jetbrains.kotlinx:kotlinx-collections-immutable:${Versions.kotlinxImmutable}"
+    const val lottieCompose = "com.airbnb.android:lottie-compose:${Versions.lottieVersion}"
 }
 
 object ComposePlugins {

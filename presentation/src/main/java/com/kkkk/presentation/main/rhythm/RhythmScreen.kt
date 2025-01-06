@@ -25,8 +25,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.LottieComposition
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.kkkk.presentation.main.rhythm.component.RhythmChip
 import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
 import com.kkkk.presentation.main.theme.Dark
@@ -38,16 +44,26 @@ import com.kkkk.stempo.presentation.R
 @Composable
 fun RhythmRoute() {
     var selectedMode by remember { mutableStateOf(RhythmMode.RHYTHM) }
+    var isPlaying by remember { mutableStateOf(false) }
+
+    val lottieComposition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.stempo_rhythm_purple)
+    )
 
     RhythmScreen(
         selectedMode = selectedMode,
-        onToggleSelected = { selectedMode = it }
+        lottieComposition = lottieComposition,
+        isPlaying = isPlaying,
+        onToggleSelected = { selectedMode = it },
+        onPlayBtnClick = { isPlaying = true },
+        onStopBtnClick = { isPlaying = false }
     )
 }
 
 @Composable
 internal fun RhythmScreen(
     selectedMode: RhythmMode,
+    lottieComposition: LottieComposition?,
     isPlaying: Boolean = false,
     onToggleSelected: (RhythmMode) -> Unit = {},
     onWatchBtnClick: () -> Unit = {},
@@ -88,30 +104,33 @@ internal fun RhythmScreen(
             } else {
                 stringResource(R.string.stretch_tv_title)
             },
+            textAlign = TextAlign.Center,
             style = StempoTheme.typography.head1
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 34.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            RhythmChip(
-                text = "2박자",
-                color = Purple50,
-                isFilled = true
-            )
-            RhythmChip(
-                modifier = Modifier.padding(horizontal = 6.dp),
-                text = "65빠르기",
-                color = Purple50,
-            )
-            RhythmChip(
-                text = "000걸음",
-            )
+        if (selectedMode == RhythmMode.RHYTHM) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 34.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                RhythmChip(
+                    text = "2박자",
+                    color = Purple50,
+                    isFilled = true
+                )
+                RhythmChip(
+                    modifier = Modifier.padding(horizontal = 6.dp),
+                    text = "65빠르기",
+                    color = Purple50,
+                )
+                RhythmChip(
+                    text = "000걸음",
+                )
+            }
         }
 
         Row(
@@ -149,6 +168,7 @@ internal fun RhythmScreen(
             modifier = Modifier
                 .size(320.dp)
                 .padding(bottom = 10.dp)
+                .background(White)
         )
         Image(
             imageVector = ImageVector.vectorResource(id = if (!isPlaying) R.drawable.ic_play else R.drawable.ic_stop),
@@ -156,20 +176,15 @@ internal fun RhythmScreen(
             modifier = Modifier
                 .size(120.dp)
                 .padding(bottom = 10.dp)
-                .clickable { if(isPlaying) onStopBtnClick() else onPlayBtnClick() }
+                .clickable { if (isPlaying) onStopBtnClick() else onPlayBtnClick() }
         )
-
-//        val lottieComposition by rememberLottieComposition(
-//            LottieCompositionSpec.RawRes(R.raw.stempo_rhythm_purple)
-//        )
-//
-//        if (isPlaying) {
-//            LottieAnimation(
-//                composition = lottieComposition,
-//                iterations = LottieConstants.IterateForever,
-//                modifier = Modifier.size(520.dp)
-//            )
-//        }
+        if (isPlaying) {
+            LottieAnimation(
+                composition = lottieComposition,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 
@@ -177,6 +192,9 @@ internal fun RhythmScreen(
 @Composable
 fun RhythmScreenPreview() {
     StempoTheme {
-        RhythmScreen(selectedMode = RhythmMode.RHYTHM)
+        RhythmScreen(
+            selectedMode = RhythmMode.RHYTHM,
+            lottieComposition = null
+        )
     }
 }
