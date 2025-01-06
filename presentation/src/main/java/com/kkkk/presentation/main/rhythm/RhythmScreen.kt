@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -107,33 +108,13 @@ internal fun RhythmScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Image(
-            imageVector = ImageVector.vectorResource(id = rhythmState.imageResource),
-            contentDescription = null,
-            modifier = Modifier
-                .padding(horizontal = 40.dp)
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .padding(bottom = 10.dp)
+        RhythmPlayBtnWithLottie(
+            rhythmState = rhythmState,
+            lottieComposition = lottieComposition,
+            onPlayBtnClick = onPlayBtnClick,
+            onStopBtnClick = onStopBtnClick
         )
-        Image(
-            imageVector = ImageVector.vectorResource(id = if (!rhythmState.isPlaying) R.drawable.ic_play else R.drawable.ic_stop),
-            contentDescription = null,
-            modifier = Modifier
-                .size(120.dp)
-                .padding(bottom = 10.dp)
-                .clickableWithoutRipple { if (rhythmState.isPlaying) onStopBtnClick() else onPlayBtnClick() }
-        )
-        if (rhythmState.isPlaying) {
-            LottieAnimation(
-                composition = lottieComposition,
-                iterations = LottieConstants.IterateForever,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .scale(1.5f)
-            )
-        }
+
         Column(
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -146,81 +127,154 @@ internal fun RhythmScreen(
                     selectedMode = rhythmState.selectedMode,
                     onToggleSelected = onToggleSelected
                 )
+
                 if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
-                    Image(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_watch),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .clickableWithoutRipple { onWatchBtnClick() }
-                            .padding(6.dp)
-                    )
+                    WatchSyncBtn(onWatchBtnClick)
                 }
             }
 
-            Text(
-                modifier = Modifier
-                    .padding(top = 26.dp, start = 60.dp, end = 60.dp)
-                    .align(Alignment.CenterHorizontally),
-                text = if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
-                    stringResource(R.string.rhythm_tv_title)
-                } else {
-                    stringResource(R.string.stretch_tv_title)
-                },
-                textAlign = TextAlign.Center,
-                style = StempoTheme.typography.head1
+            RhythmTitleText(
+                rhythmState = rhythmState
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
             if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 34.dp)
-                        .clickableWithoutRipple { onChangeBtnClick() },
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    RhythmChip(
-                        text = stringResource(R.string.rhythm_tv_bit, rhythmState.bit),
-                        color = rhythmState.color,
-                        isFilled = true
-                    )
-                    RhythmChip(
-                        modifier = Modifier.padding(horizontal = 6.dp),
-                        text = stringResource(R.string.rhythm_tv_bpm, rhythmState.bpm),
-                        color = rhythmState.color,
-                    )
-                    RhythmChip(
-                        text = stringResource(R.string.rhythm_tv_step, rhythmState.stepCount),
-                    )
-                }
+                RhythmInfoChips(
+                    rhythmState = rhythmState,
+                    onChangeBtnClick = onChangeBtnClick
+                )
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 24.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Dark)
-                    .clickableWithoutRipple { onChangeBtnClick() }
-                    .padding(vertical = 15.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_change),
-                    contentDescription = null,
-                    modifier = Modifier.padding(top = 1.dp)
-                )
-                Text(
-                    text = stringResource(id = R.string.rhythm_btn_change_level),
-                    style = StempoTheme.typography.head4,
-                    color = White
-                )
-            }
+            RhythmChangeBtn(
+                onChangeBtnClick = onChangeBtnClick
+            )
         }
+    }
+}
+
+@Composable
+fun RhythmPlayBtnWithLottie(
+    rhythmState: RhythmState,
+    lottieComposition: LottieComposition?,
+    onPlayBtnClick: () -> Unit = {},
+    onStopBtnClick: () -> Unit = {}
+) {
+    Image(
+        imageVector = ImageVector.vectorResource(id = rhythmState.imageResource),
+        contentDescription = null,
+        modifier = Modifier
+            .padding(horizontal = 40.dp)
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .padding(bottom = 10.dp)
+    )
+    Image(
+        imageVector = ImageVector.vectorResource(id = if (!rhythmState.isPlaying) R.drawable.ic_play else R.drawable.ic_stop),
+        contentDescription = null,
+        modifier = Modifier
+            .size(120.dp)
+            .padding(bottom = 10.dp)
+            .clickableWithoutRipple { if (rhythmState.isPlaying) onStopBtnClick() else onPlayBtnClick() }
+    )
+    if (rhythmState.isPlaying) {
+        LottieAnimation(
+            composition = lottieComposition,
+            iterations = LottieConstants.IterateForever,
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .scale(1.5f)
+        )
+    }
+}
+
+@Composable
+fun WatchSyncBtn(
+    onWatchBtnClick: () -> Unit = {}
+) {
+    Image(
+        imageVector = ImageVector.vectorResource(R.drawable.ic_watch),
+        contentDescription = null,
+        modifier = Modifier
+            .padding(end = 8.dp)
+            .clickableWithoutRipple { onWatchBtnClick() }
+            .padding(6.dp)
+    )
+}
+
+@Composable
+fun ColumnScope.RhythmTitleText(
+    rhythmState: RhythmState
+) {
+    Text(
+        modifier = Modifier
+            .padding(top = 26.dp, start = 60.dp, end = 60.dp)
+            .align(Alignment.CenterHorizontally),
+        text = if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
+            stringResource(R.string.rhythm_tv_title)
+        } else {
+            stringResource(R.string.stretch_tv_title)
+        },
+        textAlign = TextAlign.Center,
+        style = StempoTheme.typography.head1
+    )
+}
+
+@Composable
+fun ColumnScope.RhythmInfoChips(
+    rhythmState: RhythmState,
+    onChangeBtnClick: () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier
+            .padding(bottom = 34.dp)
+            .align(Alignment.CenterHorizontally)
+            .clickableWithoutRipple { onChangeBtnClick() },
+        horizontalArrangement = Arrangement.Center
+    ) {
+        RhythmChip(
+            text = stringResource(R.string.rhythm_tv_bit, rhythmState.bit),
+            color = rhythmState.color,
+            isFilled = true
+        )
+        RhythmChip(
+            modifier = Modifier.padding(horizontal = 6.dp),
+            text = stringResource(R.string.rhythm_tv_bpm, rhythmState.bpm),
+            color = rhythmState.color,
+        )
+        RhythmChip(
+            text = stringResource(R.string.rhythm_tv_step, rhythmState.stepCount),
+        )
+    }
+}
+
+@Composable
+fun RhythmChangeBtn(
+    onChangeBtnClick: () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 24.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(Dark)
+            .clickableWithoutRipple { onChangeBtnClick() }
+            .padding(vertical = 15.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_change),
+            contentDescription = null,
+            modifier = Modifier.padding(top = 1.dp)
+        )
+        Text(
+            text = stringResource(id = R.string.rhythm_btn_change_level),
+            style = StempoTheme.typography.head4,
+            color = White
+        )
     }
 }
 
