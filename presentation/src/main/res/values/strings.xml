@@ -35,6 +35,8 @@
     <string name="rhythm_stop_btn_save">종료하기</string>
     <string name="rhythm_stop_btn_pause">정지하기</string>
 
+    <string name="stretch_tv_title">리듬에 맞춰\n스트레칭을 진행해주세요!</string>
+
     <string name="report_tv_accuracy_average">정확도 평균 %d%%</string>
     <string name="report_tv_title">동안의 성과에요!</string>
     <string name="report_tv_achieve_title">달성한 업적</string>
