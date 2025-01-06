@@ -16,9 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +26,8 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -38,35 +37,33 @@ import com.kkkk.presentation.main.rhythm.component.RhythmChip
 import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
 import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Dark
-import com.kkkk.presentation.main.theme.Purple50
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
 
 @Composable
-fun RhythmRoute() {
-    var selectedMode by remember { mutableStateOf(RhythmMode.RHYTHM) }
-    var isPlaying by remember { mutableStateOf(false) }
+fun RhythmRoute(
+    viewModel: RhythmViewModel = hiltViewModel(),
+) {
+    val rhythmState by viewModel.rhythmState.collectAsStateWithLifecycle()
 
     val lottieComposition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.stempo_rhythm_purple)
+        LottieCompositionSpec.RawRes(rhythmState.lottieResource)
     )
 
     RhythmScreen(
-        selectedMode = selectedMode,
+        rhythmState = rhythmState,
         lottieComposition = lottieComposition,
-        isPlaying = isPlaying,
-        onToggleSelected = { selectedMode = it },
-        onPlayBtnClick = { isPlaying = true },
-        onStopBtnClick = { isPlaying = false }
+        onToggleSelected = viewModel::changeSelectedMode,
+        onPlayBtnClick = viewModel::changeIsPlaying,
+        onStopBtnClick = viewModel::changeIsPlaying,
     )
 }
 
 @Composable
 internal fun RhythmScreen(
-    selectedMode: RhythmMode,
+    rhythmState: RhythmState,
     lottieComposition: LottieComposition?,
-    isPlaying: Boolean = false,
     onToggleSelected: (RhythmMode) -> Unit = {},
     onWatchBtnClick: () -> Unit = {},
     onPlayBtnClick: () -> Unit = {},
@@ -78,7 +75,7 @@ internal fun RhythmScreen(
         contentAlignment = Alignment.Center
     ) {
         Image(
-            imageVector = ImageVector.vectorResource(id = R.drawable.img_rhythm_bg_purple),
+            imageVector = ImageVector.vectorResource(id = rhythmState.imageResource),
             contentDescription = null,
             modifier = Modifier
                 .padding(horizontal = 40.dp)
@@ -87,14 +84,14 @@ internal fun RhythmScreen(
                 .padding(bottom = 10.dp)
         )
         Image(
-            imageVector = ImageVector.vectorResource(id = if (!isPlaying) R.drawable.ic_play else R.drawable.ic_stop),
+            imageVector = ImageVector.vectorResource(id = if (!rhythmState.isPlaying) R.drawable.ic_play else R.drawable.ic_stop),
             contentDescription = null,
             modifier = Modifier
                 .size(120.dp)
                 .padding(bottom = 10.dp)
-                .clickableWithoutRipple { if (isPlaying) onStopBtnClick() else onPlayBtnClick() }
+                .clickableWithoutRipple { if (rhythmState.isPlaying) onStopBtnClick() else onPlayBtnClick() }
         )
-        if (isPlaying) {
+        if (rhythmState.isPlaying) {
             LottieAnimation(
                 composition = lottieComposition,
                 iterations = LottieConstants.IterateForever,
@@ -115,10 +112,10 @@ internal fun RhythmScreen(
         ) {
             RhythmModeToggle(
                 modifier = Modifier.padding(horizontal = 60.dp),
-                selectedMode = selectedMode,
+                selectedMode = rhythmState.selectedMode,
                 onToggleSelected = onToggleSelected
             )
-            if (selectedMode == RhythmMode.RHYTHM) {
+            if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_watch),
                     contentDescription = null,
@@ -134,7 +131,7 @@ internal fun RhythmScreen(
             modifier = Modifier
                 .padding(top = 26.dp, start = 60.dp, end = 60.dp)
                 .align(Alignment.CenterHorizontally),
-            text = if (selectedMode == RhythmMode.RHYTHM) {
+            text = if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
                 stringResource(R.string.rhythm_tv_title)
             } else {
                 stringResource(R.string.stretch_tv_title)
@@ -145,7 +142,7 @@ internal fun RhythmScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        if (selectedMode == RhythmMode.RHYTHM) {
+        if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -154,17 +151,17 @@ internal fun RhythmScreen(
                 horizontalArrangement = Arrangement.Center
             ) {
                 RhythmChip(
-                    text = "2박자",
-                    color = Purple50,
+                    text = stringResource(R.string.rhythm_tv_bit, rhythmState.bit),
+                    color = rhythmState.color,
                     isFilled = true
                 )
                 RhythmChip(
                     modifier = Modifier.padding(horizontal = 6.dp),
-                    text = "65빠르기",
-                    color = Purple50,
+                    text = stringResource(R.string.rhythm_tv_bpm, rhythmState.bpm),
+                    color = rhythmState.color,
                 )
                 RhythmChip(
-                    text = "000걸음",
+                    text = stringResource(R.string.rhythm_tv_step, rhythmState.stepCount),
                 )
             }
         }
@@ -200,7 +197,7 @@ internal fun RhythmScreen(
 fun RhythmScreenPreview() {
     StempoTheme {
         RhythmScreen(
-            selectedMode = RhythmMode.RHYTHM,
+            rhythmState = RhythmState(),
             lottieComposition = null
         )
     }
