@@ -26,8 +26,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kkkk.presentation.main.rhythm.component.RhythmChip
 import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
 import com.kkkk.presentation.main.theme.Dark
+import com.kkkk.presentation.main.theme.Purple50
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
@@ -64,7 +66,7 @@ internal fun RhythmScreen(
             if (selectedMode == RhythmMode.RHYTHM) {
                 Image(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_watch),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier
                         .padding(end = 8.dp)
                         .clickable { onWatchBtnClick() }
@@ -86,6 +88,27 @@ internal fun RhythmScreen(
         )
 
         Spacer(modifier = Modifier.weight(1f))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 34.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            RhythmChip(
+                text = "2박자",
+                color = Purple50,
+                isFilled = true
+            )
+            RhythmChip(
+                modifier = Modifier.padding(horizontal = 6.dp),
+                text = "65빠르기",
+                color = Purple50,
+            )
+            RhythmChip(
+                text = "000걸음",
+            )
+        }
 
         Row(
             modifier = Modifier
