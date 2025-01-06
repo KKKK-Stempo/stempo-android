@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -57,8 +59,13 @@ fun RhythmRoute(
         LottieCompositionSpec.RawRes(rhythmState.lottieResource)
     )
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+    )
     val scope = rememberCoroutineScope()
+
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val maxHeight = screenHeight * 0.9f
 
     RhythmScreen(
         rhythmState = rhythmState,
@@ -73,10 +80,12 @@ fun RhythmRoute(
         RhythmBottomSheet(
             rhythmState = rhythmState,
             sheetState = sheetState,
+            modifier = Modifier.heightIn(max = maxHeight),
             onDismissRequest = { viewModel.showBottomSheet(false) },
             onSubmitBtnClick = { bit, bpm ->
-                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                scope.launch {
                     viewModel.updateRhythm(bit, bpm)
+                    sheetState.hide()
                     viewModel.showBottomSheet(false)
                 }
             }
@@ -125,93 +134,92 @@ internal fun RhythmScreen(
                     .scale(1.5f)
             )
         }
-    }
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        Box(
-            modifier = Modifier.padding(top = 24.dp),
-            contentAlignment = Alignment.CenterEnd
+        Column(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            RhythmModeToggle(
-                modifier = Modifier.padding(horizontal = 60.dp),
-                selectedMode = rhythmState.selectedMode,
-                onToggleSelected = onToggleSelected
-            )
-            if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
-                Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_watch),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .clickableWithoutRipple { onWatchBtnClick() }
-                        .padding(6.dp)
+            Box(
+                modifier = Modifier.padding(top = 24.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                RhythmModeToggle(
+                    modifier = Modifier.padding(horizontal = 60.dp),
+                    selectedMode = rhythmState.selectedMode,
+                    onToggleSelected = onToggleSelected
                 )
+                if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
+                    Image(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_watch),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .clickableWithoutRipple { onWatchBtnClick() }
+                            .padding(6.dp)
+                    )
+                }
             }
-        }
 
-        Text(
-            modifier = Modifier
-                .padding(top = 26.dp, start = 60.dp, end = 60.dp)
-                .align(Alignment.CenterHorizontally),
-            text = if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
-                stringResource(R.string.rhythm_tv_title)
-            } else {
-                stringResource(R.string.stretch_tv_title)
-            },
-            textAlign = TextAlign.Center,
-            style = StempoTheme.typography.head1
-        )
+            Text(
+                modifier = Modifier
+                    .padding(top = 26.dp, start = 60.dp, end = 60.dp)
+                    .align(Alignment.CenterHorizontally),
+                text = if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
+                    stringResource(R.string.rhythm_tv_title)
+                } else {
+                    stringResource(R.string.stretch_tv_title)
+                },
+                textAlign = TextAlign.Center,
+                style = StempoTheme.typography.head1
+            )
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1f))
 
-        if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
+            if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 34.dp)
+                        .clickableWithoutRipple { onChangeBtnClick() },
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    RhythmChip(
+                        text = stringResource(R.string.rhythm_tv_bit, rhythmState.bit),
+                        color = rhythmState.color,
+                        isFilled = true
+                    )
+                    RhythmChip(
+                        modifier = Modifier.padding(horizontal = 6.dp),
+                        text = stringResource(R.string.rhythm_tv_bpm, rhythmState.bpm),
+                        color = rhythmState.color,
+                    )
+                    RhythmChip(
+                        text = stringResource(R.string.rhythm_tv_step, rhythmState.stepCount),
+                    )
+                }
+            }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 34.dp)
-                    .clickableWithoutRipple { onChangeBtnClick() },
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 24.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Dark)
+                    .clickableWithoutRipple { onChangeBtnClick() }
+                    .padding(vertical = 15.dp),
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                RhythmChip(
-                    text = stringResource(R.string.rhythm_tv_bit, rhythmState.bit),
-                    color = rhythmState.color,
-                    isFilled = true
+                Image(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_change),
+                    contentDescription = null,
+                    modifier = Modifier.padding(top = 1.dp)
                 )
-                RhythmChip(
-                    modifier = Modifier.padding(horizontal = 6.dp),
-                    text = stringResource(R.string.rhythm_tv_bpm, rhythmState.bpm),
-                    color = rhythmState.color,
-                )
-                RhythmChip(
-                    text = stringResource(R.string.rhythm_tv_step, rhythmState.stepCount),
+                Text(
+                    text = stringResource(id = R.string.rhythm_btn_change_level),
+                    style = StempoTheme.typography.head4,
+                    color = White
                 )
             }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 24.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Dark)
-                .clickableWithoutRipple { onChangeBtnClick() }
-                .padding(vertical = 15.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Image(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_change),
-                contentDescription = null,
-                modifier = Modifier.padding(top = 1.dp)
-            )
-            Text(
-                text = stringResource(id = R.string.rhythm_btn_change_level),
-                style = StempoTheme.typography.head4,
-                color = White
-            )
         }
     }
 }

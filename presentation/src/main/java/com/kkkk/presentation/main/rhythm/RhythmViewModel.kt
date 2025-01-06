@@ -19,15 +19,9 @@ constructor(
     private val _rhythmState = MutableStateFlow(RhythmState())
     val rhythmState = _rhythmState.asStateFlow()
 
-    fun changeSelectedMode(currentMode: RhythmMode) {
+    fun changeSelectedMode(selectedMode: RhythmMode) {
         _rhythmState.update {
-            it.copy(
-                selectedMode = if (currentMode == RhythmMode.RHYTHM) {
-                    RhythmMode.STRETCH
-                } else {
-                    RhythmMode.RHYTHM
-                }
-            )
+            it.copy(selectedMode = selectedMode)
         }
     }
 
