@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,8 +48,11 @@ fun RhythmRoute() {
 @Composable
 internal fun RhythmScreen(
     selectedMode: RhythmMode,
+    isPlaying: Boolean = false,
     onToggleSelected: (RhythmMode) -> Unit = {},
     onWatchBtnClick: () -> Unit = {},
+    onPlayBtnClick: () -> Unit = {},
+    onStopBtnClick: () -> Unit = {},
     onChangeBtnClick: () -> Unit = {}
 ) {
     Column(
@@ -133,6 +137,39 @@ internal fun RhythmScreen(
                 color = White
             )
         }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            imageVector = ImageVector.vectorResource(id = R.drawable.img_rhythm_bg_purple),
+            contentDescription = null,
+            modifier = Modifier
+                .size(320.dp)
+                .padding(bottom = 10.dp)
+        )
+        Image(
+            imageVector = ImageVector.vectorResource(id = if (!isPlaying) R.drawable.ic_play else R.drawable.ic_stop),
+            contentDescription = null,
+            modifier = Modifier
+                .size(120.dp)
+                .padding(bottom = 10.dp)
+                .clickable { if(isPlaying) onStopBtnClick() else onPlayBtnClick() }
+        )
+
+//        val lottieComposition by rememberLottieComposition(
+//            LottieCompositionSpec.RawRes(R.raw.stempo_rhythm_purple)
+//        )
+//
+//        if (isPlaying) {
+//            LottieAnimation(
+//                composition = lottieComposition,
+//                iterations = LottieConstants.IterateForever,
+//                modifier = Modifier.size(520.dp)
+//            )
+//        }
     }
 }
 
