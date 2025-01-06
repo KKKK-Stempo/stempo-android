@@ -13,9 +13,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +44,9 @@ import com.kkkk.presentation.main.theme.Dark
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RhythmRoute(
     viewModel: RhythmViewModel = hiltViewModel(),
@@ -51,6 +56,9 @@ fun RhythmRoute(
     val lottieComposition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(rhythmState.lottieResource)
     )
+
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
 
     RhythmScreen(
         rhythmState = rhythmState,
@@ -64,10 +72,13 @@ fun RhythmRoute(
     if (rhythmState.isBottomSheetVisible) {
         RhythmBottomSheet(
             rhythmState = rhythmState,
+            sheetState = sheetState,
             onDismissRequest = { viewModel.showBottomSheet(false) },
             onSubmitBtnClick = { bit, bpm ->
-                viewModel.updateRhythm(bit, bpm)
-                viewModel.showBottomSheet(false)
+                scope.launch { sheetState.hide() }.invokeOnCompletion {
+                    viewModel.updateRhythm(bit, bpm)
+                    viewModel.showBottomSheet(false)
+                }
             }
         )
     }

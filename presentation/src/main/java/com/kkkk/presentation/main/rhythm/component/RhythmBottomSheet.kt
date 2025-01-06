@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -55,12 +56,11 @@ import com.kkkk.stempo.presentation.R
 @Composable
 fun RhythmBottomSheet(
     rhythmState: RhythmState,
+    sheetState: SheetState = rememberModalBottomSheetState(),
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit = {},
     onSubmitBtnClick: (tempBit: Int, tempBpm: Int) -> Unit = { _, _ -> }
 ) {
-    val sheetState = rememberModalBottomSheetState()
-
     var tempBit by remember { mutableIntStateOf(rhythmState.bit) }
     var tempBpm by remember { mutableIntStateOf(rhythmState.bpm) }
 
@@ -263,12 +263,15 @@ fun RhythmBpmItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 fun RhythmBottomSheetPreview() {
     StempoTheme {
+        val sheetState: SheetState = rememberModalBottomSheetState()
         RhythmBottomSheet(
-            rhythmState = RhythmState()
+            rhythmState = RhythmState(),
+            sheetState = sheetState
         )
     }
 }
