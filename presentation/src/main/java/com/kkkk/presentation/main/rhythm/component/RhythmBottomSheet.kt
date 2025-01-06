@@ -140,7 +140,7 @@ fun RhythmBitSelectGrid(
             .padding(horizontal = 20.dp)
             .fillMaxWidth()
     ) {
-        items(listOf(2, 3, 4, 6, 8)) { bit ->
+        items(listOf(2, 3, 4, 6, 8), key = { it }) { bit ->
             RhythmBitItem(
                 bit = bit,
                 isSelected = bit == tempBit,
@@ -195,7 +195,7 @@ fun RhythmBpmSelectGrid(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        items(listOf(65, 75, 85, 95, 105, 115)) { bpm ->
+        items(listOf(65, 75, 85, 95, 105, 115), key = { it }) { bpm ->
             RhythmBpmItem(
                 bpm = bpm,
                 isSelected = tempBpm == bpm,
