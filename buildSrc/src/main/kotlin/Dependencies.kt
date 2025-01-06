@@ -100,6 +100,7 @@ object ComposeDependencies {
     const val androidxUiGraphics = "androidx.compose.ui:ui-graphics:${Versions.androidxComposeCompiler}"
     const val androidxImmutableList = "org.jetbrains.kotlinx:kotlinx-collections-immutable:${Versions.kotlinxImmutable}"
     const val lottieCompose = "com.airbnb.android:lottie-compose:${Versions.lottieVersion}"
+    const val accompanist = "com.google.accompanist:accompanist-systemuicontroller:${Versions.accompanistVersion}"
 }
 
 object ComposePlugins {
