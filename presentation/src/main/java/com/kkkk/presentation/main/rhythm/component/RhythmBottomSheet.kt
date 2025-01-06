@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -75,7 +77,7 @@ fun RhythmBottomSheet(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(
-                    modifier = Modifier.height(8.dp)
+                    modifier = Modifier.height(14.dp)
                 )
                 Icon(
                     imageVector = ImageVector.vectorResource(id = R.drawable.ic_drag_handle),
@@ -134,40 +136,22 @@ fun RhythmBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                IconButton(
+                RhythmModIcon(
+                    iconResource = if (tempBpm > MIN_BPM) R.drawable.ic_minus_purple else R.drawable.ic_minus_gray,
+                    isEnabled = tempBpm > MIN_BPM,
                     onClick = { if (tempBpm > MIN_BPM) tempBpm -= 5 },
-                    enabled = tempBpm > MIN_BPM
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(
-                            id = if (tempBpm > MIN_BPM) {
-                                R.drawable.ic_minus_purple
-                            } else {
-                                R.drawable.ic_minus_gray
-                            }
-                        ),
-                        contentDescription = null
-                    )
-                }
+                    modifier = Modifier.padding(start = 20.dp)
+                )
                 Text(
                     text = "$tempBpm",
                     style = StempoTheme.typography.head1,
                 )
-                IconButton(
+                RhythmModIcon(
+                    iconResource = if (tempBpm < MAX_BPM) R.drawable.ic_plus_purple else R.drawable.ic_plus_gray,
+                    isEnabled = tempBpm < MAX_BPM,
                     onClick = { if (tempBpm < MAX_BPM) tempBpm += 5 },
-                    enabled = tempBpm < MAX_BPM
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(
-                            id = if (tempBpm < MAX_BPM) {
-                                R.drawable.ic_plus_purple
-                            } else {
-                                R.drawable.ic_plus_gray
-                            }
-                        ),
-                        contentDescription = null
-                    )
-                }
+                    modifier = Modifier.padding(end = 20.dp)
+                )
             }
 
             LazyVerticalGrid(
@@ -231,6 +215,25 @@ fun RhythmBitItem(
             color = if (isSelected) White else Gray600
         )
     }
+}
+
+@Composable
+fun RhythmModIcon(
+    iconResource: Int,
+    isEnabled: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        imageVector = ImageVector.vectorResource(id = iconResource),
+        contentDescription = null,
+        tint = Color.Unspecified,
+        modifier = modifier
+            .size(54.dp)
+            .clickableWithoutRipple(enabled = isEnabled) {
+                if (isEnabled) onClick()
+            }
+    )
 }
 
 @Composable
