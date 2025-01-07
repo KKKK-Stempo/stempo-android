@@ -134,6 +134,11 @@ constructor(
         }
     }
 
+    fun releaseMusicPlayers() {
+        soundPool.release()
+        mediaPlayer.release()
+    }
+
     fun playMusic() {
         viewModelScope.launch {
             if (rhythmState.value.isPlayerLoaded) {

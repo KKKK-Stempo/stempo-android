@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -29,8 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -132,6 +131,12 @@ fun RhythmRoute(
             PlayState.STOP -> viewModel.postRhythmRecordToSave()
 
             PlayState.DEFAULT -> viewModel.pauseMusic(false)
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.releaseMusicPlayers()
         }
     }
 
@@ -239,7 +244,7 @@ internal fun RhythmScreen(
                     .fillMaxSize()
                     .background(Transparent50)
                     .padding(horizontal = 50.dp)
-                    .clickableWithoutRipple {  }
+                    .clickableWithoutRipple { }
             )
         }
     }
