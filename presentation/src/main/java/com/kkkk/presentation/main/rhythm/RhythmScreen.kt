@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -39,12 +40,14 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kkkk.presentation.main.rhythm.component.RhythmBottomSheet
 import com.kkkk.presentation.main.rhythm.component.RhythmChip
 import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
 import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Dark
 import com.kkkk.presentation.main.theme.StempoTheme
+import com.kkkk.presentation.main.theme.Transparent50
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
 import kotlinx.coroutines.launch
@@ -56,8 +59,11 @@ fun RhythmRoute(
 ) {
     val rhythmState by viewModel.rhythmState.collectAsStateWithLifecycle()
 
-    val lottieComposition by rememberLottieComposition(
+    val lottiePlaying by rememberLottieComposition(
         LottieCompositionSpec.RawRes(rhythmState.lottieResource)
+    )
+    val lottieLoading by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.stempo_loading)
     )
 
     val sheetState = rememberModalBottomSheetState(
@@ -68,12 +74,21 @@ fun RhythmRoute(
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val maxHeight = screenHeight * 0.9f
 
+    val systemUiController = rememberSystemUiController()
+
+    LaunchedEffect(rhythmState.isLoading) {
+        systemUiController.setStatusBarColor(
+            color = if (rhythmState.isLoading) Transparent50 else White
+        )
+    }
+
     RhythmScreen(
         rhythmState = rhythmState,
-        lottieComposition = lottieComposition,
+        lottiePlaying = lottiePlaying,
+        lottieLoading = lottieLoading,
         onToggleSelected = viewModel::changeSelectedMode,
-        onPlayBtnClick = viewModel::changeIsPlaying,
-        onStopBtnClick = viewModel::changeIsPlaying,
+        onPlayBtnClick = { viewModel.changeIsPlaying(true) },
+        onStopBtnClick = { viewModel.changeIsPlaying(false) },
         onChangeBtnClick = { viewModel.showBottomSheet(true) }
     )
 
@@ -97,7 +112,8 @@ fun RhythmRoute(
 @Composable
 internal fun RhythmScreen(
     rhythmState: RhythmState,
-    lottieComposition: LottieComposition?,
+    lottiePlaying: LottieComposition?,
+    lottieLoading: LottieComposition?,
     onToggleSelected: (RhythmMode) -> Unit = {},
     onWatchBtnClick: () -> Unit = {},
     onPlayBtnClick: () -> Unit = {},
@@ -110,7 +126,7 @@ internal fun RhythmScreen(
     ) {
         RhythmPlayBtnWithLottie(
             rhythmState = rhythmState,
-            lottieComposition = lottieComposition,
+            lottieComposition = lottiePlaying,
             onPlayBtnClick = onPlayBtnClick,
             onStopBtnClick = onStopBtnClick
         )
@@ -148,6 +164,18 @@ internal fun RhythmScreen(
 
             RhythmChangeBtn(
                 onChangeBtnClick = onChangeBtnClick
+            )
+        }
+
+        if (rhythmState.isLoading) {
+            LottieAnimation(
+                composition = lottieLoading,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Transparent50)
+                    .padding(horizontal = 50.dp)
+
             )
         }
     }
@@ -284,7 +312,8 @@ fun RhythmScreenPreview() {
     StempoTheme {
         RhythmScreen(
             rhythmState = RhythmState(),
-            lottieComposition = null
+            lottiePlaying = null,
+            lottieLoading = null
         )
     }
 }

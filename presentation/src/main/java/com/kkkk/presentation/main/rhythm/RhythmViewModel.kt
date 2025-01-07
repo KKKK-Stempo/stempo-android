@@ -19,15 +19,25 @@ constructor(
     private val _rhythmState = MutableStateFlow(RhythmState())
     val rhythmState = _rhythmState.asStateFlow()
 
+    init {
+        initRhythmFromDataStore()
+    }
+
+    private fun initRhythmFromDataStore() {
+        _rhythmState.update {
+            it.copy(bit = userRepository.getBit(), bpm = userRepository.getBpm())
+        }
+    }
+
     fun changeSelectedMode(selectedMode: RhythmMode) {
         _rhythmState.update {
             it.copy(selectedMode = selectedMode)
         }
     }
 
-    fun changeIsPlaying() {
+    fun changeIsPlaying(isPlaying: Boolean) {
         _rhythmState.update {
-            it.copy(isPlaying = !_rhythmState.value.isPlaying)
+            it.copy(isPlaying = isPlaying)
         }
     }
 
@@ -37,5 +47,8 @@ constructor(
 
     fun updateRhythm(bit: Int, bpm: Int) {
         _rhythmState.update { it.copy(bit = bit, bpm = bpm) }
+        userRepository.setBpm(bpm)
+        userRepository.setBit(bit)
+        changeIsPlaying(false)
     }
 }
