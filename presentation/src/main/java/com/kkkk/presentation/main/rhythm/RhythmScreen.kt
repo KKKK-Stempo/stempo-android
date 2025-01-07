@@ -5,7 +5,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -52,6 +51,8 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kkkk.core.extension.stringOf
+import com.kkkk.core.extension.toast
 import com.kkkk.presentation.main.rhythm.RhythmState.Companion.STRETCH_MUSIC_FILE
 import com.kkkk.presentation.main.rhythm.RhythmState.Companion.findMusicByBpm
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.FLOAT_80
@@ -114,9 +115,8 @@ fun RhythmRoute(
         viewModel.rhythmSideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
             .collect { sideEffect ->
                 when (sideEffect) {
-                    RhythmSideEffect.ErrorToast -> {
-                        Toast.makeText(context, R.string.error_msg, Toast.LENGTH_SHORT).show()
-                    }
+                    RhythmSideEffect.ErrorToast -> context.toast(context.stringOf(R.string.error_msg))
+                    RhythmSideEffect.SaveSuccessToast -> context.toast(context.stringOf(R.string.rhythm_toast_save_success))
                 }
             }
     }

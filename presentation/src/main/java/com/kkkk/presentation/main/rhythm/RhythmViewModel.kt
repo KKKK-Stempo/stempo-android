@@ -6,6 +6,7 @@ import android.media.PlaybackParams
 import android.media.SoundPool
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kkkk.domain.entity.request.RecordRequestModel
 import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
@@ -247,28 +248,40 @@ constructor(
         _beforeStepTime.value = System.currentTimeMillis()
     }
 
-    fun resetStepCount() {
+    // TODO: 워치 대응
+    fun postRhythmRecordToSave() {
+        if (_oddStepCount.value == 0 || _evenStepCount.value == 0) return
+        viewModelScope.launch {
+            rhythmRepository.postRhythmRecord(
+                RecordRequestModel(
+                    getAccuracy(
+                        _oddStepTime.value / _oddStepCount.value,
+                        _evenStepTime.value / _evenStepCount.value
+                    ),
+                    0,
+                    rhythmState.value.stepCount
+                )
+            ).onSuccess {
+                resetStepCount()
+                showDialog(false)
+                _rhythmSideEffect.emit(RhythmSideEffect.SaveSuccessToast)
+            }.onFailure {
+                _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+            }
+        }
+    }
+
+    private fun getAccuracy(time1: Long, time2: Long): Double {
+        val difference = kotlin.math.abs(time1 - time2)
+        return (1.0 - difference.toDouble() / (time1 + time2)) * 100
+    }
+
+    private fun resetStepCount() {
         _rhythmState.update { it.copy(stepCount = 0) }
         _oddStepCount.value = 0
         _evenStepCount.value = 0
-    }
-
-    fun postRhythmRecordToSave() {
-        viewModelScope.launch {
-//            rhythmRepository.postRhythmRecord(
-//                RecordRequestModel(
-//                    accuracy,
-//                    0,
-//                    stepCount.value
-//                )
-//            ).onSuccess {
-//                resetStepInfo()
-//                _isRecordSaved.emit(true)
-//            }.onFailure {
-//                _isRecordSaved.emit(false)
-//            }
-            _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
-        }
+        _oddStepTime.value = 0
+        _evenStepTime.value = 0
     }
 
     companion object {
