@@ -1,5 +1,7 @@
 package com.kkkk.presentation.main.rhythm
 
+import android.media.MediaPlayer
+import android.media.SoundPool
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,19 +23,26 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
@@ -51,6 +60,8 @@ import com.kkkk.presentation.main.theme.Transparent50
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
 import kotlinx.coroutines.launch
+import java.io.File
+import java.nio.file.Files
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +70,15 @@ fun RhythmRoute(
 ) {
     val rhythmState by viewModel.rhythmState.collectAsStateWithLifecycle()
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+
+    val soundPool = remember { SoundPool.Builder().setMaxStreams(1).build() }
+    val mediaPlayer = remember { MediaPlayer.create(context, R.raw.music_stretch) }
+
+    var beatSound by remember { mutableIntStateOf(0) }
+    var beatStream by remember { mutableIntStateOf(0) }
+
     val lottiePlaying by rememberLottieComposition(
         LottieCompositionSpec.RawRes(rhythmState.lottieResource)
     )
@@ -66,9 +86,7 @@ fun RhythmRoute(
         LottieCompositionSpec.RawRes(R.raw.stempo_loading)
     )
 
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-    )
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -80,6 +98,29 @@ fun RhythmRoute(
         systemUiController.setStatusBarColor(
             color = if (rhythmState.isLoading) Transparent50 else White
         )
+    }
+
+    LaunchedEffect(rhythmState.bit, rhythmState.bpm) {
+        if (File(context.filesDir, rhythmState.filename).exists()) {
+            viewModel.setMusicPlayer()
+        } else {
+            viewModel.getRhythmUrlState()
+        }
+    }
+
+    LaunchedEffect(rhythmState.rhythmWav) {
+        runCatching {
+            Files.newOutputStream(
+                File(context.filesDir, rhythmState.filename).toPath()
+            ).use { outputStream ->
+                outputStream.write(rhythmState.rhythmWav)
+                outputStream.flush()
+            }
+        }.onSuccess {
+            viewModel.setMusicPlayer()
+        }.onFailure {
+            // toast(stringOf(R.string.error_msg))
+        }
     }
 
     RhythmScreen(
@@ -121,7 +162,17 @@ internal fun RhythmScreen(
     onChangeBtnClick: () -> Unit = {}
 ) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(rhythmState.isLoading) {
+                if (rhythmState.isLoading) {
+                    awaitPointerEventScope {
+                        while (rhythmState.isLoading) {
+                            awaitPointerEvent(PointerEventPass.Initial)
+                        }
+                    }
+                }
+            },
         contentAlignment = Alignment.Center
     ) {
         RhythmPlayBtnWithLottie(
