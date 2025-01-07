@@ -10,6 +10,7 @@ import com.kkkk.domain.entity.request.RecordRequestModel
 import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
+import com.kkkk.presentation.manager.PhoneDataManager
 import com.kkkk.presentation.xmlmain.xmlrhythm.XmlRhythmFragment.Companion.findSpeedByBpm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -33,6 +34,7 @@ class RhythmViewModel
 constructor(
     private val rhythmRepository: RhythmRepository,
     private val userRepository: UserRepository,
+    private val phoneDataManager: PhoneDataManager
 ) : ViewModel() {
     private val _rhythmState = MutableStateFlow(RhythmState())
     val rhythmState = _rhythmState.asStateFlow()
@@ -54,7 +56,7 @@ constructor(
 
     private val _beforeStepTime = MutableStateFlow(0L)
 
-    var watchAccuracy: Double = 0.0
+    var wearableAccuracy: Double = 0.0
 
     init {
         initRhythmFromDataStore()
@@ -74,7 +76,7 @@ constructor(
         _rhythmState.update { it.copy(isPlaying = isPlaying) }
     }
 
-    fun changeIsLoading(isLoading: Boolean) {
+    private fun changeIsLoading(isLoading: Boolean) {
         _rhythmState.update { it.copy(isLoading = isLoading) }
     }
 
@@ -82,8 +84,12 @@ constructor(
         _rhythmState.update { it.copy(isBottomSheetVisible = show, isPlaying = PlayState.DEFAULT) }
     }
 
-    fun showDialog(show: Boolean) {
-        _rhythmState.update { it.copy(isDialogVisible = show) }
+    fun showSaveDialog(show: Boolean) {
+        _rhythmState.update { it.copy(isSaveDialogVisible = show) }
+    }
+
+    fun showSyncDialog(show: Boolean) {
+        _rhythmState.update { it.copy(isSyncDialogVisible = show) }
     }
 
     fun updateRhythm(bit: Int, bpm: Int) {
@@ -187,7 +193,7 @@ constructor(
                 async { if (mediaPlayer.isPlaying) mediaPlayer.pause() }
             ).awaitAll()
             if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
-                showDialog(true)
+                showSaveDialog(true)
             }
         }
     }
@@ -251,12 +257,12 @@ constructor(
     }
 
     fun postRhythmRecordToSave() {
-        if ((_oddStepCount.value == 0 || _evenStepCount.value == 0) && watchAccuracy == 0.0) return
-        val accuracy = getAccuracy(
-            _oddStepTime.value / _oddStepCount.value,
-            _evenStepTime.value / _evenStepCount.value
-        )
-        if (accuracy == 0.0) return
+        val isInvalidStep = (_oddStepCount.value == 0 || _evenStepCount.value == 0) && wearableAccuracy == 0.0
+        val accuracy = calculateAccuracy()
+        if (isInvalidStep || accuracy == 0.0) {
+            resetStepCount()
+            return
+        }
         viewModelScope.launch {
             rhythmRepository.postRhythmRecord(
                 RecordRequestModel(
@@ -266,7 +272,6 @@ constructor(
                 )
             ).onSuccess {
                 resetStepCount()
-                showDialog(false)
                 _rhythmSideEffect.emit(RhythmSideEffect.SaveSuccessToast)
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
@@ -274,20 +279,40 @@ constructor(
         }
     }
 
-    private fun getAccuracy(time1: Long, time2: Long): Double =
-        if (watchAccuracy == 0.0) {
-            (1.0 - kotlin.math.abs(time1 - time2).toDouble() / (time1 + time2)) * 100
+    private fun calculateAccuracy(): Double {
+        return if (wearableAccuracy == 0.0) {
+            val time1 = _oddStepTime.value.toDouble() / _oddStepCount.value
+            val time2 = _evenStepTime.value.toDouble() / _evenStepCount.value
+            (1.0 - kotlin.math.abs(time1 - time2) / (time1 + time2)) * 100
         } else {
-            watchAccuracy
+            wearableAccuracy
         }
+    }
 
     private fun resetStepCount() {
+        showSaveDialog(false)
+        updateIsPlayerLoaded(false)
         _rhythmState.update { it.copy(stepCount = 0) }
         _oddStepCount.value = 0
         _evenStepCount.value = 0
         _oddStepTime.value = 0
         _evenStepTime.value = 0
-        watchAccuracy = 0.0
+        wearableAccuracy = 0.0
+    }
+
+    fun sendBpmToWearable() {
+        phoneDataManager.sendIntToWearable(
+            PhoneDataManager.PATH_BPM,
+            PhoneDataManager.KEY_BPM,
+            rhythmState.value.bpm
+        )
+        showSyncDialog(false)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        soundPool.release()
+        mediaPlayer.release()
     }
 
     companion object {

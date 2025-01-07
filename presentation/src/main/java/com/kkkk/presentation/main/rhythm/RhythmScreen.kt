@@ -5,6 +5,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.flowWithLifecycle
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -68,6 +68,7 @@ import com.kkkk.presentation.main.rhythm.component.RhythmBottomSheet
 import com.kkkk.presentation.main.rhythm.component.RhythmChip
 import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
 import com.kkkk.presentation.main.rhythm.component.RhythmStopDialog
+import com.kkkk.presentation.main.rhythm.component.RhythmSyncDialog
 import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Dark
 import com.kkkk.presentation.main.theme.StempoTheme
@@ -83,16 +84,15 @@ fun RhythmRoute(
     viewModel: RhythmViewModel = hiltViewModel(),
 ) {
     val rhythmState by viewModel.rhythmState.collectAsStateWithLifecycle()
-
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    val sensorManager =
-        remember { context.getSystemService(Context.SENSOR_SERVICE) as SensorManager }
-    val stepDetectorSensor = remember { sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) }
+    // 시스템 서비스 및 데이터 클라이언트
+    val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    val stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+    val wearableDataClient = Wearable.getDataClient(context)
 
-    val wearableDataClient = remember { Wearable.getDataClient(context) }
-
+    // Lottie 및 애니메이션 속도 관리
     val lottiePlaying by rememberLottieComposition(
         LottieCompositionSpec.RawRes(rhythmState.lottieResource)
     )
@@ -103,22 +103,20 @@ fun RhythmRoute(
         if (rhythmState.selectedMode == RhythmMode.RHYTHM) rhythmState.bpm / FLOAT_80 else 0.75F
     }
 
+    // 바텀시트 관련 상태
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
-
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val maxHeight = screenHeight * 0.9f
+    val maxHeight = LocalConfiguration.current.screenHeightDp.dp * 0.9f
 
     val systemUiController = rememberSystemUiController()
 
     LaunchedEffect(viewModel.rhythmSideEffect, lifecycleOwner) {
-        viewModel.rhythmSideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
-            .collect { sideEffect ->
-                when (sideEffect) {
-                    RhythmSideEffect.ErrorToast -> context.toast(context.stringOf(R.string.error_msg))
-                    RhythmSideEffect.SaveSuccessToast -> context.toast(context.stringOf(R.string.rhythm_toast_save_success))
-                }
+        viewModel.rhythmSideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                RhythmSideEffect.ErrorToast -> context.toast(context.stringOf(R.string.error_msg))
+                RhythmSideEffect.SaveSuccessToast -> context.toast(context.stringOf(R.string.rhythm_toast_save_success))
             }
+        }
     }
 
     LaunchedEffect(rhythmState.isLoading) {
@@ -128,10 +126,10 @@ fun RhythmRoute(
     }
 
     LaunchedEffect(rhythmState.bit, rhythmState.bpm) {
-        if (File(context.filesDir, rhythmState.filename).exists()) {
-            viewModel.updateIsPlayerLoaded(false)
-        } else {
+        if (!File(context.filesDir, rhythmState.filename).exists()) {
             viewModel.getRhythmUrlState(File(context.filesDir, rhythmState.filename).toPath())
+        } else {
+            viewModel.updateIsPlayerLoaded(false)
         }
     }
 
@@ -158,11 +156,8 @@ fun RhythmRoute(
     LaunchedEffect(rhythmState.isPlaying) {
         when (rhythmState.isPlaying) {
             PlayState.PLAYING -> viewModel.playMusic()
-
             PlayState.PAUSE -> viewModel.pauseMusic(true)
-
             PlayState.STOP -> viewModel.postRhythmRecordToSave()
-
             PlayState.DEFAULT -> viewModel.pauseMusic(false)
         }
     }
@@ -177,11 +172,7 @@ fun RhythmRoute(
 
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }
-        sensorManager.registerListener(
-            sensorListener,
-            stepDetectorSensor,
-            SensorManager.SENSOR_DELAY_NORMAL
-        )
+        sensorManager.registerListener(sensorListener, stepDetectorSensor, SENSOR_DELAY_NORMAL)
         onDispose { sensorManager.unregisterListener(sensorListener) }
     }
 
@@ -194,7 +185,7 @@ fun RhythmRoute(
                             PATH_START -> viewModel.changeIsPlaying(PlayState.PLAYING)
                             PATH_END -> viewModel.changeIsPlaying(PlayState.DEFAULT)
                             PATH_RECORD -> {
-                                viewModel.watchAccuracy =
+                                viewModel.wearableAccuracy =
                                     DataMapItem.fromDataItem(item).dataMap.getDouble(KEY_RECORD)
                                 viewModel.changeIsPlaying(PlayState.PAUSE)
                             }
@@ -217,6 +208,7 @@ fun RhythmRoute(
         lottieLoading = lottieLoading,
         animationSpeed = animationSpeed,
         onToggleSelected = viewModel::changeSelectedMode,
+        onWatchBtnClick = { viewModel.showSyncDialog(true) },
         onPlayBtnClick = { viewModel.changeIsPlaying(PlayState.PLAYING) },
         onPauseBtnClick = { viewModel.changeIsPlaying(PlayState.PAUSE) },
         onChangeBtnClick = { viewModel.showBottomSheet(true) }
@@ -238,11 +230,18 @@ fun RhythmRoute(
         )
     }
 
-    if (rhythmState.isDialogVisible) {
+    if (rhythmState.isSaveDialogVisible) {
         RhythmStopDialog(
             onSaveClick = { viewModel.changeIsPlaying(PlayState.STOP) },
-            onPauseClick = { viewModel.showDialog(false) },
-            onDismissRequest = { viewModel.showDialog(false) },
+            onPauseClick = { viewModel.showSaveDialog(false) },
+            onDismissRequest = { viewModel.showSaveDialog(false) },
+        )
+    }
+
+    if (rhythmState.isSyncDialogVisible) {
+        RhythmSyncDialog(
+            onConfirmClick = viewModel::sendBpmToWearable,
+            onDismissRequest = { viewModel.showSyncDialog(false) },
         )
     }
 }
