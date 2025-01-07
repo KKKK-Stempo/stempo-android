@@ -62,7 +62,6 @@ import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
 import kotlinx.coroutines.launch
 import java.io.File
-import java.nio.file.Files
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -143,7 +142,7 @@ fun RhythmRoute(
         animationSpeed = animationSpeed,
         onToggleSelected = viewModel::changeSelectedMode,
         onPlayBtnClick = { viewModel.changeIsPlaying(PlayState.PLAYING) },
-        onStopBtnClick = { viewModel.changeIsPlaying(PlayState.PAUSE) },
+        onPauseBtnClick = { viewModel.changeIsPlaying(PlayState.PAUSE) },
         onChangeBtnClick = { viewModel.showBottomSheet(true) }
     )
 
@@ -181,21 +180,11 @@ internal fun RhythmScreen(
     onToggleSelected: (RhythmMode) -> Unit = {},
     onWatchBtnClick: () -> Unit = {},
     onPlayBtnClick: () -> Unit = {},
-    onStopBtnClick: () -> Unit = {},
+    onPauseBtnClick: () -> Unit = {},
     onChangeBtnClick: () -> Unit = {}
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .pointerInput(rhythmState.isLoading) {
-                if (rhythmState.isLoading) {
-                    awaitPointerEventScope {
-                        while (rhythmState.isLoading) {
-                            awaitPointerEvent(PointerEventPass.Initial)
-                        }
-                    }
-                }
-            },
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         RhythmPlayBtnWithLottie(
@@ -203,7 +192,7 @@ internal fun RhythmScreen(
             lottieComposition = lottiePlaying,
             animationSpeed = animationSpeed,
             onPlayBtnClick = onPlayBtnClick,
-            onStopBtnClick = onStopBtnClick
+            onStopBtnClick = onPauseBtnClick
         )
 
         Column(
@@ -250,7 +239,7 @@ internal fun RhythmScreen(
                     .fillMaxSize()
                     .background(Transparent50)
                     .padding(horizontal = 50.dp)
-
+                    .clickableWithoutRipple {  }
             )
         }
     }

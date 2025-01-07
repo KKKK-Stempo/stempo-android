@@ -101,8 +101,7 @@ constructor(
         suspendCancellableCoroutine<Unit> { continuation ->
             if (file.exists()) {
                 soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
-                    setOnLoadCompleteListener { _, sampleId, status ->
-                        // TODO: 이거 왜 status 0 이 안되지 .. status == 0 조건 추가 필요함
+                    setOnLoadCompleteListener { _, sampleId, _ ->
                         if (sampleId == beatSound) {
                             continuation.resume(Unit)
                         }
