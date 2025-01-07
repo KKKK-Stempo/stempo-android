@@ -149,21 +149,19 @@ fun RhythmRoute(
                 async {
                     suspendCancellableCoroutine<Unit> { continuation ->
                         if (File(context.filesDir, rhythmState.filename).exists()) {
-                            soundPool.release()
                             soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
-                                setOnLoadCompleteListener { _, _, status ->
-                                    if (status == 0 && continuation.isActive) {
+                                setOnLoadCompleteListener { _, sampleId, status ->
+                                    // TODO: 이거 왜 status 0 이 안돼지 .. status == 0 조건 추가 필요함
+                                    if (sampleId == rhythmState.beatSound) {
                                         continuation.resume(Unit)
                                     }
                                 }
                             }
-                            val soundId = soundPool.load(
-                                File(context.filesDir, rhythmState.filename).absolutePath, 1
+                            viewModel.updateBeatSound(
+                                soundPool.load(
+                                    File(context.filesDir, rhythmState.filename).absolutePath, 1
+                                )
                             )
-                            viewModel.updateBeatSound(soundId)
-                            if (continuation.isActive) {
-                                continuation.resume(Unit)
-                            }
                         } else {
                             Toast.makeText(context, R.string.error_msg, Toast.LENGTH_SHORT).show()
                             continuation.resume(Unit)
@@ -174,21 +172,27 @@ fun RhythmRoute(
                 async {
                     suspendCancellableCoroutine<Unit> { continuation ->
                         try {
-                            mediaPlayer.release()
-                            mediaPlayer =
-                                MediaPlayer.create(context, findMusicByBpm(rhythmState.bpm)).apply {
+                            mediaPlayer = MediaPlayer().apply {
+                                if (!isPlaying) {
+                                    reset()
+                                    val afd = context.resources
+                                        .openRawResourceFd(findMusicByBpm(rhythmState.bpm))
+                                    setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                                    afd.close()
                                     isLooping = true
                                     setVolume(0.2f, 0.2f)
-                                    setOnPreparedListener { continuation.resume(Unit) }
+                                    prepareAsync()
+                                    continuation.resume(Unit)
                                 }
+                            }
                         } catch (e: Exception) {
                             continuation.resumeWithException(e)
                         }
                     }
                 }
             ).awaitAll()
-            viewModel.changeIsLoading(false)
             viewModel.updateIsPlayerLoaded(true)
+            viewModel.changeIsLoading(false)
         }
     }
 
@@ -197,10 +201,13 @@ fun RhythmRoute(
             PlayState.PLAYING -> {
                 listOf(
                     async {
-                        mediaPlayer.apply {
-                            playbackParams =
-                                PlaybackParams().setSpeed(findSpeedByBpm(rhythmState.bpm))
-                        }.start()
+                        if (!mediaPlayer.isPlaying) {
+                            mediaPlayer.apply {
+                                playbackParams = PlaybackParams()
+                                    .setSpeed(findSpeedByBpm(rhythmState.bpm))
+                                start()
+                            }
+                        }
                     },
                     async {
                         if (rhythmState.beatStream != 0) {
