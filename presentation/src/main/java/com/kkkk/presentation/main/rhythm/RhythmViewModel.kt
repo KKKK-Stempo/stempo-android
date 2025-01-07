@@ -45,6 +45,14 @@ constructor(
     private var beatSound: Int = 0
     private var beatStream: Int = 0
 
+    private val _oddStepCount = MutableStateFlow(0)
+    private val _oddStepTime = MutableStateFlow(0L)
+
+    private val _evenStepCount = MutableStateFlow(0)
+    private val _evenStepTime = MutableStateFlow(0L)
+
+    private val _beforeStepTime = MutableStateFlow(0L)
+
     init {
         initRhythmFromDataStore()
     }
@@ -173,7 +181,7 @@ constructor(
         viewModelScope.launch {
             listOf(
                 async { if (beatStream != 0) soundPool.pause(beatStream) },
-                async { mediaPlayer.pause() }
+                async { if (mediaPlayer.isPlaying) mediaPlayer.pause() }
             ).awaitAll()
             if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
                 showDialog(true)
@@ -221,6 +229,28 @@ constructor(
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
             }
         }
+    }
+
+    fun addStepCount() {
+        _rhythmState.update { it.copy(stepCount = it.stepCount + 1) }
+        if (rhythmState.value.stepCount < 2) {
+            _beforeStepTime.value = System.currentTimeMillis()
+            return
+        }
+        if (rhythmState.value.stepCount % 2 == 0) {
+            _oddStepCount.value += 1
+            _oddStepTime.value += System.currentTimeMillis() - _beforeStepTime.value
+        } else {
+            _evenStepCount.value += 1
+            _evenStepTime.value += System.currentTimeMillis() - _beforeStepTime.value
+        }
+        _beforeStepTime.value = System.currentTimeMillis()
+    }
+
+    fun resetStepCount() {
+        _rhythmState.update { it.copy(stepCount = 0) }
+        _oddStepCount.value = 0
+        _evenStepCount.value = 0
     }
 
     fun postRhythmRecordToSave() {

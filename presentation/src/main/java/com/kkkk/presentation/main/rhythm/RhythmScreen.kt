@@ -1,5 +1,10 @@
 package com.kkkk.presentation.main.rhythm
 
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -72,6 +77,20 @@ fun RhythmRoute(
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
+
+    val sensorManager =
+        remember { context.getSystemService(Context.SENSOR_SERVICE) as SensorManager }
+    val stepDetectorSensor = remember { sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) }
+
+    val sensorListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent?) {
+            if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
+                viewModel.addStepCount()
+            }
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    }
 
     val lottiePlaying by rememberLottieComposition(
         LottieCompositionSpec.RawRes(rhythmState.lottieResource)
@@ -148,9 +167,16 @@ fun RhythmRoute(
         }
     }
 
+    LaunchedEffect(sensorManager) {
+        stepDetectorSensor?.let {
+            sensorManager.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_NORMAL)
+        }
+    }
+
     DisposableEffect(Unit) {
         onDispose {
             viewModel.releaseMusicPlayers()
+            sensorManager.unregisterListener(sensorListener)
         }
     }
 
