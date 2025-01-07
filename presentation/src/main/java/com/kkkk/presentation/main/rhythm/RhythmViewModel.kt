@@ -54,6 +54,8 @@ constructor(
 
     private val _beforeStepTime = MutableStateFlow(0L)
 
+    var watchAccuracy: Double = 0.0
+
     init {
         initRhythmFromDataStore()
     }
@@ -248,16 +250,17 @@ constructor(
         _beforeStepTime.value = System.currentTimeMillis()
     }
 
-    // TODO: 워치 대응
     fun postRhythmRecordToSave() {
-        if (_oddStepCount.value == 0 || _evenStepCount.value == 0) return
+        if ((_oddStepCount.value == 0 || _evenStepCount.value == 0) && watchAccuracy == 0.0) return
+        val accuracy = getAccuracy(
+            _oddStepTime.value / _oddStepCount.value,
+            _evenStepTime.value / _evenStepCount.value
+        )
+        if (accuracy == 0.0) return
         viewModelScope.launch {
             rhythmRepository.postRhythmRecord(
                 RecordRequestModel(
-                    getAccuracy(
-                        _oddStepTime.value / _oddStepCount.value,
-                        _evenStepTime.value / _evenStepCount.value
-                    ),
+                    accuracy,
                     0,
                     rhythmState.value.stepCount
                 )
@@ -271,10 +274,12 @@ constructor(
         }
     }
 
-    private fun getAccuracy(time1: Long, time2: Long): Double {
-        val difference = kotlin.math.abs(time1 - time2)
-        return (1.0 - difference.toDouble() / (time1 + time2)) * 100
-    }
+    private fun getAccuracy(time1: Long, time2: Long): Double =
+        if (watchAccuracy == 0.0) {
+            (1.0 - kotlin.math.abs(time1 - time2).toDouble() / (time1 + time2)) * 100
+        } else {
+            watchAccuracy
+        }
 
     private fun resetStepCount() {
         _rhythmState.update { it.copy(stepCount = 0) }
@@ -282,9 +287,18 @@ constructor(
         _evenStepCount.value = 0
         _oddStepTime.value = 0
         _evenStepTime.value = 0
+        watchAccuracy = 0.0
     }
 
     companion object {
         const val FLOAT_80 = 80.00000000000000000000F
+
+        const val KEY_RECORD = "KEY_RECORD"
+        const val KEY_START = "KEY_START"
+        const val KEY_END = "KEY_END"
+
+        const val PATH_RECORD = "/record"
+        const val PATH_START = "/start"
+        const val PATH_END = "/end"
     }
 }

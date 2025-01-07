@@ -51,11 +51,19 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.android.gms.wearable.DataClient
+import com.google.android.gms.wearable.DataEvent
+import com.google.android.gms.wearable.DataMapItem
+import com.google.android.gms.wearable.Wearable
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.presentation.main.rhythm.RhythmState.Companion.STRETCH_MUSIC_FILE
 import com.kkkk.presentation.main.rhythm.RhythmState.Companion.findMusicByBpm
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.FLOAT_80
+import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.KEY_RECORD
+import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_END
+import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_RECORD
+import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_START
 import com.kkkk.presentation.main.rhythm.component.RhythmBottomSheet
 import com.kkkk.presentation.main.rhythm.component.RhythmChip
 import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
@@ -83,15 +91,7 @@ fun RhythmRoute(
         remember { context.getSystemService(Context.SENSOR_SERVICE) as SensorManager }
     val stepDetectorSensor = remember { sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR) }
 
-    val sensorListener = object : SensorEventListener {
-        override fun onSensorChanged(event: SensorEvent?) {
-            if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
-                viewModel.addStepCount()
-            }
-        }
-
-        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
-    }
+    val wearableDataClient = remember { Wearable.getDataClient(context) }
 
     val lottiePlaying by rememberLottieComposition(
         LottieCompositionSpec.RawRes(rhythmState.lottieResource)
@@ -167,17 +167,48 @@ fun RhythmRoute(
         }
     }
 
-    LaunchedEffect(sensorManager) {
-        stepDetectorSensor?.let {
-            sensorManager.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_NORMAL)
+    DisposableEffect(sensorManager) {
+        val sensorListener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent?) {
+                if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
+                    viewModel.addStepCount()
+                }
+            }
+
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
         }
+        sensorManager.registerListener(
+            sensorListener,
+            stepDetectorSensor,
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
+        onDispose { sensorManager.unregisterListener(sensorListener) }
+    }
+
+    DisposableEffect(wearableDataClient) {
+        val wearableDataListener = DataClient.OnDataChangedListener { dataEvents ->
+            dataEvents.forEach { event ->
+                if (event.type == DataEvent.TYPE_CHANGED) {
+                    event.dataItem.also { item ->
+                        when (item.uri.path) {
+                            PATH_START -> viewModel.changeIsPlaying(PlayState.PLAYING)
+                            PATH_END -> viewModel.changeIsPlaying(PlayState.DEFAULT)
+                            PATH_RECORD -> {
+                                viewModel.watchAccuracy =
+                                    DataMapItem.fromDataItem(item).dataMap.getDouble(KEY_RECORD)
+                                viewModel.changeIsPlaying(PlayState.PAUSE)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        wearableDataClient.addListener(wearableDataListener)
+        onDispose { wearableDataClient.removeListener(wearableDataListener) }
     }
 
     DisposableEffect(Unit) {
-        onDispose {
-            viewModel.releaseMusicPlayers()
-            sensorManager.unregisterListener(sensorListener)
-        }
+        onDispose { viewModel.releaseMusicPlayers() }
     }
 
     RhythmScreen(
