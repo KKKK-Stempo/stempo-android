@@ -1,25 +1,18 @@
 package com.kkkk.presentation.main.rhythm
 
-import android.media.MediaPlayer
-import android.media.SoundPool
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
-import com.kkkk.presentation.xmlmain.xmlrhythm.XmlRhythmFragment.Companion.findMusicByBpm
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
-import kotlin.coroutines.resume
 
 @HiltViewModel
 class RhythmViewModel
@@ -45,10 +38,10 @@ constructor(
     }
 
     fun changeSelectedMode(selectedMode: RhythmMode) {
-        _rhythmState.update { it.copy(selectedMode = selectedMode, isPlaying = false) }
+        _rhythmState.update { it.copy(selectedMode = selectedMode, isPlaying = PlayState.DEFAULT) }
     }
 
-    fun changeIsPlaying(isPlaying: Boolean) {
+    fun changeIsPlaying(isPlaying: PlayState) {
         _rhythmState.update { it.copy(isPlaying = isPlaying) }
     }
 
@@ -57,11 +50,15 @@ constructor(
     }
 
     fun showBottomSheet(show: Boolean) {
-        _rhythmState.update { it.copy(isBottomSheetVisible = show, isPlaying = false) }
+        _rhythmState.update { it.copy(isBottomSheetVisible = show, isPlaying = PlayState.DEFAULT) }
+    }
+
+    fun showDialog(show: Boolean) {
+        _rhythmState.update { it.copy(isDialogVisible = show) }
     }
 
     fun updateRhythm(bit: Int, bpm: Int) {
-        _rhythmState.update { it.copy(bit = bit, bpm = bpm, isPlaying = false) }
+        _rhythmState.update { it.copy(bit = bit, bpm = bpm, isPlaying = PlayState.DEFAULT) }
         userRepository.setBpm(bpm)
         userRepository.setBit(bit)
     }
@@ -76,6 +73,20 @@ constructor(
 
     fun updateBeatSound(beatSound: Int) {
         _rhythmState.update { it.copy(beatSound = beatSound) }
+    }
+
+    fun playMusic() {
+        viewModelScope.launch {
+            if (rhythmState.value.isPlayerLoaded) {
+                _rhythmState.update { it.copy(isPlaying = PlayState.PLAYING) }
+            } else {
+                _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+            }
+        }
+    }
+
+    fun pauseMusic() {
+
     }
 
     fun getRhythmUrlState() {
@@ -105,6 +116,24 @@ constructor(
                 .onFailure {
                     _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
                 }
+        }
+    }
+
+    fun postRhythmRecordToSave() {
+        viewModelScope.launch {
+//            rhythmRepository.postRhythmRecord(
+//                RecordRequestModel(
+//                    accuracy,
+//                    0,
+//                    stepCount.value
+//                )
+//            ).onSuccess {
+//                resetStepInfo()
+//                _isRecordSaved.emit(true)
+//            }.onFailure {
+//                _isRecordSaved.emit(false)
+//            }
+            _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
         }
     }
 

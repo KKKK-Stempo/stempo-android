@@ -8,9 +8,10 @@ import com.kkkk.stempo.presentation.R
 
 data class RhythmState(
     val selectedMode: RhythmMode = RhythmMode.RHYTHM,
-    val isPlaying: Boolean = false,
+    val isPlaying: PlayState = PlayState.DEFAULT,
     val isLoading: Boolean = false,
     val isBottomSheetVisible: Boolean = false,
+    val isDialogVisible: Boolean = false,
     val bit: Int = MIN_BIT,
     val bpm: Int = MIN_BPM,
     val isPlayerLoaded: Boolean = true,

@@ -1,6 +1,7 @@
 package com.kkkk.presentation.main.rhythm
 
 import android.media.MediaPlayer
+import android.media.PlaybackParams
 import android.media.SoundPool
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -54,12 +55,14 @@ import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.FLOAT_80
 import com.kkkk.presentation.main.rhythm.component.RhythmBottomSheet
 import com.kkkk.presentation.main.rhythm.component.RhythmChip
 import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
+import com.kkkk.presentation.main.rhythm.component.RhythmStopDialog
 import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Dark
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.Transparent50
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.presentation.xmlmain.xmlrhythm.XmlRhythmFragment.Companion.findMusicByBpm
+import com.kkkk.presentation.xmlmain.xmlrhythm.XmlRhythmFragment.Companion.findSpeedByBpm
 import com.kkkk.stempo.presentation.R
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -176,8 +179,53 @@ fun RhythmRoute(
                             }
                         continuation.invokeOnCancellation { mediaPlayer.release() }
                     }
-                }).awaitAll()
+                }
+            ).awaitAll()
             viewModel.changeIsLoading(false)
+        }
+    }
+
+    LaunchedEffect(rhythmState.isPlaying) {
+        when (rhythmState.isPlaying) {
+            PlayState.PLAYING -> {
+                listOf(
+                    async {
+                        mediaPlayer.apply {
+                            playbackParams =
+                                PlaybackParams().setSpeed(findSpeedByBpm(rhythmState.bpm))
+                        }.start()
+                    },
+                    async {
+                        if (rhythmState.beatStream != 0) {
+                            soundPool.resume(rhythmState.beatStream)
+                        } else {
+                            viewModel.updateBeatStream(
+                                soundPool.play(rhythmState.beatSound, 10f, 10f, 1, -1, 1f)
+                            )
+                        }
+                    },
+                ).awaitAll()
+            }
+
+            PlayState.PAUSE -> {
+                listOf(
+                    async { if (rhythmState.beatStream != 0) soundPool.pause(rhythmState.beatStream) },
+                    async { mediaPlayer.pause() }
+                ).awaitAll()
+                viewModel.showDialog(true)
+            }
+
+            PlayState.STOP -> {
+                viewModel.postRhythmRecordToSave()
+            }
+
+            PlayState.DEFAULT -> {
+                listOf(
+                    async { if (rhythmState.beatStream != 0) soundPool.pause(rhythmState.beatStream) },
+                    async { mediaPlayer.pause() }
+                ).awaitAll()
+                // TODO : 초기화
+            }
         }
     }
 
@@ -187,8 +235,8 @@ fun RhythmRoute(
         lottieLoading = lottieLoading,
         animationSpeed = animationSpeed,
         onToggleSelected = viewModel::changeSelectedMode,
-        onPlayBtnClick = { viewModel.changeIsPlaying(true) },
-        onStopBtnClick = { viewModel.changeIsPlaying(false) },
+        onPlayBtnClick = viewModel::playMusic,
+        onStopBtnClick = viewModel::pauseMusic,
         onChangeBtnClick = { viewModel.showBottomSheet(true) }
     )
 
@@ -205,6 +253,14 @@ fun RhythmRoute(
                     viewModel.showBottomSheet(false)
                 }
             }
+        )
+    }
+
+    if (rhythmState.isDialogVisible) {
+        RhythmStopDialog(
+            onSaveClick = { viewModel.changeIsPlaying(PlayState.STOP) },
+            onPauseClick = { viewModel.showDialog(false) },
+            onDismissRequest = { viewModel.showDialog(false) },
         )
     }
 }
@@ -311,14 +367,16 @@ fun RhythmPlayBtnWithLottie(
             .padding(bottom = 10.dp)
     )
     Image(
-        imageVector = ImageVector.vectorResource(id = if (!rhythmState.isPlaying) R.drawable.ic_play else R.drawable.ic_stop),
+        imageVector = ImageVector.vectorResource(
+            id = if (rhythmState.isPlaying == PlayState.PLAYING) R.drawable.ic_stop else R.drawable.ic_play
+        ),
         contentDescription = null,
         modifier = Modifier
             .size(120.dp)
             .padding(bottom = 10.dp)
-            .clickableWithoutRipple { if (rhythmState.isPlaying) onStopBtnClick() else onPlayBtnClick() }
+            .clickableWithoutRipple { if (rhythmState.isPlaying == PlayState.PLAYING) onStopBtnClick() else onPlayBtnClick() }
     )
-    if (rhythmState.isPlaying) {
+    if (rhythmState.isPlaying == PlayState.PLAYING) {
         LottieAnimation(
             composition = lottieComposition,
             iterations = LottieConstants.IterateForever,
