@@ -6,7 +6,9 @@ import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -21,6 +23,9 @@ constructor(
 ) : ViewModel() {
     private val _rhythmState = MutableStateFlow(RhythmState())
     val rhythmState = _rhythmState.asStateFlow()
+
+    private val _rhythmSideEffect = MutableSharedFlow<RhythmSideEffect>()
+    val rhythmSideEffect = _rhythmSideEffect.asSharedFlow()
 
     init {
         initRhythmFromDataStore()
@@ -67,7 +72,7 @@ constructor(
                     getRhythmWavFile(it)
                 }
                 .onFailure {
-                    //  _rhythmUrlState.value = UiState.Failure(it.message.toString())
+                    _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
                 }
         }
     }
@@ -79,12 +84,16 @@ constructor(
                     _rhythmState.update { it.copy(rhythmWav = wav) }
                 }
                 .onFailure {
-                    // _downloadWavState.value = UiState.Failure(it.message.toString())
+                    _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
                 }
         }
     }
 
     fun setMusicPlayer() {
 
+    }
+
+    companion object {
+        const val FLOAT_80 = 80.00000000000000000000F
     }
 }

@@ -2,6 +2,7 @@ package com.kkkk.presentation.main.rhythm
 
 import android.media.MediaPlayer
 import android.media.SoundPool
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -44,12 +45,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.FLOAT_80
 import com.kkkk.presentation.main.rhythm.component.RhythmBottomSheet
 import com.kkkk.presentation.main.rhythm.component.RhythmChip
 import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
@@ -85,6 +88,7 @@ fun RhythmRoute(
     val lottieLoading by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.stempo_loading)
     )
+    val animationSpeed = remember(rhythmState.bpm) { rhythmState.bpm / FLOAT_80 }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -93,6 +97,17 @@ fun RhythmRoute(
     val maxHeight = screenHeight * 0.9f
 
     val systemUiController = rememberSystemUiController()
+
+    LaunchedEffect(viewModel.rhythmSideEffect, lifecycleOwner) {
+        viewModel.rhythmSideEffect.flowWithLifecycle(lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    RhythmSideEffect.ErrorToast -> {
+                        Toast.makeText(context, R.string.error_msg, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+    }
 
     LaunchedEffect(rhythmState.isLoading) {
         systemUiController.setStatusBarColor(
@@ -119,7 +134,7 @@ fun RhythmRoute(
         }.onSuccess {
             viewModel.setMusicPlayer()
         }.onFailure {
-            // toast(stringOf(R.string.error_msg))
+            Toast.makeText(context, R.string.error_msg, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -127,6 +142,7 @@ fun RhythmRoute(
         rhythmState = rhythmState,
         lottiePlaying = lottiePlaying,
         lottieLoading = lottieLoading,
+        animationSpeed = animationSpeed,
         onToggleSelected = viewModel::changeSelectedMode,
         onPlayBtnClick = { viewModel.changeIsPlaying(true) },
         onStopBtnClick = { viewModel.changeIsPlaying(false) },
@@ -155,6 +171,7 @@ internal fun RhythmScreen(
     rhythmState: RhythmState,
     lottiePlaying: LottieComposition?,
     lottieLoading: LottieComposition?,
+    animationSpeed: Float = 1f,
     onToggleSelected: (RhythmMode) -> Unit = {},
     onWatchBtnClick: () -> Unit = {},
     onPlayBtnClick: () -> Unit = {},
@@ -178,6 +195,7 @@ internal fun RhythmScreen(
         RhythmPlayBtnWithLottie(
             rhythmState = rhythmState,
             lottieComposition = lottiePlaying,
+            animationSpeed = animationSpeed,
             onPlayBtnClick = onPlayBtnClick,
             onStopBtnClick = onStopBtnClick
         )
@@ -236,6 +254,7 @@ internal fun RhythmScreen(
 fun RhythmPlayBtnWithLottie(
     rhythmState: RhythmState,
     lottieComposition: LottieComposition?,
+    animationSpeed: Float = 1f,
     onPlayBtnClick: () -> Unit = {},
     onStopBtnClick: () -> Unit = {}
 ) {
@@ -260,6 +279,7 @@ fun RhythmPlayBtnWithLottie(
         LottieAnimation(
             composition = lottieComposition,
             iterations = LottieConstants.IterateForever,
+            speed = animationSpeed,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
