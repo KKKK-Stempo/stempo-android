@@ -1,18 +1,30 @@
 package com.kkkk.presentation.main.rhythm
 
+import android.content.res.AssetFileDescriptor
+import android.media.MediaPlayer
+import android.media.PlaybackParams
+import android.media.SoundPool
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
+import com.kkkk.presentation.xmlmain.xmlrhythm.XmlRhythmFragment.Companion.findSpeedByBpm
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 @HiltViewModel
 class RhythmViewModel
@@ -26,6 +38,12 @@ constructor(
 
     private val _rhythmSideEffect = MutableSharedFlow<RhythmSideEffect>()
     val rhythmSideEffect = _rhythmSideEffect.asSharedFlow()
+
+    private var soundPool = SoundPool.Builder().setMaxStreams(1).build()
+    private var mediaPlayer = MediaPlayer()
+
+    private var beatSound: Int = 0
+    private var beatStream: Int = 0
 
     init {
         initRhythmFromDataStore()
@@ -67,29 +85,95 @@ constructor(
         _rhythmState.update { it.copy(isPlayerLoaded = isPlayerLoaded) }
     }
 
-    fun updateBeatStream(beatStream: Int) {
-        _rhythmState.update { it.copy(beatStream = beatStream) }
+    fun setMusicPlayer(soundPoolFile: File, mediaPlayerAfd: AssetFileDescriptor) {
+        viewModelScope.launch {
+            beatStream = 0
+            listOf(
+                async { setSoundPoolAsync(soundPoolFile) },
+                async { setMediaPlayerAsync(mediaPlayerAfd) }
+            ).awaitAll()
+            updateIsPlayerLoaded(true)
+            changeIsLoading(false)
+        }
     }
 
-    fun updateBeatSound(beatSound: Int) {
-        _rhythmState.update { it.copy(beatSound = beatSound) }
+    private suspend fun setSoundPoolAsync(file: File) {
+        suspendCancellableCoroutine<Unit> { continuation ->
+            if (file.exists()) {
+                soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
+                    setOnLoadCompleteListener { _, sampleId, status ->
+                        // TODO: 이거 왜 status 0 이 안되지 .. status == 0 조건 추가 필요함
+                        if (sampleId == beatSound) {
+                            continuation.resume(Unit)
+                        }
+                    }
+                }
+                beatSound = soundPool.load(file.absolutePath, 1)
+            } else {
+                viewModelScope.launch {
+                    _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                    continuation.resume(Unit)
+                }
+            }
+            continuation.invokeOnCancellation { soundPool.release() }
+        }
+    }
+
+    private suspend fun setMediaPlayerAsync(afd: AssetFileDescriptor) {
+        suspendCancellableCoroutine<Unit> { continuation ->
+            mediaPlayer = MediaPlayer().apply {
+                if (!isPlaying) {
+                    reset()
+                    setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                    afd.close()
+                    isLooping = true
+                    setVolume(0.2f, 0.2f)
+                    prepareAsync()
+                    continuation.resume(Unit)
+                }
+            }
+        }
     }
 
     fun playMusic() {
         viewModelScope.launch {
             if (rhythmState.value.isPlayerLoaded) {
-                _rhythmState.update { it.copy(isPlaying = PlayState.PLAYING) }
+                listOf(
+                    async { playMediaPlayerWithSpeed() },
+                    async { playOrResumeSoundPool() },
+                ).awaitAll()
             } else {
+                changeIsPlaying(PlayState.DEFAULT)
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
             }
         }
     }
 
-    fun pauseMusic() {
-
+    private fun playMediaPlayerWithSpeed() {
+        mediaPlayer.apply {
+            playbackParams = PlaybackParams().setSpeed(findSpeedByBpm(rhythmState.value.bpm))
+        }.start()
     }
 
-    fun getRhythmUrlState() {
+    private fun playOrResumeSoundPool() {
+        if (beatStream != 0) {
+            soundPool.resume(beatStream)
+        } else {
+            beatStream = soundPool.play(beatSound, 10f, 10f, 1, -1, 1f)
+        }
+    }
+
+    fun pauseMusic(isDialogNeeded: Boolean) {
+        viewModelScope.launch {
+            listOf(
+                async { if (beatStream != 0) soundPool.pause(beatStream) },
+                async { mediaPlayer.pause() }
+            ).awaitAll()
+            if (isDialogNeeded) showDialog(true)
+        }
+    }
+
+    fun getRhythmUrlState(filePath: Path) {
         changeIsLoading(true)
         viewModelScope.launch {
             rhythmRepository.postToGetRhythmUrl(
@@ -97,25 +181,37 @@ constructor(
                     rhythmState.value.bpm,
                     rhythmState.value.bit
                 )
-            )
-                .onSuccess {
-                    getRhythmWavFile(it)
-                }
-                .onFailure {
+            ).onSuccess {
+                getRhythmWavFile(it, filePath)
+            }.onFailure {
+                _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+            }
+        }
+    }
+
+    private fun getRhythmWavFile(url: String, filePath: Path) {
+        viewModelScope.launch {
+            rhythmRepository.getRhythmWav(url)
+                .onSuccess { wav ->
+                    saveWavFile(wav, filePath)
+                }.onFailure {
                     _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
                 }
         }
     }
 
-    private fun getRhythmWavFile(url: String) {
+    private fun saveWavFile(wavFile: ByteArray, filePath: Path) {
         viewModelScope.launch {
-            rhythmRepository.getRhythmWav(url)
-                .onSuccess { wav ->
-                    _rhythmState.update { it.copy(rhythmWav = wav) }
+            runCatching {
+                Files.newOutputStream(filePath).use { outputStream ->
+                    outputStream.write(wavFile)
+                    outputStream.flush()
                 }
-                .onFailure {
-                    _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
-                }
+            }.onSuccess {
+                updateIsPlayerLoaded(false)
+            }.onFailure {
+                _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+            }
         }
     }
 

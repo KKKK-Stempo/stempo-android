@@ -1,8 +1,5 @@
 package com.kkkk.presentation.main.rhythm
 
-import android.media.MediaPlayer
-import android.media.PlaybackParams
-import android.media.SoundPool
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -52,7 +49,6 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kkkk.presentation.main.rhythm.RhythmState.Companion.findMusicByBpm
-import com.kkkk.presentation.main.rhythm.RhythmState.Companion.findSpeedByBpm
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.FLOAT_80
 import com.kkkk.presentation.main.rhythm.component.RhythmBottomSheet
 import com.kkkk.presentation.main.rhythm.component.RhythmChip
@@ -64,14 +60,9 @@ import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.Transparent50
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
 import java.nio.file.Files
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,9 +73,6 @@ fun RhythmRoute(
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
-
-    var soundPool = remember { SoundPool.Builder().setMaxStreams(1).build() }
-    var mediaPlayer = remember { MediaPlayer.create(context, R.raw.music_stretch) }
 
     val lottiePlaying by rememberLottieComposition(
         LottieCompositionSpec.RawRes(rhythmState.lottieResource)
@@ -123,123 +111,28 @@ fun RhythmRoute(
         if (File(context.filesDir, rhythmState.filename).exists()) {
             viewModel.updateIsPlayerLoaded(false)
         } else {
-            viewModel.getRhythmUrlState()
-        }
-    }
-
-    LaunchedEffect(rhythmState.rhythmWav) {
-        runCatching {
-            Files.newOutputStream(
-                File(context.filesDir, rhythmState.filename).toPath()
-            ).use { outputStream ->
-                outputStream.write(rhythmState.rhythmWav)
-                outputStream.flush()
-            }
-        }.onSuccess {
-            viewModel.updateIsPlayerLoaded(false)
-        }.onFailure {
-            Toast.makeText(context, R.string.error_msg, Toast.LENGTH_SHORT).show()
+            viewModel.getRhythmUrlState(File(context.filesDir, rhythmState.filename).toPath())
         }
     }
 
     LaunchedEffect(rhythmState.isPlayerLoaded) {
         if (!rhythmState.isPlayerLoaded) {
-            viewModel.updateBeatStream(0)
-            listOf(
-                async {
-                    suspendCancellableCoroutine<Unit> { continuation ->
-                        if (File(context.filesDir, rhythmState.filename).exists()) {
-                            soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
-                                setOnLoadCompleteListener { _, sampleId, status ->
-                                    // TODO: 이거 왜 status 0 이 안돼지 .. status == 0 조건 추가 필요함
-                                    if (sampleId == rhythmState.beatSound) {
-                                        continuation.resume(Unit)
-                                    }
-                                }
-                            }
-                            viewModel.updateBeatSound(
-                                soundPool.load(
-                                    File(context.filesDir, rhythmState.filename).absolutePath, 1
-                                )
-                            )
-                        } else {
-                            Toast.makeText(context, R.string.error_msg, Toast.LENGTH_SHORT).show()
-                            continuation.resume(Unit)
-                        }
-                        continuation.invokeOnCancellation { soundPool.release() }
-                    }
-                },
-                async {
-                    suspendCancellableCoroutine<Unit> { continuation ->
-                        try {
-                            mediaPlayer = MediaPlayer().apply {
-                                if (!isPlaying) {
-                                    reset()
-                                    val afd = context.resources
-                                        .openRawResourceFd(findMusicByBpm(rhythmState.bpm))
-                                    setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
-                                    afd.close()
-                                    isLooping = true
-                                    setVolume(0.2f, 0.2f)
-                                    prepareAsync()
-                                    continuation.resume(Unit)
-                                }
-                            }
-                        } catch (e: Exception) {
-                            continuation.resumeWithException(e)
-                        }
-                    }
-                }
-            ).awaitAll()
-            viewModel.updateIsPlayerLoaded(true)
-            viewModel.changeIsLoading(false)
+            viewModel.setMusicPlayer(
+                soundPoolFile = File(context.filesDir, rhythmState.filename),
+                mediaPlayerAfd = context.resources.openRawResourceFd(findMusicByBpm(rhythmState.bpm))
+            )
         }
     }
 
     LaunchedEffect(rhythmState.isPlaying) {
         when (rhythmState.isPlaying) {
-            PlayState.PLAYING -> {
-                listOf(
-                    async {
-                        if (!mediaPlayer.isPlaying) {
-                            mediaPlayer.apply {
-                                playbackParams = PlaybackParams()
-                                    .setSpeed(findSpeedByBpm(rhythmState.bpm))
-                                start()
-                            }
-                        }
-                    },
-                    async {
-                        if (rhythmState.beatStream != 0) {
-                            soundPool.resume(rhythmState.beatStream)
-                        } else {
-                            viewModel.updateBeatStream(
-                                soundPool.play(rhythmState.beatSound, 10f, 10f, 1, -1, 1f)
-                            )
-                        }
-                    },
-                ).awaitAll()
-            }
+            PlayState.PLAYING -> viewModel.playMusic()
 
-            PlayState.PAUSE -> {
-                listOf(
-                    async { if (rhythmState.beatStream != 0) soundPool.pause(rhythmState.beatStream) },
-                    async { mediaPlayer.pause() }
-                ).awaitAll()
-                viewModel.showDialog(true)
-            }
+            PlayState.PAUSE -> viewModel.pauseMusic(true)
 
-            PlayState.STOP -> {
-                viewModel.postRhythmRecordToSave()
-            }
+            PlayState.STOP -> viewModel.postRhythmRecordToSave()
 
-            PlayState.DEFAULT -> {
-                listOf(
-                    async { if (rhythmState.beatStream != 0) soundPool.pause(rhythmState.beatStream) },
-                    async { mediaPlayer.pause() }
-                ).awaitAll()
-                // TODO : 초기화
-            }
+            PlayState.DEFAULT -> viewModel.pauseMusic(false)
         }
     }
 
@@ -249,8 +142,8 @@ fun RhythmRoute(
         lottieLoading = lottieLoading,
         animationSpeed = animationSpeed,
         onToggleSelected = viewModel::changeSelectedMode,
-        onPlayBtnClick = viewModel::playMusic,
-        onStopBtnClick = viewModel::pauseMusic,
+        onPlayBtnClick = { viewModel.changeIsPlaying(PlayState.PLAYING) },
+        onStopBtnClick = { viewModel.changeIsPlaying(PlayState.PAUSE) },
         onChangeBtnClick = { viewModel.showBottomSheet(true) }
     )
 
