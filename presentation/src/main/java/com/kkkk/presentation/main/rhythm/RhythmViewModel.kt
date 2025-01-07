@@ -1,18 +1,25 @@
 package com.kkkk.presentation.main.rhythm
 
+import android.media.MediaPlayer
+import android.media.SoundPool
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
+import com.kkkk.presentation.xmlmain.xmlrhythm.XmlRhythmFragment.Companion.findMusicByBpm
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 @HiltViewModel
 class RhythmViewModel
@@ -59,6 +66,18 @@ constructor(
         userRepository.setBit(bit)
     }
 
+    fun updateIsPlayerLoaded(isPlayerLoaded: Boolean) {
+        _rhythmState.update { it.copy(isPlayerLoaded = isPlayerLoaded) }
+    }
+
+    fun updateBeatStream(beatStream: Int) {
+        _rhythmState.update { it.copy(beatStream = beatStream) }
+    }
+
+    fun updateBeatSound(beatSound: Int) {
+        _rhythmState.update { it.copy(beatSound = beatSound) }
+    }
+
     fun getRhythmUrlState() {
         changeIsLoading(true)
         viewModelScope.launch {
@@ -87,10 +106,6 @@ constructor(
                     _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
                 }
         }
-    }
-
-    fun setMusicPlayer() {
-
     }
 
     companion object {

@@ -13,8 +13,11 @@ data class RhythmState(
     val isBottomSheetVisible: Boolean = false,
     val bit: Int = MIN_BIT,
     val bpm: Int = MIN_BPM,
+    val isPlayerLoaded: Boolean = true,
     val stepCount: Int = 0,
     val rhythmWav: ByteArray? = null,
+    val beatSound: Int = 0,
+    val beatStream: Int = 0,
 ) {
     val filename: String
         get() = "stempo_bpm_${bpm}_bit_${bit}"

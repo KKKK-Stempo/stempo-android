@@ -24,10 +24,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,10 +59,15 @@ import com.kkkk.presentation.main.theme.Dark
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.Transparent50
 import com.kkkk.presentation.main.theme.White
+import com.kkkk.presentation.xmlmain.xmlrhythm.XmlRhythmFragment.Companion.findMusicByBpm
 import com.kkkk.stempo.presentation.R
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
 import java.nio.file.Files
+import kotlin.coroutines.resume
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,11 +79,8 @@ fun RhythmRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    val soundPool = remember { SoundPool.Builder().setMaxStreams(1).build() }
-    val mediaPlayer = remember { MediaPlayer.create(context, R.raw.music_stretch) }
-
-    var beatSound by remember { mutableIntStateOf(0) }
-    var beatStream by remember { mutableIntStateOf(0) }
+    var soundPool = remember { SoundPool.Builder().setMaxStreams(1).build() }
+    var mediaPlayer = remember { MediaPlayer.create(context, R.raw.music_stretch) }
 
     val lottiePlaying by rememberLottieComposition(
         LottieCompositionSpec.RawRes(rhythmState.lottieResource)
@@ -117,7 +117,7 @@ fun RhythmRoute(
 
     LaunchedEffect(rhythmState.bit, rhythmState.bpm) {
         if (File(context.filesDir, rhythmState.filename).exists()) {
-            viewModel.setMusicPlayer()
+            viewModel.updateIsPlayerLoaded(false)
         } else {
             viewModel.getRhythmUrlState()
         }
@@ -132,9 +132,52 @@ fun RhythmRoute(
                 outputStream.flush()
             }
         }.onSuccess {
-            viewModel.setMusicPlayer()
+            viewModel.updateIsPlayerLoaded(false)
         }.onFailure {
             Toast.makeText(context, R.string.error_msg, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    LaunchedEffect(rhythmState.isPlayerLoaded) {
+        if (!rhythmState.isPlayerLoaded) {
+            viewModel.updateBeatStream(0)
+            listOf(
+                async {
+                    suspendCancellableCoroutine<Unit> { continuation ->
+                        if (File(context.filesDir, rhythmState.filename).exists()) {
+                            soundPool.release()
+                            soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
+                                setOnLoadCompleteListener { _, sampleId, status ->
+                                    if (status == 0 && sampleId == rhythmState.beatSound) {
+                                        continuation.resume(Unit)
+                                    }
+                                }
+                            }
+                            viewModel.updateBeatSound(
+                                soundPool.load(
+                                    File(context.filesDir, rhythmState.filename).absolutePath, 1
+                                )
+                            )
+                        } else {
+                            Toast.makeText(context, R.string.error_msg, Toast.LENGTH_SHORT).show()
+                            continuation.resume(Unit)
+                        }
+                        continuation.invokeOnCancellation { soundPool.release() }
+                    }
+                },
+                async {
+                    suspendCancellableCoroutine<Unit> { continuation ->
+                        mediaPlayer.release()
+                        mediaPlayer =
+                            MediaPlayer.create(context, findMusicByBpm(rhythmState.bpm)).apply {
+                                isLooping = true
+                                setVolume(0.2f, 0.2f)
+                                setOnPreparedListener { continuation.resume(Unit) }
+                            }
+                        continuation.invokeOnCancellation { mediaPlayer.release() }
+                    }
+                }).awaitAll()
+            viewModel.changeIsLoading(false)
         }
     }
 
