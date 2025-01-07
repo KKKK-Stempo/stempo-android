@@ -52,6 +52,8 @@ data class RhythmState(
         const val MIN_BIT = 2
         const val MAX_BIT = 8
 
+        const val STRETCH_MUSIC_FILE = "stempo_bpm_60_bit_2"
+
         fun findMusicByBpm(bpm: Int) = when (bpm / 20) {
             3 -> R.raw.music_bpm_60
             4 -> R.raw.music_bpm_80

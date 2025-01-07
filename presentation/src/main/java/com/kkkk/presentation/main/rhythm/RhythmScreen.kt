@@ -47,6 +47,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kkkk.presentation.main.rhythm.RhythmState.Companion.STRETCH_MUSIC_FILE
 import com.kkkk.presentation.main.rhythm.RhythmState.Companion.findMusicByBpm
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.FLOAT_80
 import com.kkkk.presentation.main.rhythm.component.RhythmBottomSheet
@@ -78,7 +79,9 @@ fun RhythmRoute(
     val lottieLoading by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.stempo_loading)
     )
-    val animationSpeed = remember(rhythmState.bpm) { rhythmState.bpm / FLOAT_80 }
+    val animationSpeed = remember(rhythmState.selectedMode, rhythmState.bpm) {
+        if (rhythmState.selectedMode == RhythmMode.RHYTHM) rhythmState.bpm / FLOAT_80 else 0.75F
+    }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -113,12 +116,23 @@ fun RhythmRoute(
         }
     }
 
+    LaunchedEffect(rhythmState.selectedMode) {
+        viewModel.updateIsPlayerLoaded(false)
+    }
+
     LaunchedEffect(rhythmState.isPlayerLoaded) {
         if (!rhythmState.isPlayerLoaded) {
-            viewModel.setMusicPlayer(
-                soundPoolFile = File(context.filesDir, rhythmState.filename),
-                mediaPlayerAfd = context.resources.openRawResourceFd(findMusicByBpm(rhythmState.bpm))
-            )
+            if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
+                viewModel.setMusicPlayer(
+                    soundPoolFile = File(context.filesDir, rhythmState.filename),
+                    mediaPlayerAfd = context.resources.openRawResourceFd(findMusicByBpm(rhythmState.bpm))
+                )
+            } else {
+                viewModel.setMusicPlayer(
+                    soundPoolFile = File(context.filesDir, STRETCH_MUSIC_FILE),
+                    mediaPlayerAfd = context.resources.openRawResourceFd(R.raw.music_stretch)
+                )
+            }
         }
     }
 

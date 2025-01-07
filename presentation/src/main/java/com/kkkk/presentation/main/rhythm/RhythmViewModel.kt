@@ -155,7 +155,9 @@ constructor(
 
     private fun playMediaPlayerWithSpeed() {
         mediaPlayer.apply {
-            playbackParams = PlaybackParams().setSpeed(findSpeedByBpm(rhythmState.value.bpm))
+            if (rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
+                playbackParams = PlaybackParams().setSpeed(findSpeedByBpm(rhythmState.value.bpm))
+            }
         }.start()
     }
 
@@ -173,7 +175,9 @@ constructor(
                 async { if (beatStream != 0) soundPool.pause(beatStream) },
                 async { mediaPlayer.pause() }
             ).awaitAll()
-            if (isDialogNeeded) showDialog(true)
+            if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
+                showDialog(true)
+            }
         }
     }
 
