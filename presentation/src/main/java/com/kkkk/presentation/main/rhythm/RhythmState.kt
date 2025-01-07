@@ -54,5 +54,21 @@ data class RhythmState(
         const val MAX_BPM = 120
         const val MIN_BIT = 2
         const val MAX_BIT = 8
+
+        fun findMusicByBpm(bpm: Int) = when (bpm / 20) {
+            3 -> R.raw.music_bpm_60
+            4 -> R.raw.music_bpm_80
+            5 -> R.raw.music_bpm_100
+            6 -> R.raw.music_bpm_120
+            else -> R.raw.music_bpm_60
+        }
+
+        fun findSpeedByBpm(bpm: Int) = when (bpm % 20) {
+            0 -> 1.0f
+            5 -> 1.08f
+            10 -> 1.16f
+            15 -> 1.25f
+            else -> 1.0f
+        }
     }
 }

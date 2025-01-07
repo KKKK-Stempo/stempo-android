@@ -51,6 +51,8 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kkkk.presentation.main.rhythm.RhythmState.Companion.findMusicByBpm
+import com.kkkk.presentation.main.rhythm.RhythmState.Companion.findSpeedByBpm
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.FLOAT_80
 import com.kkkk.presentation.main.rhythm.component.RhythmBottomSheet
 import com.kkkk.presentation.main.rhythm.component.RhythmChip
@@ -61,8 +63,6 @@ import com.kkkk.presentation.main.theme.Dark
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.Transparent50
 import com.kkkk.presentation.main.theme.White
-import com.kkkk.presentation.xmlmain.xmlrhythm.XmlRhythmFragment.Companion.findMusicByBpm
-import com.kkkk.presentation.xmlmain.xmlrhythm.XmlRhythmFragment.Companion.findSpeedByBpm
 import com.kkkk.stempo.presentation.R
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -71,6 +71,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.File
 import java.nio.file.Files
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -150,17 +151,19 @@ fun RhythmRoute(
                         if (File(context.filesDir, rhythmState.filename).exists()) {
                             soundPool.release()
                             soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
-                                setOnLoadCompleteListener { _, sampleId, status ->
-                                    if (status == 0 && sampleId == rhythmState.beatSound) {
+                                setOnLoadCompleteListener { _, _, status ->
+                                    if (status == 0 && continuation.isActive) {
                                         continuation.resume(Unit)
                                     }
                                 }
                             }
-                            viewModel.updateBeatSound(
-                                soundPool.load(
-                                    File(context.filesDir, rhythmState.filename).absolutePath, 1
-                                )
+                            val soundId = soundPool.load(
+                                File(context.filesDir, rhythmState.filename).absolutePath, 1
                             )
+                            viewModel.updateBeatSound(soundId)
+                            if (continuation.isActive) {
+                                continuation.resume(Unit)
+                            }
                         } else {
                             Toast.makeText(context, R.string.error_msg, Toast.LENGTH_SHORT).show()
                             continuation.resume(Unit)
@@ -170,18 +173,22 @@ fun RhythmRoute(
                 },
                 async {
                     suspendCancellableCoroutine<Unit> { continuation ->
-                        mediaPlayer.release()
-                        mediaPlayer =
-                            MediaPlayer.create(context, findMusicByBpm(rhythmState.bpm)).apply {
-                                isLooping = true
-                                setVolume(0.2f, 0.2f)
-                                setOnPreparedListener { continuation.resume(Unit) }
-                            }
-                        continuation.invokeOnCancellation { mediaPlayer.release() }
+                        try {
+                            mediaPlayer.release()
+                            mediaPlayer =
+                                MediaPlayer.create(context, findMusicByBpm(rhythmState.bpm)).apply {
+                                    isLooping = true
+                                    setVolume(0.2f, 0.2f)
+                                    setOnPreparedListener { continuation.resume(Unit) }
+                                }
+                        } catch (e: Exception) {
+                            continuation.resumeWithException(e)
+                        }
                     }
                 }
             ).awaitAll()
             viewModel.changeIsLoading(false)
+            viewModel.updateIsPlayerLoaded(true)
         }
     }
 
