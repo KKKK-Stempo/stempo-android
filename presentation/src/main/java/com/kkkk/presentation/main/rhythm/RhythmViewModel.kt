@@ -4,6 +4,7 @@ import android.content.res.AssetFileDescriptor
 import android.media.MediaPlayer
 import android.media.PlaybackParams
 import android.media.SoundPool
+import android.view.Choreographer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.entity.request.RecordRequestModel
@@ -26,6 +27,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 @HiltViewModel
 class RhythmViewModel
@@ -103,50 +105,58 @@ constructor(
 
     fun setMusicPlayer(soundPoolFile: File, mediaPlayerAfd: AssetFileDescriptor) {
         viewModelScope.launch {
-            beatStream = 0
-            listOf(
-                async { setSoundPoolAsync(soundPoolFile) },
-                async { setMediaPlayerAsync(mediaPlayerAfd) }
-            ).awaitAll()
-            updateIsPlayerLoaded(true)
-            changeIsLoading(false)
+            runCatching {
+                listOf(
+                    async { setSoundPoolAsync(soundPoolFile) },
+                    async { setMediaPlayerAsync(mediaPlayerAfd) }
+                ).awaitAll()
+            }.onSuccess {
+                updateIsPlayerLoaded(true)
+                changeIsLoading(false)
+                mediaPlayerAfd.close()
+            }.onFailure {
+                _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+            }
         }
     }
 
     private suspend fun setSoundPoolAsync(file: File) {
         suspendCancellableCoroutine<Unit> { continuation ->
-            if (file.exists()) {
+            runCatching {
                 soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
                     setOnLoadCompleteListener { _, sampleId, _ ->
                         if (sampleId == beatSound) {
                             continuation.resume(Unit)
+                        } else {
+                            continuation.resumeWithException(IllegalStateException())
                         }
                     }
                 }
+                beatStream = 0
                 beatSound = soundPool.load(file.absolutePath, 1)
-            } else {
-                viewModelScope.launch {
-                    _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
-                    continuation.resume(Unit)
-                }
-            }
-            continuation.invokeOnCancellation { soundPool.release() }
+            }.onFailure { continuation.resumeWithException(it) }
         }
     }
 
     private suspend fun setMediaPlayerAsync(afd: AssetFileDescriptor) {
         suspendCancellableCoroutine<Unit> { continuation ->
-            mediaPlayer = MediaPlayer().apply {
-                if (!isPlaying) {
+            runCatching {
+                mediaPlayer = MediaPlayer().apply {
                     reset()
+                    setOnPreparedListener { continuation.resume(Unit) }
+                    setOnErrorListener { _, _, _ ->
+                        continuation.resumeWithException(IllegalStateException())
+                        true
+                    }
                     setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
-                    afd.close()
                     isLooping = true
                     setVolume(0.2f, 0.2f)
-                    prepareAsync()
-                    continuation.resume(Unit)
+                    if (rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
+                        playbackParams = PlaybackParams().setSpeed(rhythmState.value.speedByBpm)
+                    }
                 }
-            }
+                mediaPlayer.prepareAsync()
+            }.onFailure { continuation.resumeWithException(it) }
         }
     }
 
@@ -156,25 +166,17 @@ constructor(
     }
 
     fun playMusic() {
-        viewModelScope.launch {
-            if (rhythmState.value.isPlayerLoaded) {
-                listOf(
-                    async { playMediaPlayerWithSpeed() },
-                    async { playOrResumeSoundPool() },
-                ).awaitAll()
-            } else {
+        if (rhythmState.value.isPlayerLoaded) {
+            Choreographer.getInstance().postFrameCallback {
+                mediaPlayer.start()
+                playOrResumeSoundPool()
+            }
+        } else {
+            viewModelScope.launch {
                 changeIsPlaying(PlayState.DEFAULT)
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
             }
         }
-    }
-
-    private fun playMediaPlayerWithSpeed() {
-        mediaPlayer.apply {
-            if (rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
-                playbackParams = PlaybackParams().setSpeed(rhythmState.value.speedByBpm)
-            }
-        }.start()
     }
 
     private fun playOrResumeSoundPool() {
@@ -186,14 +188,12 @@ constructor(
     }
 
     fun pauseMusic(isDialogNeeded: Boolean) {
-        viewModelScope.launch {
-            listOf(
-                async { if (beatStream != 0) soundPool.pause(beatStream) },
-                async { if (mediaPlayer.isPlaying) mediaPlayer.pause() }
-            ).awaitAll()
-            if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
-                showSaveDialog(true)
-            }
+        Choreographer.getInstance().postFrameCallback {
+            if (beatStream != 0) soundPool.pause(beatStream)
+            if (mediaPlayer.isPlaying) mediaPlayer.pause()
+        }
+        if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
+            showSaveDialog(true)
         }
     }
 
