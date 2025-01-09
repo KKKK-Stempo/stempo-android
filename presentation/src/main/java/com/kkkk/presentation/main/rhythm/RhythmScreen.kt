@@ -2,6 +2,7 @@ package com.kkkk.presentation.main.rhythm
 
 import android.content.Context
 import android.hardware.Sensor
+import android.hardware.Sensor.TYPE_STEP_DETECTOR
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
@@ -120,21 +121,15 @@ fun RhythmRoute(
     }
 
     LaunchedEffect(rhythmState.isLoading) {
-        systemUiController.setStatusBarColor(
-            color = if (rhythmState.isLoading) Transparent50 else White
-        )
+        systemUiController.setStatusBarColor(color = if (rhythmState.isLoading) Transparent50 else White)
     }
 
-    LaunchedEffect(rhythmState.bit, rhythmState.bpm) {
+    LaunchedEffect(rhythmState.bit, rhythmState.bpm, rhythmState.selectedMode) {
         if (!File(context.filesDir, rhythmState.filename).exists()) {
             viewModel.getRhythmUrlState(File(context.filesDir, rhythmState.filename).toPath())
         } else {
             viewModel.updateIsPlayerLoaded(false)
         }
-    }
-
-    LaunchedEffect(rhythmState.selectedMode) {
-        viewModel.updateIsPlayerLoaded(false)
     }
 
     LaunchedEffect(rhythmState.isPlayerLoaded) {
@@ -165,9 +160,7 @@ fun RhythmRoute(
     DisposableEffect(sensorManager) {
         val sensorListener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent?) {
-                if (event?.sensor?.type == Sensor.TYPE_STEP_DETECTOR) {
-                    viewModel.addStepCount()
-                }
+                if (event?.sensor?.type == TYPE_STEP_DETECTOR) viewModel.addStepCount()
             }
 
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
@@ -178,21 +171,18 @@ fun RhythmRoute(
 
     DisposableEffect(wearableDataClient) {
         val wearableDataListener = DataClient.OnDataChangedListener { dataEvents ->
-            dataEvents.forEach { event ->
-                if (event.type == DataEvent.TYPE_CHANGED) {
-                    event.dataItem.also { item ->
-                        when (item.uri.path) {
-                            PATH_START -> viewModel.changeIsPlaying(PlayState.PLAYING)
-                            PATH_END -> viewModel.changeIsPlaying(PlayState.DEFAULT)
-                            PATH_RECORD -> {
-                                viewModel.wearableAccuracy =
-                                    DataMapItem.fromDataItem(item).dataMap.getDouble(KEY_RECORD)
-                                viewModel.changeIsPlaying(PlayState.PAUSE)
-                            }
+            dataEvents.filter { it.type == DataEvent.TYPE_CHANGED }.map { it.dataItem }
+                .forEach { item ->
+                    val dataMap = DataMapItem.fromDataItem(item).dataMap
+                    when (item.uri.path) {
+                        PATH_START -> viewModel.changeIsPlaying(PlayState.PLAYING)
+                        PATH_END -> viewModel.changeIsPlaying(PlayState.DEFAULT)
+                        PATH_RECORD -> {
+                            viewModel.wearableAccuracy = dataMap.getDouble(KEY_RECORD)
+                            viewModel.changeIsPlaying(PlayState.PAUSE)
                         }
                     }
                 }
-            }
         }
         wearableDataClient.addListener(wearableDataListener)
         onDispose { wearableDataClient.removeListener(wearableDataListener) }
