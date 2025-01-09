@@ -120,7 +120,7 @@ fun RhythmRoute(
 
     LaunchedEffect(rhythmState.bit, rhythmState.bpm, rhythmState.selectedMode) {
         if (!File(context.filesDir, rhythmState.filename).exists()) {
-            viewModel.getRhythmUrlState(File(context.filesDir, rhythmState.filename).toPath())
+            viewModel.downloadNewMusicFile(File(context.filesDir, rhythmState.filename).toPath())
         } else {
             viewModel.updateIsPlayerLoaded(false)
         }

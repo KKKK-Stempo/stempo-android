@@ -197,46 +197,39 @@ constructor(
         }
     }
 
-    fun getRhythmUrlState(filePath: Path) {
+    fun downloadNewMusicFile(filePath: Path) {
         changeIsLoading(true)
         viewModelScope.launch {
-            rhythmRepository.postToGetRhythmUrl(
-                RhythmRequestModel(
-                    rhythmState.value.bpm,
-                    rhythmState.value.bit
-                )
-            ).onSuccess {
-                getRhythmWavFile(it, filePath)
-            }.onFailure {
-                _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
-            }
-        }
-    }
-
-    private fun getRhythmWavFile(url: String, filePath: Path) {
-        viewModelScope.launch {
-            rhythmRepository.getRhythmWav(url)
-                .onSuccess { wav ->
-                    saveWavFile(wav, filePath)
-                }.onFailure {
-                    _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
-                }
-        }
-    }
-
-    private fun saveWavFile(wavFile: ByteArray, filePath: Path) {
-        viewModelScope.launch {
             runCatching {
-                Files.newOutputStream(filePath).use { outputStream ->
-                    outputStream.write(wavFile)
-                    outputStream.flush()
-                }
+                val url = getRhythmUrl()
+                val wavFile = getRhythmFile(url)
+                saveRhythmFile(wavFile, filePath)
             }.onSuccess {
                 updateIsPlayerLoaded(false)
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
             }
         }
+    }
+
+    private suspend fun getRhythmUrl(): String =
+        rhythmRepository.postToGetRhythmUrl(
+            RhythmRequestModel(
+                rhythmState.value.bpm,
+                rhythmState.value.bit
+            )
+        ).getOrThrow()
+
+    private suspend fun getRhythmFile(url: String): ByteArray =
+        rhythmRepository.getRhythmWav(url).getOrThrow()
+
+    private suspend fun saveRhythmFile(wavFile: ByteArray, filePath: Path) {
+        runCatching {
+            Files.newOutputStream(filePath).use { outputStream ->
+                outputStream.write(wavFile)
+                outputStream.flush()
+            }
+        }.getOrThrow()
     }
 
     fun addStepCount() {
