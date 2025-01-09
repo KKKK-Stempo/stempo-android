@@ -11,7 +11,6 @@ import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
 import com.kkkk.presentation.manager.PhoneDataManager
-import com.kkkk.presentation.xmlmain.xmlrhythm.XmlRhythmFragment.Companion.findSpeedByBpm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -173,7 +172,7 @@ constructor(
     private fun playMediaPlayerWithSpeed() {
         mediaPlayer.apply {
             if (rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
-                playbackParams = PlaybackParams().setSpeed(findSpeedByBpm(rhythmState.value.bpm))
+                playbackParams = PlaybackParams().setSpeed(rhythmState.value.speedByBpm)
             }
         }.start()
     }
@@ -257,7 +256,8 @@ constructor(
     }
 
     fun postRhythmRecordToSave() {
-        val isInvalidStep = (_oddStepCount.value == 0 || _evenStepCount.value == 0) && wearableAccuracy == 0.0
+        val isInvalidStep =
+            (_oddStepCount.value == 0 || _evenStepCount.value == 0) && wearableAccuracy == 0.0
         val accuracy = calculateAccuracy()
         if (isInvalidStep || accuracy == 0.0) {
             resetStepCount()
@@ -316,8 +316,6 @@ constructor(
     }
 
     companion object {
-        const val FLOAT_80 = 80.00000000000000000000F
-
         const val KEY_RECORD = "KEY_RECORD"
         const val KEY_START = "KEY_START"
         const val KEY_END = "KEY_END"
