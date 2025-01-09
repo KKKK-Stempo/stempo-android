@@ -8,11 +8,15 @@ import com.kkkk.stempo.presentation.R
 
 data class RhythmState(
     val selectedMode: RhythmMode = RhythmMode.RHYTHM,
-    val isPlaying: Boolean = false,
+    val isPlaying: PlayState = PlayState.DEFAULT,
+    val isLoading: Boolean = false,
     val isBottomSheetVisible: Boolean = false,
+    val isSaveDialogVisible: Boolean = false,
+    val isSyncDialogVisible: Boolean = false,
     val bit: Int = MIN_BIT,
     val bpm: Int = MIN_BPM,
-    val stepCount: Int = 0
+    val isPlayerLoaded: Boolean = true,
+    val stepCount: Int = 0,
 ) {
     val filename: String
         get() = "stempo_bpm_${bpm}_bit_${bit}"
@@ -48,5 +52,23 @@ data class RhythmState(
         const val MAX_BPM = 120
         const val MIN_BIT = 2
         const val MAX_BIT = 8
+
+        const val STRETCH_MUSIC_FILE = "stempo_bpm_60_bit_2"
+
+        fun findMusicByBpm(bpm: Int) = when (bpm / 20) {
+            3 -> R.raw.music_bpm_60
+            4 -> R.raw.music_bpm_80
+            5 -> R.raw.music_bpm_100
+            6 -> R.raw.music_bpm_120
+            else -> R.raw.music_bpm_60
+        }
+
+        fun findSpeedByBpm(bpm: Int) = when (bpm % 20) {
+            0 -> 1.0f
+            5 -> 1.08f
+            10 -> 1.16f
+            15 -> 1.25f
+            else -> 1.0f
+        }
     }
 }

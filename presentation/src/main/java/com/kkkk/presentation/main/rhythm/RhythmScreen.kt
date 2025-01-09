@@ -1,5 +1,12 @@
 package com.kkkk.presentation.main.rhythm
 
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.Sensor.TYPE_STEP_DETECTOR
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +26,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,27 +37,47 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.android.gms.wearable.DataClient
+import com.google.android.gms.wearable.DataEvent
+import com.google.android.gms.wearable.DataMapItem
+import com.google.android.gms.wearable.Wearable
+import com.kkkk.core.extension.stringOf
+import com.kkkk.core.extension.toast
+import com.kkkk.presentation.main.rhythm.RhythmState.Companion.STRETCH_MUSIC_FILE
+import com.kkkk.presentation.main.rhythm.RhythmState.Companion.findMusicByBpm
+import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.FLOAT_80
+import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.KEY_RECORD
+import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_END
+import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_RECORD
+import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_START
 import com.kkkk.presentation.main.rhythm.component.RhythmBottomSheet
 import com.kkkk.presentation.main.rhythm.component.RhythmChip
 import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
+import com.kkkk.presentation.main.rhythm.component.RhythmStopDialog
+import com.kkkk.presentation.main.rhythm.component.RhythmSyncDialog
 import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Dark
 import com.kkkk.presentation.main.theme.StempoTheme
+import com.kkkk.presentation.main.theme.Transparent50
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,25 +85,122 @@ fun RhythmRoute(
     viewModel: RhythmViewModel = hiltViewModel(),
 ) {
     val rhythmState by viewModel.rhythmState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
 
-    val lottieComposition by rememberLottieComposition(
+    // 시스템 서비스 및 데이터 클라이언트
+    val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    val stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+    val wearableDataClient = Wearable.getDataClient(context)
+
+    // Lottie 및 애니메이션 속도 관리
+    val lottiePlaying by rememberLottieComposition(
         LottieCompositionSpec.RawRes(rhythmState.lottieResource)
     )
-
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
+    val lottieLoading by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.stempo_loading)
     )
-    val scope = rememberCoroutineScope()
+    val animationSpeed = remember(rhythmState.selectedMode, rhythmState.bpm) {
+        if (rhythmState.selectedMode == RhythmMode.RHYTHM) rhythmState.bpm / FLOAT_80 else 0.75F
+    }
 
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val maxHeight = screenHeight * 0.9f
+    // 바텀시트 관련 상태
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
+    val maxHeight = LocalConfiguration.current.screenHeightDp.dp * 0.9f
+
+    val systemUiController = rememberSystemUiController()
+
+    LaunchedEffect(viewModel.rhythmSideEffect, lifecycleOwner) {
+        viewModel.rhythmSideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                RhythmSideEffect.ErrorToast -> context.toast(context.stringOf(R.string.error_msg))
+                RhythmSideEffect.SaveSuccessToast -> context.toast(context.stringOf(R.string.rhythm_toast_save_success))
+            }
+        }
+    }
+
+    LaunchedEffect(rhythmState.isLoading) {
+        systemUiController.setStatusBarColor(color = if (rhythmState.isLoading) Transparent50 else White)
+    }
+
+    LaunchedEffect(rhythmState.bit, rhythmState.bpm, rhythmState.selectedMode) {
+        if (!File(context.filesDir, rhythmState.filename).exists()) {
+            viewModel.getRhythmUrlState(File(context.filesDir, rhythmState.filename).toPath())
+        } else {
+            viewModel.updateIsPlayerLoaded(false)
+        }
+    }
+
+    LaunchedEffect(rhythmState.isPlayerLoaded) {
+        if (!rhythmState.isPlayerLoaded) {
+            if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
+                viewModel.setMusicPlayer(
+                    soundPoolFile = File(context.filesDir, rhythmState.filename),
+                    mediaPlayerAfd = context.resources.openRawResourceFd(findMusicByBpm(rhythmState.bpm))
+                )
+            } else {
+                viewModel.setMusicPlayer(
+                    soundPoolFile = File(context.filesDir, STRETCH_MUSIC_FILE),
+                    mediaPlayerAfd = context.resources.openRawResourceFd(R.raw.music_stretch)
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(rhythmState.isPlaying) {
+        when (rhythmState.isPlaying) {
+            PlayState.PLAYING -> viewModel.playMusic()
+            PlayState.PAUSE -> viewModel.pauseMusic(true)
+            PlayState.STOP -> viewModel.postRhythmRecordToSave()
+            PlayState.DEFAULT -> viewModel.pauseMusic(false)
+        }
+    }
+
+    DisposableEffect(sensorManager) {
+        val sensorListener = object : SensorEventListener {
+            override fun onSensorChanged(event: SensorEvent?) {
+                if (event?.sensor?.type == TYPE_STEP_DETECTOR) viewModel.addStepCount()
+            }
+
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        }
+        sensorManager.registerListener(sensorListener, stepDetectorSensor, SENSOR_DELAY_NORMAL)
+        onDispose { sensorManager.unregisterListener(sensorListener) }
+    }
+
+    DisposableEffect(wearableDataClient) {
+        val wearableDataListener = DataClient.OnDataChangedListener { dataEvents ->
+            dataEvents.filter { it.type == DataEvent.TYPE_CHANGED }.map { it.dataItem }
+                .forEach { item ->
+                    val dataMap = DataMapItem.fromDataItem(item).dataMap
+                    when (item.uri.path) {
+                        PATH_START -> viewModel.changeIsPlaying(PlayState.PLAYING)
+                        PATH_END -> viewModel.changeIsPlaying(PlayState.DEFAULT)
+                        PATH_RECORD -> {
+                            viewModel.wearableAccuracy = dataMap.getDouble(KEY_RECORD)
+                            viewModel.changeIsPlaying(PlayState.PAUSE)
+                        }
+                    }
+                }
+        }
+        wearableDataClient.addListener(wearableDataListener)
+        onDispose { wearableDataClient.removeListener(wearableDataListener) }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose { viewModel.releaseMusicPlayers() }
+    }
 
     RhythmScreen(
         rhythmState = rhythmState,
-        lottieComposition = lottieComposition,
+        lottiePlaying = lottiePlaying,
+        lottieLoading = lottieLoading,
+        animationSpeed = animationSpeed,
         onToggleSelected = viewModel::changeSelectedMode,
-        onPlayBtnClick = viewModel::changeIsPlaying,
-        onStopBtnClick = viewModel::changeIsPlaying,
+        onWatchBtnClick = { viewModel.showSyncDialog(true) },
+        onPlayBtnClick = { viewModel.changeIsPlaying(PlayState.PLAYING) },
+        onPauseBtnClick = { viewModel.changeIsPlaying(PlayState.PAUSE) },
         onChangeBtnClick = { viewModel.showBottomSheet(true) }
     )
 
@@ -92,16 +219,33 @@ fun RhythmRoute(
             }
         )
     }
+
+    if (rhythmState.isSaveDialogVisible) {
+        RhythmStopDialog(
+            onSaveClick = { viewModel.changeIsPlaying(PlayState.STOP) },
+            onPauseClick = { viewModel.showSaveDialog(false) },
+            onDismissRequest = { viewModel.showSaveDialog(false) },
+        )
+    }
+
+    if (rhythmState.isSyncDialogVisible) {
+        RhythmSyncDialog(
+            onConfirmClick = viewModel::sendBpmToWearable,
+            onDismissRequest = { viewModel.showSyncDialog(false) },
+        )
+    }
 }
 
 @Composable
 internal fun RhythmScreen(
     rhythmState: RhythmState,
-    lottieComposition: LottieComposition?,
+    lottiePlaying: LottieComposition?,
+    lottieLoading: LottieComposition?,
+    animationSpeed: Float = 1f,
     onToggleSelected: (RhythmMode) -> Unit = {},
     onWatchBtnClick: () -> Unit = {},
     onPlayBtnClick: () -> Unit = {},
-    onStopBtnClick: () -> Unit = {},
+    onPauseBtnClick: () -> Unit = {},
     onChangeBtnClick: () -> Unit = {}
 ) {
     Box(
@@ -110,9 +254,10 @@ internal fun RhythmScreen(
     ) {
         RhythmPlayBtnWithLottie(
             rhythmState = rhythmState,
-            lottieComposition = lottieComposition,
+            lottieComposition = lottiePlaying,
+            animationSpeed = animationSpeed,
             onPlayBtnClick = onPlayBtnClick,
-            onStopBtnClick = onStopBtnClick
+            onStopBtnClick = onPauseBtnClick
         )
 
         Column(
@@ -150,6 +295,18 @@ internal fun RhythmScreen(
                 onChangeBtnClick = onChangeBtnClick
             )
         }
+
+        if (rhythmState.isLoading) {
+            LottieAnimation(
+                composition = lottieLoading,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Transparent50)
+                    .padding(horizontal = 50.dp)
+                    .clickableWithoutRipple { }
+            )
+        }
     }
 }
 
@@ -157,6 +314,7 @@ internal fun RhythmScreen(
 fun RhythmPlayBtnWithLottie(
     rhythmState: RhythmState,
     lottieComposition: LottieComposition?,
+    animationSpeed: Float = 1f,
     onPlayBtnClick: () -> Unit = {},
     onStopBtnClick: () -> Unit = {}
 ) {
@@ -170,17 +328,20 @@ fun RhythmPlayBtnWithLottie(
             .padding(bottom = 10.dp)
     )
     Image(
-        imageVector = ImageVector.vectorResource(id = if (!rhythmState.isPlaying) R.drawable.ic_play else R.drawable.ic_stop),
+        imageVector = ImageVector.vectorResource(
+            id = if (rhythmState.isPlaying == PlayState.PLAYING) R.drawable.ic_stop else R.drawable.ic_play
+        ),
         contentDescription = null,
         modifier = Modifier
             .size(120.dp)
             .padding(bottom = 10.dp)
-            .clickableWithoutRipple { if (rhythmState.isPlaying) onStopBtnClick() else onPlayBtnClick() }
+            .clickableWithoutRipple { if (rhythmState.isPlaying == PlayState.PLAYING) onStopBtnClick() else onPlayBtnClick() }
     )
-    if (rhythmState.isPlaying) {
+    if (rhythmState.isPlaying == PlayState.PLAYING) {
         LottieAnimation(
             composition = lottieComposition,
             iterations = LottieConstants.IterateForever,
+            speed = animationSpeed,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
@@ -284,7 +445,8 @@ fun RhythmScreenPreview() {
     StempoTheme {
         RhythmScreen(
             rhythmState = RhythmState(),
-            lottieComposition = null
+            lottiePlaying = null,
+            lottieLoading = null
         )
     }
 }
