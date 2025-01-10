@@ -237,7 +237,7 @@ fun RhythmRoute(
 }
 
 @Composable
-internal fun RhythmScreen(
+private fun RhythmScreen(
     rhythmState: RhythmState,
     lottiePlaying: LottieComposition?,
     lottieLoading: LottieComposition?,
