@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.mikephil.charting.data.Entry
+import com.kkkk.core.extension.stringOf
+import com.kkkk.core.extension.toast
 import com.kkkk.presentation.main.record.component.DottedShape
 import com.kkkk.presentation.main.record.component.RecordLineChart
 import com.kkkk.presentation.main.theme.Gray100
@@ -48,6 +50,14 @@ fun RecordRoute(
     val recordState by viewModel.recordState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
+
+    LaunchedEffect(viewModel.recordSideEffect, lifecycleOwner) {
+        viewModel.recordSideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                RecordSideEffect.ErrorToast -> context.toast(context.stringOf(R.string.error_msg))
+            }
+        }
+    }
 
     RecordScreen(
         recordState = recordState,
@@ -139,17 +149,15 @@ private fun RecordScreen(
                 )
 
                 RecordLineChart(
-                    dateList = listOf("1", "2", "3"),
-                    entriesList = listOf(
-                        Entry(0F, 70F),
-                        Entry(1F, 100F),
-                        Entry(2F, 50F)
-                    )
+                    dateList = recordState.dateList,
+                    entriesList = recordState.entriesList
                 )
             }
 
             Column(
-                modifier = Modifier.fillMaxHeight().padding(bottom = 24.dp),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(bottom = 24.dp),
                 verticalArrangement = Arrangement.Center
             ) {
                 Row(
