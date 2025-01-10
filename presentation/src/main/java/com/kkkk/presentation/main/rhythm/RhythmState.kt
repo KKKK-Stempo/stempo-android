@@ -46,16 +46,11 @@ data class RhythmState(
             else -> R.drawable.img_rhythm_bg_purple
         }
 
+    val animationSpeed: Float
+        get() = if (selectedMode == RhythmMode.RHYTHM) bpm / FLOAT_80 else 0.75F
 
-    companion object {
-        const val MIN_BPM = 60
-        const val MAX_BPM = 120
-        const val MIN_BIT = 2
-        const val MAX_BIT = 8
-
-        const val STRETCH_MUSIC_FILE = "stempo_bpm_60_bit_2"
-
-        fun findMusicByBpm(bpm: Int) = when (bpm / 20) {
+    val musicByBpm: Int
+        get() = when (bpm / 20) {
             3 -> R.raw.music_bpm_60
             4 -> R.raw.music_bpm_80
             5 -> R.raw.music_bpm_100
@@ -63,12 +58,23 @@ data class RhythmState(
             else -> R.raw.music_bpm_60
         }
 
-        fun findSpeedByBpm(bpm: Int) = when (bpm % 20) {
+    val speedByBpm: Float
+        get() = when (bpm % 20) {
             0 -> 1.0f
             5 -> 1.08f
             10 -> 1.16f
             15 -> 1.25f
             else -> 1.0f
         }
+
+    companion object {
+        const val MIN_BPM = 60
+        const val MAX_BPM = 120
+        const val MIN_BIT = 2
+        const val MAX_BIT = 8
+
+        const val FLOAT_80 = 80.00000000000000000000F
+
+        const val STRETCH_MUSIC_FILE = "stempo_bpm_60_bit_2"
     }
 }
