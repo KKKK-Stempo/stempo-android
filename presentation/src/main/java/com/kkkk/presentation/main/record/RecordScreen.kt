@@ -33,14 +33,23 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.LottieComposition
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.presentation.main.record.component.DottedShape
 import com.kkkk.presentation.main.record.component.RecordLineChart
+import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Gray100
 import com.kkkk.presentation.main.theme.Gray300
 import com.kkkk.presentation.main.theme.Gray600
 import com.kkkk.presentation.main.theme.StempoTheme
+import com.kkkk.presentation.main.theme.Transparent50
+import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
 
 @Composable
@@ -48,8 +57,13 @@ fun RecordRoute(
     viewModel: RecordViewModel = hiltViewModel()
 ) {
     val recordState by viewModel.recordState.collectAsStateWithLifecycle()
+
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
+    val systemUiController = rememberSystemUiController()
+    val lottieLoading by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.stempo_loading)
+    )
 
     LaunchedEffect(viewModel.recordSideEffect, lifecycleOwner) {
         viewModel.recordSideEffect.collect { sideEffect ->
@@ -59,8 +73,18 @@ fun RecordRoute(
         }
     }
 
+    LaunchedEffect(recordState.isLoading) {
+        systemUiController.setStatusBarColor(color = if (recordState.isLoading) Transparent50 else White)
+    }
+
+    LaunchedEffect(recordState.selectedMonth) {
+        viewModel.updateIsLoading(true)
+        viewModel.setGraphWithDate()
+    }
+
     RecordScreen(
         recordState = recordState,
+        lottieLoading = lottieLoading,
         onMonthChangeBtnClick = {}
     )
 }
@@ -68,6 +92,7 @@ fun RecordRoute(
 @Composable
 private fun RecordScreen(
     recordState: RecordState,
+    lottieLoading: LottieComposition? = null,
     onMonthChangeBtnClick: () -> Unit = {},
 ) {
     Box(
@@ -107,14 +132,16 @@ private fun RecordScreen(
                     text = stringResource(id = R.string.report_tv_title),
                     style = StempoTheme.typography.head1
                 )
-                Text(
-                    modifier = Modifier.padding(top = 2.dp, end = 16.dp),
-                    text = stringResource(
-                        id = R.string.report_tv_accuracy_average,
-                        recordState.averageAccuracy
-                    ),
-                    style = StempoTheme.typography.body1
-                )
+                if (!recordState.isRecordEmpty) {
+                    Text(
+                        modifier = Modifier.padding(top = 2.dp, end = 16.dp),
+                        text = stringResource(
+                            id = R.string.report_tv_accuracy_average,
+                            recordState.averageAccuracy
+                        ),
+                        style = StempoTheme.typography.body1
+                    )
+                }
             }
 
             Box(
@@ -152,6 +179,19 @@ private fun RecordScreen(
                     dateList = recordState.dateList,
                     entriesList = recordState.entriesList
                 )
+
+                if (recordState.isRecordEmpty) {
+                    Image(
+                        imageVector = ImageVector.vectorResource(R.drawable.img_record_empty),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .padding(horizontal = 16.dp)
+                            .background(Gray100, RoundedCornerShape(8.dp))
+                            .padding(vertical = 30.dp)
+                    )
+                }
             }
 
             Column(
@@ -202,6 +242,17 @@ private fun RecordScreen(
                     )
                 }
             }
+        }
+        if (recordState.isLoading) {
+            LottieAnimation(
+                composition = lottieLoading,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Transparent50)
+                    .padding(horizontal = 50.dp)
+                    .clickableWithoutRipple { }
+            )
         }
     }
 }

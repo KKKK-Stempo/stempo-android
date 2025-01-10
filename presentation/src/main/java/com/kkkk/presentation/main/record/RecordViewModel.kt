@@ -34,6 +34,10 @@ constructor(
         getStatisticBadges()
     }
 
+    fun updateIsLoading(isLoading: Boolean) {
+        _recordState.update { it.copy(isLoading = isLoading) }
+    }
+
     fun updateSelectedMonth(month: Int) {
         _recordState.update { it.copy(selectedMonth = month) }
     }
@@ -83,9 +87,11 @@ constructor(
                             )
                         }
                     }
+                    updateIsLoading(false)
                 }
                 .onFailure {
                     _recordSideEffect.emit(RecordSideEffect.ErrorToast)
+                    updateIsLoading(false)
                 }
         }
     }

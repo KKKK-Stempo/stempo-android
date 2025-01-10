@@ -9,6 +9,7 @@ data class RecordState(
     val dateList: List<String> = emptyList(),
     val entriesList: List<Entry> = emptyList(),
     val isRecordEmpty: Boolean = true,
+    val isLoading: Boolean = true,
     val countToday: Int = 0,
     val countWeek: Int = 0,
     val countConsecutive: Int = 0,
