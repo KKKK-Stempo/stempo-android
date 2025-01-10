@@ -1,13 +1,19 @@
 package com.kkkk.presentation.main.record
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -25,10 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
-import com.kkkk.presentation.main.theme.Black
+import com.kkkk.presentation.main.theme.Gray100
+import com.kkkk.presentation.main.theme.Gray600
 import com.kkkk.presentation.main.theme.StempoTheme
-import com.kkkk.presentation.main.theme.Transparent
 import com.kkkk.stempo.presentation.R
 
 @Composable
@@ -55,12 +60,12 @@ private fun RecordScreen(
     ) {
         Column {
             Row(
-                modifier = Modifier.padding(top = 16.dp),
+                modifier = Modifier.padding(top = 24.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
-                    modifier = Modifier.padding(start = 18.dp),
+                    modifier = Modifier.padding(start = 16.dp),
                     text = stringResource(id = R.string.report_tv_month, recordState.selectedMonth),
                     style = StempoTheme.typography.head1
                 )
@@ -83,17 +88,91 @@ private fun RecordScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    modifier = Modifier.padding(start = 18.dp),
+                    modifier = Modifier.padding(start = 16.dp),
                     text = stringResource(id = R.string.report_tv_title),
                     style = StempoTheme.typography.head1
                 )
                 Text(
-                    modifier = Modifier.padding(top = 2.dp, end = 18.dp),
-                    text = stringResource(id = R.string.report_tv_accuracy_average, recordState.averageAccuracy),
+                    modifier = Modifier.padding(top = 2.dp, end = 16.dp),
+                    text = stringResource(
+                        id = R.string.report_tv_accuracy_average,
+                        recordState.averageAccuracy
+                    ),
                     style = StempoTheme.typography.body1
                 )
             }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Row(
+                modifier = Modifier.padding(start = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_crown),
+                    contentDescription = null,
+                )
+                Text(
+                    text = stringResource(id = R.string.report_tv_achieve_title),
+                    style = StempoTheme.typography.head3,
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 8.dp, bottom = 24.dp)
+                    .background(color = Gray100, shape = RoundedCornerShape(8.dp))
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                RecordBadge(
+                    R.drawable.ic_badge_today,
+                    R.string.report_tv_achieve_today,
+                    recordState.countToday
+                )
+                RecordBadge(
+                    R.drawable.ic_badge_week,
+                    R.string.report_tv_achieve_week,
+                    recordState.countWeek
+                )
+                RecordBadge(
+                    R.drawable.ic_badge_sequence,
+                    R.string.report_tv_achieve_consecutive,
+                    recordState.countConsecutive
+                )
+            }
         }
+    }
+}
+
+@Composable
+fun RecordBadge(
+    @DrawableRes imageRes: Int,
+    @StringRes text: Int,
+    count: Int,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            imageVector = ImageVector.vectorResource(imageRes),
+            contentDescription = null
+        )
+        Text(
+            modifier = Modifier.padding(top = 4.dp),
+            text = stringResource(text),
+            style = StempoTheme.typography.caption1,
+            color = Gray600
+        )
+        Text(
+            modifier = Modifier.padding(top = 4.dp),
+            text = stringResource(R.string.report_tv_achieve_count, count),
+            style = StempoTheme.typography.body1
+        )
     }
 }
 
