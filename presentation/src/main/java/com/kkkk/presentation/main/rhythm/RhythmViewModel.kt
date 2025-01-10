@@ -234,34 +234,38 @@ constructor(
 
     fun addStepCount() {
         _rhythmState.update { it.copy(stepCount = it.stepCount + 1) }
+        val currentTime = System.currentTimeMillis()
         if (rhythmState.value.stepCount < 2) {
-            _beforeStepTime.value = System.currentTimeMillis()
+            _beforeStepTime.value = currentTime
             return
         }
-        if (rhythmState.value.stepCount % 2 == 0) {
-            _oddStepCount.value += 1
-            _oddStepTime.value += System.currentTimeMillis() - _beforeStepTime.value
+        val isEven = rhythmState.value.stepCount % 2 == 0
+        val elapsedTime = currentTime - _beforeStepTime.value
+        if (isEven) {
+            _evenStepCount.value++
+            _evenStepTime.value += elapsedTime
         } else {
-            _evenStepCount.value += 1
-            _evenStepTime.value += System.currentTimeMillis() - _beforeStepTime.value
+            _oddStepCount.value++
+            _oddStepTime.value += elapsedTime
         }
-        _beforeStepTime.value = System.currentTimeMillis()
+        _beforeStepTime.value = currentTime
     }
 
-    fun postRhythmRecordToSave() {
-        val isInvalidStep =
-            (_oddStepCount.value == 0 || _evenStepCount.value == 0) && wearableAccuracy == 0.0
+    fun recordCurrentStepAccuracy() {
         val accuracy = calculateAccuracy()
-        if (isInvalidStep || accuracy == 0.0) {
+        if (accuracy == 0.0) {
             resetStepCount()
-            return
+        } else {
+            postRhythmRecordToSave(accuracy)
         }
+    }
+
+    fun postRhythmRecordToSave(accuracy: Double) {
         viewModelScope.launch {
             rhythmRepository.postRhythmRecord(
                 RecordRequestModel(
-                    accuracy,
-                    0,
-                    rhythmState.value.stepCount
+                    accuracy = accuracy,
+                    steps = rhythmState.value.stepCount,
                 )
             ).onSuccess {
                 resetStepCount()
@@ -273,12 +277,20 @@ constructor(
     }
 
     private fun calculateAccuracy(): Double {
-        return if (wearableAccuracy == 0.0) {
-            val time1 = _oddStepTime.value.toDouble() / _oddStepCount.value
-            val time2 = _evenStepTime.value.toDouble() / _evenStepCount.value
-            (1.0 - kotlin.math.abs(time1 - time2) / (time1 + time2)) * 100
-        } else {
-            wearableAccuracy
+        when {
+            wearableAccuracy != 0.0 -> {
+                return wearableAccuracy
+            }
+
+            _oddStepCount.value == 0 || _evenStepCount.value == 0 -> {
+                return 0.0
+            }
+
+            else -> {
+                val time1 = _oddStepTime.value.toDouble() / _oddStepCount.value
+                val time2 = _evenStepTime.value.toDouble() / _evenStepCount.value
+                return (1.0 - kotlin.math.abs(time1 - time2) / (time1 + time2)) * 100
+            }
         }
     }
 

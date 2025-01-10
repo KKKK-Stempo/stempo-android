@@ -87,7 +87,7 @@ fun RhythmRoute(
 
     // 시스템 서비스 및 데이터 클라이언트
     val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    val stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+    val stepDetectorSensor = sensorManager.getDefaultSensor(TYPE_STEP_DETECTOR)
     val wearableDataClient = Wearable.getDataClient(context)
 
     // Lottie 및 애니메이션 속도 관리
@@ -146,7 +146,7 @@ fun RhythmRoute(
         when (rhythmState.isPlaying) {
             PlayState.PLAYING -> viewModel.playMusic()
             PlayState.PAUSE -> viewModel.pauseMusic(true)
-            PlayState.STOP -> viewModel.postRhythmRecordToSave()
+            PlayState.STOP -> viewModel.recordCurrentStepAccuracy()
             PlayState.DEFAULT -> viewModel.pauseMusic(false)
         }
     }
