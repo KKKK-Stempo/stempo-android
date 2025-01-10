@@ -38,8 +38,12 @@ constructor(
         _recordState.update { it.copy(isLoading = isLoading) }
     }
 
+    fun changeIsDialogVisible() {
+        _recordState.update { it.copy(isDropDownVisible = !it.isDropDownVisible) }
+    }
+
     fun updateSelectedMonth(month: Int) {
-        _recordState.update { it.copy(selectedMonth = month) }
+        _recordState.update { it.copy(selectedMonth = month, isDropDownVisible = false) }
     }
 
     private fun getStatisticBadges() {

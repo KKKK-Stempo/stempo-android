@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,11 +26,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -63,7 +67,7 @@ fun RecordRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val systemUiController = rememberSystemUiController()
-    
+
     val lottieLoading by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.stempo_loading)
     )
@@ -88,7 +92,8 @@ fun RecordRoute(
     RecordScreen(
         recordState = recordState,
         lottieLoading = lottieLoading,
-        onMonthChangeBtnClick = {}
+        onMonthChangeBtnClick = viewModel::changeIsDialogVisible,
+        onDropdownItemClick = { viewModel.updateSelectedMonth(it) }
     )
 }
 
@@ -97,6 +102,7 @@ private fun RecordScreen(
     recordState: RecordState,
     lottieLoading: LottieComposition? = null,
     onMonthChangeBtnClick: () -> Unit = {},
+    onDropdownItemClick: (Int) -> Unit = {},
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -186,6 +192,12 @@ private fun RecordScreen(
             }
         }
 
+        if (recordState.isDropDownVisible) {
+            RecordDropDown(
+                onDropdownItemClick = onDropdownItemClick
+            )
+        }
+
         if (recordState.isLoading) {
             LottieAnimation(
                 composition = lottieLoading,
@@ -223,7 +235,7 @@ fun RecordMonthSelectBtn(
                 .size(44.dp)
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(id = if (recordState.isDialogVisible) R.drawable.ic_drop_up else R.drawable.ic_drop_down),
+                imageVector = ImageVector.vectorResource(id = if (recordState.isDropDownVisible) R.drawable.ic_drop_up else R.drawable.ic_drop_down),
                 contentDescription = null,
                 tint = Color.Unspecified,
             )
@@ -254,6 +266,32 @@ fun RecordTitleWithAccuracy(
                 ),
                 style = StempoTheme.typography.body1
             )
+        }
+    }
+}
+
+@Composable
+fun RecordDropDown(
+    onDropdownItemClick: (Int) -> Unit = {}
+) {
+    Box(
+        modifier = Modifier
+            .padding(start = 16.dp, top = 70.dp)
+            .shadow(10.dp, RoundedCornerShape(8.dp))
+            .background(White, RoundedCornerShape(8.dp))
+    ) {
+        LazyColumn {
+            items(listOf(1, 3, 6), key = { it }) { month ->
+                Text(
+                    text = stringResource(id = R.string.report_tv_month, month),
+                    style = StempoTheme.typography.body1,
+                    modifier = Modifier
+                        .clickableWithoutRipple { onDropdownItemClick(month) }
+                        .padding(vertical = 8.dp)
+                        .padding(horizontal = 44.dp),
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }
@@ -324,7 +362,7 @@ fun RecordAchievementTitle() {
 fun RecordScreenPreview() {
     StempoTheme {
         RecordScreen(
-            recordState = RecordState()
+            recordState = RecordState(isLoading = false)
         )
     }
 }
