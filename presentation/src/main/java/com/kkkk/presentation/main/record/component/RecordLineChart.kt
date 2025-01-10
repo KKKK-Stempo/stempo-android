@@ -77,6 +77,7 @@ private fun LineChart.setYAxisSettings() {
     axisLeft.apply {
         isEnabled = false
         axisMaximum = 100f
+        axisMinimum = 0f
     }
     axisRight.isEnabled = false
 }

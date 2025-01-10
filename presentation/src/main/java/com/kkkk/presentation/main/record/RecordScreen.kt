@@ -8,9 +8,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,7 +32,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.mikephil.charting.data.Entry
+import com.kkkk.presentation.main.record.component.DottedShape
+import com.kkkk.presentation.main.record.component.RecordLineChart
 import com.kkkk.presentation.main.theme.Gray100
+import com.kkkk.presentation.main.theme.Gray300
 import com.kkkk.presentation.main.theme.Gray600
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.stempo.presentation.R
@@ -102,48 +107,92 @@ private fun RecordScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            Row(
-                modifier = Modifier.padding(start = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 26.dp)
+                    .padding(horizontal = 5.dp),
             ) {
-                Image(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_crown),
-                    contentDescription = null,
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, top = 14.dp)
+                        .height(1.dp)
+                        .align(Alignment.TopCenter)
+                        .background(color = Gray300, shape = DottedShape(12.dp))
                 )
-                Text(
-                    text = stringResource(id = R.string.report_tv_achieve_title),
-                    style = StempoTheme.typography.head3,
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 23.dp)
+                        .height(1.dp)
+                        .align(Alignment.Center)
+                        .background(color = Gray300, shape = DottedShape(12.dp))
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 37.dp)
+                        .height(1.dp)
+                        .align(Alignment.BottomCenter)
+                        .background(color = Gray300, shape = DottedShape(12.dp))
+                )
+
+                RecordLineChart(
+                    dateList = listOf("1", "2", "3"),
+                    entriesList = listOf(
+                        Entry(0F, 70F),
+                        Entry(1F, 100F),
+                        Entry(2F, 50F)
+                    )
                 )
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 8.dp, bottom = 24.dp)
-                    .background(color = Gray100, shape = RoundedCornerShape(8.dp))
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
+            Column(
+                modifier = Modifier.fillMaxHeight().padding(bottom = 24.dp),
+                verticalArrangement = Arrangement.Center
             ) {
-                RecordBadge(
-                    R.drawable.ic_badge_today,
-                    R.string.report_tv_achieve_today,
-                    recordState.countToday
-                )
-                RecordBadge(
-                    R.drawable.ic_badge_week,
-                    R.string.report_tv_achieve_week,
-                    recordState.countWeek
-                )
-                RecordBadge(
-                    R.drawable.ic_badge_sequence,
-                    R.string.report_tv_achieve_consecutive,
-                    recordState.countConsecutive
-                )
+                Row(
+                    modifier = Modifier.padding(start = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_crown),
+                        contentDescription = null,
+                    )
+                    Text(
+                        text = stringResource(id = R.string.report_tv_achieve_title),
+                        style = StempoTheme.typography.head3,
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 8.dp)
+                        .background(color = Gray100, shape = RoundedCornerShape(8.dp))
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    RecordBadge(
+                        R.drawable.ic_badge_today,
+                        R.string.report_tv_achieve_today,
+                        recordState.countToday
+                    )
+                    RecordBadge(
+                        R.drawable.ic_badge_week,
+                        R.string.report_tv_achieve_week,
+                        recordState.countWeek
+                    )
+                    RecordBadge(
+                        R.drawable.ic_badge_sequence,
+                        R.string.report_tv_achieve_consecutive,
+                        recordState.countConsecutive
+                    )
+                }
             }
         }
     }
