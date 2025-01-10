@@ -190,7 +190,7 @@ constructor(
     fun pauseMusic(isDialogNeeded: Boolean) {
         Choreographer.getInstance().postFrameCallback {
             if (beatStream != 0) soundPool.pause(beatStream)
-            if (mediaPlayer.isPlaying) mediaPlayer.pause()
+            runCatching {  if (mediaPlayer.isPlaying) mediaPlayer.pause() }
         }
         if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
             showSaveDialog(true)
