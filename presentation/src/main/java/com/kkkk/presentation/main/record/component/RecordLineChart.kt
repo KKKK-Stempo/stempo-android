@@ -31,10 +31,15 @@ fun RecordLineChart(
             .height(300.dp),
         factory = { context ->
             LineChart(context).apply {
-                data = LineData(LineDataSet(entriesList, null).setDataSettings())
-                setXAxisSettings(dateList)
                 setYAxisSettings()
                 setCommonSettings()
+                invalidate()
+            }
+        },
+        update = { lineChart ->
+            lineChart.apply {
+                data = LineData(LineDataSet(entriesList, null).setDataSettings())
+                setXAxisSettings(dateList)
                 invalidate()
             }
         }
