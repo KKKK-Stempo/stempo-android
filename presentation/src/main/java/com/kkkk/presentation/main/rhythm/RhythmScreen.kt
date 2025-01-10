@@ -29,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,8 +58,6 @@ import com.google.android.gms.wearable.Wearable
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.presentation.main.rhythm.RhythmState.Companion.STRETCH_MUSIC_FILE
-import com.kkkk.presentation.main.rhythm.RhythmState.Companion.findMusicByBpm
-import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.FLOAT_80
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.KEY_RECORD
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_END
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_RECORD
@@ -90,7 +87,7 @@ fun RhythmRoute(
 
     // 시스템 서비스 및 데이터 클라이언트
     val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    val stepDetectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+    val stepDetectorSensor = sensorManager.getDefaultSensor(TYPE_STEP_DETECTOR)
     val wearableDataClient = Wearable.getDataClient(context)
 
     // Lottie 및 애니메이션 속도 관리
@@ -100,9 +97,6 @@ fun RhythmRoute(
     val lottieLoading by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.stempo_loading)
     )
-    val animationSpeed = remember(rhythmState.selectedMode, rhythmState.bpm) {
-        if (rhythmState.selectedMode == RhythmMode.RHYTHM) rhythmState.bpm / FLOAT_80 else 0.75F
-    }
 
     // 바텀시트 관련 상태
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -126,7 +120,7 @@ fun RhythmRoute(
 
     LaunchedEffect(rhythmState.bit, rhythmState.bpm, rhythmState.selectedMode) {
         if (!File(context.filesDir, rhythmState.filename).exists()) {
-            viewModel.getRhythmUrlState(File(context.filesDir, rhythmState.filename).toPath())
+            viewModel.downloadNewMusicFile(File(context.filesDir, rhythmState.filename).toPath())
         } else {
             viewModel.updateIsPlayerLoaded(false)
         }
@@ -137,7 +131,7 @@ fun RhythmRoute(
             if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
                 viewModel.setMusicPlayer(
                     soundPoolFile = File(context.filesDir, rhythmState.filename),
-                    mediaPlayerAfd = context.resources.openRawResourceFd(findMusicByBpm(rhythmState.bpm))
+                    mediaPlayerAfd = context.resources.openRawResourceFd(rhythmState.musicByBpm)
                 )
             } else {
                 viewModel.setMusicPlayer(
@@ -152,7 +146,7 @@ fun RhythmRoute(
         when (rhythmState.isPlaying) {
             PlayState.PLAYING -> viewModel.playMusic()
             PlayState.PAUSE -> viewModel.pauseMusic(true)
-            PlayState.STOP -> viewModel.postRhythmRecordToSave()
+            PlayState.STOP -> viewModel.recordCurrentStepAccuracy()
             PlayState.DEFAULT -> viewModel.pauseMusic(false)
         }
     }
@@ -196,7 +190,6 @@ fun RhythmRoute(
         rhythmState = rhythmState,
         lottiePlaying = lottiePlaying,
         lottieLoading = lottieLoading,
-        animationSpeed = animationSpeed,
         onToggleSelected = viewModel::changeSelectedMode,
         onWatchBtnClick = { viewModel.showSyncDialog(true) },
         onPlayBtnClick = { viewModel.changeIsPlaying(PlayState.PLAYING) },
@@ -241,7 +234,6 @@ internal fun RhythmScreen(
     rhythmState: RhythmState,
     lottiePlaying: LottieComposition?,
     lottieLoading: LottieComposition?,
-    animationSpeed: Float = 1f,
     onToggleSelected: (RhythmMode) -> Unit = {},
     onWatchBtnClick: () -> Unit = {},
     onPlayBtnClick: () -> Unit = {},
@@ -255,7 +247,6 @@ internal fun RhythmScreen(
         RhythmPlayBtnWithLottie(
             rhythmState = rhythmState,
             lottieComposition = lottiePlaying,
-            animationSpeed = animationSpeed,
             onPlayBtnClick = onPlayBtnClick,
             onStopBtnClick = onPauseBtnClick
         )
@@ -314,7 +305,6 @@ internal fun RhythmScreen(
 fun RhythmPlayBtnWithLottie(
     rhythmState: RhythmState,
     lottieComposition: LottieComposition?,
-    animationSpeed: Float = 1f,
     onPlayBtnClick: () -> Unit = {},
     onStopBtnClick: () -> Unit = {}
 ) {
@@ -341,7 +331,7 @@ fun RhythmPlayBtnWithLottie(
         LottieAnimation(
             composition = lottieComposition,
             iterations = LottieConstants.IterateForever,
-            speed = animationSpeed,
+            speed = rhythmState.animationSpeed,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
