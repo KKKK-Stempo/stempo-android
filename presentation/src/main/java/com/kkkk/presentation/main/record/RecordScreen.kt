@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -29,6 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -61,6 +63,7 @@ fun RecordRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val systemUiController = rememberSystemUiController()
+    
     val lottieLoading by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.stempo_loading)
     )
@@ -99,50 +102,15 @@ private fun RecordScreen(
         modifier = Modifier.fillMaxSize(),
     ) {
         Column {
-            Row(
-                modifier = Modifier.padding(top = 24.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Text(
-                    modifier = Modifier.padding(start = 16.dp),
-                    text = stringResource(id = R.string.report_tv_month, recordState.selectedMonth),
-                    style = StempoTheme.typography.head1
-                )
-                IconButton(
-                    onClick = onMonthChangeBtnClick,
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .size(44.dp)
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = if (recordState.isDialogVisible) R.drawable.ic_drop_up else R.drawable.ic_drop_down),
-                        contentDescription = null,
-                        tint = Color.Unspecified,
-                    )
-                }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    modifier = Modifier.padding(start = 16.dp),
-                    text = stringResource(id = R.string.report_tv_title),
-                    style = StempoTheme.typography.head1
-                )
-                if (!recordState.isRecordEmpty) {
-                    Text(
-                        modifier = Modifier.padding(top = 2.dp, end = 16.dp),
-                        text = stringResource(
-                            id = R.string.report_tv_accuracy_average,
-                            recordState.averageAccuracy
-                        ),
-                        style = StempoTheme.typography.body1
-                    )
-                }
-            }
+            RecordMonthSelectBtn(
+                recordState = recordState,
+                onMonthChangeBtnClick = onMonthChangeBtnClick,
+                modifier = Modifier.padding(top = 24.dp)
+            )
+
+            RecordTitleWithAccuracy(
+                recordState = recordState
+            )
 
             Box(
                 modifier = Modifier
@@ -150,31 +118,18 @@ private fun RecordScreen(
                     .padding(top = 26.dp)
                     .padding(horizontal = 5.dp),
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 14.dp)
-                        .height(1.dp)
-                        .align(Alignment.TopCenter)
-                        .background(color = Gray300, shape = DottedShape(12.dp))
+                RecordChartDashLine(
+                    topPadding = 14.dp,
+                    alignment = Alignment.TopCenter
                 )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 23.dp)
-                        .height(1.dp)
-                        .align(Alignment.Center)
-                        .background(color = Gray300, shape = DottedShape(12.dp))
+                RecordChartDashLine(
+                    bottomPadding = 23.dp,
+                    alignment = Alignment.Center
                 )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 37.dp)
-                        .height(1.dp)
-                        .align(Alignment.BottomCenter)
-                        .background(color = Gray300, shape = DottedShape(12.dp))
+                RecordChartDashLine(
+                    bottomPadding = 37.dp,
+                    alignment = Alignment.BottomCenter
                 )
-
                 RecordLineChart(
                     dateList = recordState.dateList,
                     entriesList = recordState.entriesList
@@ -200,20 +155,7 @@ private fun RecordScreen(
                     .padding(bottom = 24.dp),
                 verticalArrangement = Arrangement.Center
             ) {
-                Row(
-                    modifier = Modifier.padding(start = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Image(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_crown),
-                        contentDescription = null,
-                    )
-                    Text(
-                        text = stringResource(id = R.string.report_tv_achieve_title),
-                        style = StempoTheme.typography.head3,
-                    )
-                }
+                RecordAchievementTitle()
 
                 Row(
                     modifier = Modifier
@@ -243,6 +185,7 @@ private fun RecordScreen(
                 }
             }
         }
+
         if (recordState.isLoading) {
             LottieAnimation(
                 composition = lottieLoading,
@@ -255,6 +198,80 @@ private fun RecordScreen(
             )
         }
     }
+}
+
+@Composable
+fun RecordMonthSelectBtn(
+    recordState: RecordState,
+    onMonthChangeBtnClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
+    ) {
+        Text(
+            modifier = Modifier.padding(start = 17.dp),
+            text = stringResource(id = R.string.report_tv_month, recordState.selectedMonth),
+            style = StempoTheme.typography.head1
+        )
+        IconButton(
+            onClick = onMonthChangeBtnClick,
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .size(44.dp)
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = if (recordState.isDialogVisible) R.drawable.ic_drop_up else R.drawable.ic_drop_down),
+                contentDescription = null,
+                tint = Color.Unspecified,
+            )
+        }
+    }
+}
+
+@Composable
+fun RecordTitleWithAccuracy(
+    recordState: RecordState,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            modifier = Modifier.padding(start = 16.dp),
+            text = stringResource(id = R.string.report_tv_title),
+            style = StempoTheme.typography.head1
+        )
+        if (!recordState.isRecordEmpty) {
+            Text(
+                modifier = Modifier.padding(end = 20.dp),
+                text = stringResource(
+                    id = R.string.report_tv_accuracy_average,
+                    recordState.averageAccuracy
+                ),
+                style = StempoTheme.typography.body1
+            )
+        }
+    }
+}
+
+@Composable
+fun BoxScope.RecordChartDashLine(
+    topPadding: Dp = 0.dp,
+    bottomPadding: Dp = 0.dp,
+    alignment: Alignment
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = topPadding, bottom = bottomPadding)
+            .height(1.dp)
+            .align(alignment)
+            .background(color = Gray300, shape = DottedShape(12.dp))
+    )
 }
 
 @Composable
@@ -271,7 +288,7 @@ fun RecordBadge(
             contentDescription = null
         )
         Text(
-            modifier = Modifier.padding(top = 4.dp),
+            modifier = Modifier.padding(top = 2.dp),
             text = stringResource(text),
             style = StempoTheme.typography.caption1,
             color = Gray600
@@ -280,6 +297,24 @@ fun RecordBadge(
             modifier = Modifier.padding(top = 4.dp),
             text = stringResource(R.string.report_tv_achieve_count, count),
             style = StempoTheme.typography.body1
+        )
+    }
+}
+
+@Composable
+fun RecordAchievementTitle() {
+    Row(
+        modifier = Modifier.padding(start = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Image(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_crown),
+            contentDescription = null,
+        )
+        Text(
+            text = stringResource(id = R.string.report_tv_achieve_title),
+            style = StempoTheme.typography.head3,
         )
     }
 }

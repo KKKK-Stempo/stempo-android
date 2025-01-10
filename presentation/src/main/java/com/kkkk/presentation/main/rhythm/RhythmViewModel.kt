@@ -190,7 +190,7 @@ constructor(
         viewModelScope.launch {
             listOf(
                 async { if (beatStream != 0) soundPool.pause(beatStream) },
-                async { if (mediaPlayer.isPlaying) mediaPlayer.pause() }
+                async { runCatching { mediaPlayer.pause() } }
             ).awaitAll()
             if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
                 showSaveDialog(true)
@@ -257,7 +257,8 @@ constructor(
     }
 
     fun postRhythmRecordToSave() {
-        val isInvalidStep = (_oddStepCount.value == 0 || _evenStepCount.value == 0) && wearableAccuracy == 0.0
+        val isInvalidStep =
+            (_oddStepCount.value == 0 || _evenStepCount.value == 0) && wearableAccuracy == 0.0
         val accuracy = calculateAccuracy()
         if (isInvalidStep || accuracy == 0.0) {
             resetStepCount()
