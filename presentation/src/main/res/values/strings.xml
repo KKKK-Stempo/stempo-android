@@ -45,6 +45,12 @@
     <string name="report_tv_month_1">1개월</string>
     <string name="report_tv_month_3">3개월</string>
     <string name="report_tv_month_6">6개월</string>
+    <string name="report_tv_month">%d개월</string>
+
+    <string name="report_tv_achieve_today">오늘</string>
+    <string name="report_tv_achieve_week">이번주</string>
+    <string name="report_tv_achieve_consecutive">연속</string>
+    <string name="report_tv_achieve_count">%d회</string>
 
     <string name="onboarding_start_tv_title">리듬 추천을 위해\n보행속도 정보가 필요해요\n진행하시겠어요?</string>
     <string name="onboarding_start_measure_button">보행속도 측정하기</string>

@@ -44,6 +44,7 @@ import com.kkkk.presentation.main.theme.Purple50
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
+import okhttp3.internal.immutableListOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -140,7 +141,7 @@ fun RhythmBitSelectGrid(
             .padding(horizontal = 20.dp)
             .fillMaxWidth()
     ) {
-        items(listOf(2, 3, 4, 6, 8), key = { it }) { bit ->
+        items(immutableListOf(2, 3, 4, 6, 8), key = { it }) { bit ->
             RhythmBitItem(
                 bit = bit,
                 isSelected = bit == tempBit,
@@ -195,7 +196,7 @@ fun RhythmBpmSelectGrid(
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        items(listOf(65, 75, 85, 95, 105, 115), key = { it }) { bpm ->
+        items(immutableListOf(65, 75, 85, 95, 105, 115), key = { it }) { bpm ->
             RhythmBpmItem(
                 bpm = bpm,
                 isSelected = tempBpm == bpm,
