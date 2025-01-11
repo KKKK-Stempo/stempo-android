@@ -57,6 +57,7 @@ import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.Transparent50
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
+import okhttp3.internal.immutableListOf
 
 @Composable
 fun RecordRoute(
@@ -93,7 +94,7 @@ fun RecordRoute(
         recordState = recordState,
         lottieLoading = lottieLoading,
         onMonthChangeBtnClick = viewModel::changeIsDialogVisible,
-        onDropdownItemClick = { viewModel.updateSelectedMonth(it) }
+        onDropdownItemClick = viewModel::updateSelectedMonth
     )
 }
 
@@ -246,9 +247,10 @@ fun RecordMonthSelectBtn(
 @Composable
 fun RecordTitleWithAccuracy(
     recordState: RecordState,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -272,16 +274,17 @@ fun RecordTitleWithAccuracy(
 
 @Composable
 fun RecordDropDown(
-    onDropdownItemClick: (Int) -> Unit = {}
+    modifier: Modifier = Modifier,
+    onDropdownItemClick: (Int) -> Unit = {},
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .padding(start = 16.dp, top = 70.dp)
             .shadow(10.dp, RoundedCornerShape(8.dp))
             .background(White, RoundedCornerShape(8.dp))
     ) {
         LazyColumn {
-            items(listOf(1, 3, 6), key = { it }) { month ->
+            items(immutableListOf(1, 3, 6), key = { it }) { month ->
                 Text(
                     text = stringResource(id = R.string.report_tv_month, month),
                     style = StempoTheme.typography.body1,
@@ -298,12 +301,13 @@ fun RecordDropDown(
 
 @Composable
 fun BoxScope.RecordChartDashLine(
+    modifier: Modifier = Modifier,
     topPadding: Dp = 0.dp,
     bottomPadding: Dp = 0.dp,
-    alignment: Alignment
+    alignment: Alignment = Alignment.Center
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(start = 16.dp, end = 16.dp, top = topPadding, bottom = bottomPadding)
             .height(1.dp)
@@ -317,8 +321,10 @@ fun RecordBadge(
     @DrawableRes imageRes: Int,
     @StringRes text: Int,
     count: Int,
+    modifier: Modifier = Modifier
 ) {
     Column(
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
@@ -340,9 +346,11 @@ fun RecordBadge(
 }
 
 @Composable
-fun RecordAchievementTitle() {
+fun RecordAchievementTitle(
+    modifier: Modifier = Modifier
+) {
     Row(
-        modifier = Modifier.padding(start = 16.dp),
+        modifier = modifier.padding(start = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
