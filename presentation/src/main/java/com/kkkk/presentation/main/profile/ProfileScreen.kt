@@ -32,7 +32,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.presentation.main.profile.model.ProfileButtonType
-import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
+import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Gray100
 import com.kkkk.presentation.main.theme.Gray200
 import com.kkkk.presentation.main.theme.Gray500
@@ -74,7 +74,7 @@ fun ProfileRoute(
     }
 
     ProfileScreen(
-        versionText = BuildConfig.VERSION_NAME,
+        versionText = "v ${BuildConfig.VERSION_NAME}",
         onAnnounceBtnClick = viewModel::startWebsiteWithUrl,
         onFaqBtnClick = viewModel::startWebsiteWithUrl,
         onSuggestBtnClick = viewModel::startWebsiteWithUrl,

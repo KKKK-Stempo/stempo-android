@@ -57,6 +57,9 @@ import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
+import com.kkkk.presentation.main.component.OneButtonDialog
+import com.kkkk.presentation.main.component.TwoButtonDialog
+import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.rhythm.RhythmState.Companion.STRETCH_MUSIC_FILE
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.KEY_RECORD
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_END
@@ -65,9 +68,6 @@ import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_START
 import com.kkkk.presentation.main.rhythm.component.RhythmBottomSheet
 import com.kkkk.presentation.main.rhythm.component.RhythmChip
 import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
-import com.kkkk.presentation.main.rhythm.component.RhythmStopDialog
-import com.kkkk.presentation.main.rhythm.component.RhythmSyncDialog
-import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
 import com.kkkk.presentation.main.rhythm.model.PlayState
 import com.kkkk.presentation.main.rhythm.model.RhythmMode
 import com.kkkk.presentation.main.theme.Dark
@@ -216,15 +216,19 @@ fun RhythmRoute(
     }
 
     if (rhythmState.isSaveDialogVisible) {
-        RhythmStopDialog(
-            onSaveClick = { viewModel.changeIsPlaying(PlayState.STOP) },
-            onPauseClick = { viewModel.showSaveDialog(false) },
+        TwoButtonDialog(
+            content = stringResource(R.string.rhythm_stop_tv_title),
+            firstBtnText = stringResource(R.string.rhythm_stop_btn_save),
+            secondBtnText = stringResource(R.string.rhythm_stop_btn_pause),
+            onFirstBtnClick = { viewModel.changeIsPlaying(PlayState.STOP) },
+            onSecondBtnClick = { viewModel.showSaveDialog(false) },
             onDismissRequest = { viewModel.showSaveDialog(false) },
         )
     }
 
     if (rhythmState.isSyncDialogVisible) {
-        RhythmSyncDialog(
+        OneButtonDialog(
+            content = stringResource(R.string.rhythm_wearable_sync),
             onConfirmClick = viewModel::sendBpmToWearable,
             onDismissRequest = { viewModel.showSyncDialog(false) },
         )

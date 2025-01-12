@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Gray100
 import com.kkkk.presentation.main.theme.Gray300
 import com.kkkk.presentation.main.theme.Gray500
