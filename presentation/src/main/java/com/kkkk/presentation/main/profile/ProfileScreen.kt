@@ -56,29 +56,27 @@ fun ProfileRoute(
     LaunchedEffect(viewModel.profileSideEffect, lifecycleOwner) {
         viewModel.profileSideEffect.collect { sideEffect ->
             when (sideEffect) {
-                ProfileSideEffect.ErrorToast -> context.toast(context.stringOf(R.string.error_msg))
-                ProfileSideEffect.NotPreparedToast -> context.toast(context.stringOf(R.string.profile_not_prepared))
+                ProfileSideEffect.ErrorToast -> {
+                    context.toast(context.stringOf(R.string.error_msg))
+                }
+
+                ProfileSideEffect.NotPreparedToast -> {
+                    context.toast(context.stringOf(R.string.profile_not_prepared))
+                }
+
+                ProfileSideEffect.ProfileCleared -> {
+                    ProcessPhoenix.triggerRebirth(context)
+                }
+
+                is ProfileSideEffect.WebsiteClicked -> {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(sideEffect.url)))
+                }
             }
         }
     }
 
     LaunchedEffect(Unit) {
         systemUiController.setStatusBarColor(color = Gray100)
-    }
-
-    LaunchedEffect(profileState.clickedWebsiteUrl) {
-        if (profileState.clickedWebsiteUrl.isNotEmpty()) {
-            context.startActivity(
-                Intent(Intent.ACTION_VIEW, Uri.parse(profileState.clickedWebsiteUrl))
-            )
-            viewModel.updateWebsiteUrl("")
-        }
-    }
-
-    LaunchedEffect(profileState.isProfileCleared) {
-        if(profileState.isProfileCleared) {
-            ProcessPhoenix.triggerRebirth(context)
-        }
     }
 
     ProfileScreen(
@@ -121,14 +119,14 @@ private fun ProfileScreen(
 
             ProfileContentBox(
                 firstItemText = stringResource(id = R.string.profile_btn_announce),
-                onFirstItemClick = { onAnnounceBtnClick(ProfileButtonType.BTN_ANNOUNCE) },
+                onFirstItemClick = { onAnnounceBtnClick(ProfileButtonType.URL_ANNOUNCE) },
                 secondItemText = stringResource(id = R.string.profile_btn_faq),
-                onSecondItemClick = { onFaqBtnClick(ProfileButtonType.BTN_FAQ) }
+                onSecondItemClick = { onFaqBtnClick(ProfileButtonType.URL_FAQ) }
             )
 
             ProfileContentBox(
                 firstItemText = stringResource(id = R.string.profile_btn_suggest),
-                onFirstItemClick = { onSuggestBtnClick(ProfileButtonType.BTN_SUGGEST) },
+                onFirstItemClick = { onSuggestBtnClick(ProfileButtonType.URL_SUGGEST) },
                 secondItemText = stringResource(id = R.string.profile_btn_voice),
                 onSecondItemClick = onVoiceBtnClick
             )
