@@ -11,7 +11,7 @@ import androidx.navigation.navOptions
 import com.kkkk.presentation.main.navigation.MainTabRoute
 import com.kkkk.presentation.main.profile.navigation.navigateToProfile
 import com.kkkk.presentation.main.record.navigation.navigateToRecord
-import com.kkkk.presentation.main.result.navigation.navigateToResult
+import com.kkkk.presentation.main.homework.navigation.navigateToHomework
 import com.kkkk.presentation.main.rhythm.navigation.navigateToRhythm
 
 class MainNavigator(
@@ -46,7 +46,7 @@ class MainNavigator(
         when (tab) {
             BottomTabItem.RECORD -> navController.navigateToRecord(navOptions)
             BottomTabItem.RHYTHM -> navController.navigateToRhythm(navOptions)
-            BottomTabItem.RESULT -> navController.navigateToResult(navOptions)
+            BottomTabItem.RESULT -> navController.navigateToHomework(navOptions)
             BottomTabItem.PROFILE -> navController.navigateToProfile(navOptions)
         }
     }

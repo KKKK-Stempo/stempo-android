@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.kkkk.presentation.main.profile.navigation.profileNavGraph
 import com.kkkk.presentation.main.record.navigation.recordNavGraph
-import com.kkkk.presentation.main.result.navigation.resultNavGraph
+import com.kkkk.presentation.main.homework.navigation.homeworkNavGraph
 import com.kkkk.presentation.main.rhythm.navigation.rhythmNavGraph
 import com.kkkk.presentation.main.theme.White
 import kotlinx.collections.immutable.toImmutableList
@@ -38,7 +38,7 @@ fun MainScreen(
             ) {
                 recordNavGraph()
                 rhythmNavGraph()
-                resultNavGraph()
+                homeworkNavGraph()
                 profileNavGraph()
             }
         }

@@ -144,7 +144,7 @@ enum class BottomTabItem(
         "과제",
         R.drawable.ic_study_selected,
         R.drawable.ic_study_unselected,
-        MainTabRoute.Result
+        MainTabRoute.Homework
     ),
     PROFILE(
         "마이",

@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.result
+package com.kkkk.presentation.main.homework
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,16 +8,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ResultRoute() {
-    ResultScreen()
+fun HomeworkRoute() {
+    HomeworkScreen()
 }
 
 @Composable
-private fun ResultScreen() {
+private fun HomeworkScreen() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Result Screen")
+        Text(text = "Homework Screen")
     }
 }
