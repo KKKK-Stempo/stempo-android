@@ -1,5 +1,7 @@
 package com.kkkk.presentation.main.profile
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,12 +31,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
+import com.kkkk.presentation.main.profile.model.ProfileButtonType
 import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Gray100
 import com.kkkk.presentation.main.theme.Gray200
 import com.kkkk.presentation.main.theme.Gray500
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.White
+import com.kkkk.stempo.presentation.BuildConfig
 import com.kkkk.stempo.presentation.R
 
 @Composable
@@ -60,25 +64,32 @@ fun ProfileRoute(
         systemUiController.setStatusBarColor(color = Gray100)
     }
 
+    LaunchedEffect(profileState.clickedWebsiteUrl) {
+        if (profileState.clickedWebsiteUrl.isNotEmpty()) {
+            context.startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse(profileState.clickedWebsiteUrl))
+            )
+            viewModel.updateWebsiteUrl("")
+        }
+    }
+
     ProfileScreen(
-        profileState = profileState,
-        versionText = "",
-        onAnnounceBtnClick = { },
-        onFaqBtnClick = { },
-        onVoiceBtnClick = { },
-        onSuggestBtnClick = { },
+        versionText = BuildConfig.VERSION_NAME,
+        onAnnounceBtnClick = viewModel::startWebsiteWithUrl,
+        onFaqBtnClick = viewModel::startWebsiteWithUrl,
+        onSuggestBtnClick = viewModel::startWebsiteWithUrl,
+        onVoiceBtnClick = viewModel::showNotPreparedToast,
         onWithdrawBtnClick = { }
     )
 }
 
 @Composable
 private fun ProfileScreen(
-    profileState: ProfileState,
     versionText: String = "",
-    onAnnounceBtnClick: () -> Unit = {},
-    onFaqBtnClick: () -> Unit = {},
+    onAnnounceBtnClick: (ProfileButtonType) -> Unit = {},
+    onFaqBtnClick: (ProfileButtonType) -> Unit = {},
+    onSuggestBtnClick: (ProfileButtonType) -> Unit = {},
     onVoiceBtnClick: () -> Unit = {},
-    onSuggestBtnClick: () -> Unit = {},
     onWithdrawBtnClick: () -> Unit = {},
 ) {
     Box(
@@ -91,16 +102,16 @@ private fun ProfileScreen(
 
             ProfileContentBox(
                 firstItemText = stringResource(id = R.string.profile_btn_announce),
-                onFirstItemClick = onAnnounceBtnClick,
+                onFirstItemClick = { onAnnounceBtnClick(ProfileButtonType.BTN_ANNOUNCE) },
                 secondItemText = stringResource(id = R.string.profile_btn_faq),
-                onSecondItemClick = onFaqBtnClick,
+                onSecondItemClick = { onFaqBtnClick(ProfileButtonType.BTN_FAQ) }
             )
 
             ProfileContentBox(
-                firstItemText = stringResource(id = R.string.profile_btn_voice),
-                onFirstItemClick = onVoiceBtnClick,
-                secondItemText = stringResource(id = R.string.profile_btn_suggest),
-                onSecondItemClick = onSuggestBtnClick,
+                firstItemText = stringResource(id = R.string.profile_btn_suggest),
+                onFirstItemClick = { onSuggestBtnClick(ProfileButtonType.BTN_SUGGEST) },
+                secondItemText = stringResource(id = R.string.profile_btn_voice),
+                onSecondItemClick = onVoiceBtnClick
             )
 
             ProfileContentBox(
@@ -173,7 +184,7 @@ fun ProfileContentItem(
         modifier = modifier
             .padding(vertical = 18.dp, horizontal = 20.dp)
             .fillMaxWidth()
-            .clickableWithoutRipple { if (versionText.isNotEmpty()) onClick() },
+            .clickableWithoutRipple { onClick() },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -200,6 +211,6 @@ fun ProfileContentItem(
 @Composable
 fun ProfileScreenPreview() {
     StempoTheme {
-        ProfileScreen(profileState = ProfileState(), versionText = "v1.0.0")
+        ProfileScreen(versionText = "v1.0.0")
     }
 }

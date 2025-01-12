@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.rhythm
+package com.kkkk.presentation.main.rhythm.model
 
 enum class RhythmMode(val text: String) {
     RHYTHM("리듬모드"),

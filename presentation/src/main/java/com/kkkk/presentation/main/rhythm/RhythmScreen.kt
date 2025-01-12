@@ -68,6 +68,8 @@ import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
 import com.kkkk.presentation.main.rhythm.component.RhythmStopDialog
 import com.kkkk.presentation.main.rhythm.component.RhythmSyncDialog
 import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
+import com.kkkk.presentation.main.rhythm.model.PlayState
+import com.kkkk.presentation.main.rhythm.model.RhythmMode
 import com.kkkk.presentation.main.theme.Dark
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.Transparent50
