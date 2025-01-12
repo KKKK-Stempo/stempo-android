@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.rhythm.component
+package com.kkkk.presentation.main.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,10 +24,13 @@ import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
 
 @Composable
-fun RhythmStopDialog(
-    onSaveClick: () -> Unit,
-    onPauseClick: () -> Unit,
-    onDismissRequest: () -> Unit
+fun TwoButtonDialog(
+    content: String = "",
+    firstBtnText: String = "",
+    secondBtnText: String = "",
+    onFirstBtnClick: () -> Unit = {},
+    onSecondBtnClick: () -> Unit = {},
+    onDismissRequest: () -> Unit = {},
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Column(
@@ -37,7 +40,7 @@ fun RhythmStopDialog(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(R.string.rhythm_stop_tv_title),
+                text = content,
                 style = StempoTheme.typography.head3.copy(
                     lineHeight = 28.sp
                 ),
@@ -57,8 +60,8 @@ fun RhythmStopDialog(
                         .background(color = Purple10, shape = RoundedCornerShape(12.dp))
                         .padding(vertical = 15.dp)
                         .weight(1f)
-                        .clickableWithoutRipple { onSaveClick() },
-                    text = stringResource(R.string.rhythm_stop_btn_save),
+                        .clickableWithoutRipple { onFirstBtnClick() },
+                    text = firstBtnText,
                     style = StempoTheme.typography.head4,
                     textAlign = TextAlign.Center,
                     color = Purple50
@@ -69,8 +72,8 @@ fun RhythmStopDialog(
                         .background(color = Purple50, shape = RoundedCornerShape(12.dp))
                         .padding(vertical = 15.dp)
                         .weight(1f)
-                        .clickableWithoutRipple { onPauseClick() },
-                    text = stringResource(R.string.rhythm_stop_btn_pause),
+                        .clickableWithoutRipple { onSecondBtnClick() },
+                    text = secondBtnText,
                     style = StempoTheme.typography.head4,
                     textAlign = TextAlign.Center,
                     color = Purple10
@@ -84,10 +87,10 @@ fun RhythmStopDialog(
 @Composable
 fun RhythmStopDialogPreview() {
     StempoTheme {
-        RhythmStopDialog(
-            onSaveClick = {},
-            onPauseClick = {},
-            onDismissRequest = {}
+        TwoButtonDialog(
+            content = stringResource(R.string.rhythm_stop_tv_title),
+            firstBtnText = stringResource(R.string.rhythm_stop_btn_save),
+            secondBtnText = stringResource(R.string.rhythm_stop_btn_pause),
         )
     }
 }

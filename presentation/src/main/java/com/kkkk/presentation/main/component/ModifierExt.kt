@@ -1,4 +1,4 @@
-package com.kkkk.presentation.main.rhythm.component
+package com.kkkk.presentation.main.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource

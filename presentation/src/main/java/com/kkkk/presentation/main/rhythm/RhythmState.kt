@@ -1,6 +1,8 @@
 package com.kkkk.presentation.main.rhythm
 
 import androidx.compose.ui.graphics.Color
+import com.kkkk.presentation.main.rhythm.model.PlayState
+import com.kkkk.presentation.main.rhythm.model.RhythmMode
 import com.kkkk.presentation.main.theme.Green50
 import com.kkkk.presentation.main.theme.Purple50
 import com.kkkk.presentation.main.theme.Sky50

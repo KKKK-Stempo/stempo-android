@@ -11,6 +11,8 @@ import com.kkkk.domain.entity.request.RecordRequestModel
 import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
+import com.kkkk.presentation.main.rhythm.model.PlayState
+import com.kkkk.presentation.main.rhythm.model.RhythmMode
 import com.kkkk.presentation.manager.PhoneDataManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async

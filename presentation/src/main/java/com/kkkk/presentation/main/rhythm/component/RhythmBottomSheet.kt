@@ -34,6 +34,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.rhythm.RhythmState
 import com.kkkk.presentation.main.rhythm.RhythmState.Companion.MAX_BPM
 import com.kkkk.presentation.main.rhythm.RhythmState.Companion.MIN_BPM

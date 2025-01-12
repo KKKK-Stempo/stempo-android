@@ -49,7 +49,7 @@ import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.presentation.main.record.component.DottedShape
 import com.kkkk.presentation.main.record.component.RecordLineChart
-import com.kkkk.presentation.main.rhythm.component.clickableWithoutRipple
+import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Gray100
 import com.kkkk.presentation.main.theme.Gray300
 import com.kkkk.presentation.main.theme.Gray600

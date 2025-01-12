@@ -17,7 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kkkk.presentation.main.rhythm.RhythmMode
+import com.kkkk.presentation.main.component.clickableWithoutRipple
+import com.kkkk.presentation.main.rhythm.model.RhythmMode
 import com.kkkk.presentation.main.theme.Black
 import com.kkkk.presentation.main.theme.Gray200
 import com.kkkk.presentation.main.theme.Gray600
