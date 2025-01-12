@@ -72,6 +72,10 @@
     <string name="profile_btn_withdraw">기록 지우기</string>
     <string name="profile_not_prepared">다음 업데이트 때 사용 가능해요!</string>
 
+    <string name="profile_withdraw_content">모든 기록이 사라져요!\n정말로 기록을 삭제할까요?</string>
+    <string name="profile_withdraw_cancel">취소하기</string>
+    <string name="profile_withdraw_delete">삭제하기</string>
+
     <string name="study_tv_my">진행해야 할 과제에요!</string>
     <string name="study_tv_teacher">입력한 과제에요!</string>
 

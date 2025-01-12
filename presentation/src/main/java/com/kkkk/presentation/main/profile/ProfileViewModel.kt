@@ -5,11 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.repository.AuthRepository
 import com.kkkk.domain.repository.UserRepository
 import com.kkkk.presentation.main.profile.model.ProfileButtonType
+import com.kkkk.presentation.xmlmain.xmlprofile.XmlProfileViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,7 +28,7 @@ constructor(
     private val _profileSideEffect = MutableSharedFlow<ProfileSideEffect>()
     val profileSideEffect = _profileSideEffect.asSharedFlow()
 
-   fun updateWebsiteUrl(url: String) {
+    fun updateWebsiteUrl(url: String) {
         _profileState.value = _profileState.value.copy(clickedWebsiteUrl = url)
     }
 
@@ -45,7 +47,24 @@ constructor(
         }
     }
 
+    fun updateIsDialogVisible(isVisible: Boolean) {
+        _profileState.value = _profileState.value.copy(isDialogVisible = isVisible)
+    }
+
+    fun withdrawAccount() {
+        viewModelScope.launch {
+            authRepository.unregister(
+                authorization = BEARER + " " + userRepository.getRefreshToken()
+            ).onSuccess {
+                userRepository.clearInfo()
+                _profileState.update { it.copy(isProfileCleared = true) }
+            }
+        }
+    }
+
     companion object {
+        private const val BEARER = "Bearer"
+
         private const val URL_ANNOUNCE =
             "https://field-colt-189.notion.site/Stempo-e8252a5094eb4351819809dc3abd6623?pvs=4"
         private const val URL_FAQ =
