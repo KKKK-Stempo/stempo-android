@@ -4,7 +4,7 @@ import com.kkkk.domain.entity.response.StudyModel.StudyItemModel
 import com.kkkk.presentation.main.homework.model.HomeworkMode
 
 data class HomeworkState(
-    val currentMode: HomeworkMode = HomeworkMode.MYSELF,
+    val selectedMode: HomeworkMode = HomeworkMode.MYSELF,
     val homeworkList: List<StudyItemModel> = emptyList(),
     val isListEmpty: Boolean = true,
 ) {
