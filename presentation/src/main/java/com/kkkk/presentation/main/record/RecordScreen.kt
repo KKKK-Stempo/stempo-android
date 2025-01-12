@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -47,12 +48,14 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
+import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.record.component.DottedShape
 import com.kkkk.presentation.main.record.component.RecordLineChart
-import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Gray100
 import com.kkkk.presentation.main.theme.Gray300
 import com.kkkk.presentation.main.theme.Gray600
+import com.kkkk.presentation.main.theme.Purple10
+import com.kkkk.presentation.main.theme.Purple50
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.Transparent50
 import com.kkkk.presentation.main.theme.White
@@ -195,6 +198,7 @@ private fun RecordScreen(
 
         if (recordState.isDropDownVisible) {
             RecordDropDown(
+                recordState = recordState,
                 onDropdownItemClick = onDropdownItemClick
             )
         }
@@ -274,6 +278,7 @@ fun RecordTitleWithAccuracy(
 
 @Composable
 fun RecordDropDown(
+    recordState: RecordState,
     modifier: Modifier = Modifier,
     onDropdownItemClick: (Int) -> Unit = {},
 ) {
@@ -288,11 +293,13 @@ fun RecordDropDown(
                 Text(
                     text = stringResource(id = R.string.report_tv_month, month),
                     style = StempoTheme.typography.body1,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier
                         .clickableWithoutRipple { onDropdownItemClick(month) }
+                        .background(if (month == recordState.selectedMonth) Purple10 else White)
                         .padding(vertical = 8.dp)
-                        .padding(horizontal = 44.dp),
-                    textAlign = TextAlign.Center,
+                        .width(130.dp),
+                    color = if (month == recordState.selectedMonth) Purple50 else Gray300
                 )
             }
         }

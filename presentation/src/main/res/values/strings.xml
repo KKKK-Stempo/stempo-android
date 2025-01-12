@@ -30,6 +30,7 @@
     <string name="rhythm_btn_change_level">단계 변경하기</string>
     <string name="rhythm_btn_submit_level">완료하기</string>
     <string name="rhythm_toast_save_success">기록 저장이 완료되었어요!</string>
+    <string name="rhythm_stretch_info">스트레칭 모드에서는\n자동 리듬을 제공해요</string>
 
     <string name="rhythm_wearable_sync">"워치와 리듬 동기화를 위해\n스템포 워치 앱 화면을 켜고\n확인 버튼을 눌러주세요"</string>
 
