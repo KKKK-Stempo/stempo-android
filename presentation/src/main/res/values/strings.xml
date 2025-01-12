@@ -66,6 +66,7 @@
     <string name="profile_btn_faq">FAQ</string>
     <string name="profile_btn_voice">불편한 점 얘기하기 (음성)</string>
     <string name="profile_btn_suggest">건의하기</string>
+    <string name="profile_version">버전 정보</string>
     <string name="profile_btn_withdraw">기록 지우기</string>
     <string name="profile_not_prepared">다음 업데이트 때 사용 가능해요!</string>
 
