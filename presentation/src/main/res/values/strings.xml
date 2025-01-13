@@ -78,6 +78,8 @@
     <string name="profile_withdraw_delete">삭제하기</string>
 
     <string name="study_tv_title">과제</string>
+    <string name="study_tv_empty">스템포와 운동해볼까요?</string>
+    <string name="study_tv_progress">과제 진척도</string>
     <string name="study_tv_my">진행해야 할 과제에요!</string>
     <string name="study_tv_teacher">입력한 과제에요!</string>
 
