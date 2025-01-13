@@ -36,6 +36,7 @@ import com.kkkk.presentation.main.theme.Sky50
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun HomeworkProgressBar(
@@ -117,7 +118,7 @@ fun HomeworkProgressBarPreview() {
     StempoTheme {
         HomeworkProgressBar(
             homeworkState = HomeworkState(
-                homeworkList = listOf(
+                homeworkList = persistentListOf(
                     StudyModel.StudyItemModel(0, "description", true),
                     StudyModel.StudyItemModel(1, "description", false)
                 ),
