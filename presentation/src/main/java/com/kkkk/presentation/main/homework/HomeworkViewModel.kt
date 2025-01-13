@@ -33,11 +33,20 @@ class HomeworkViewModel @Inject constructor(
         _homeworkState.update { it.copy(selectedMode = selectedMode) }
     }
 
+    fun changeDialogVisible(isDialogVisible: Boolean) {
+        _homeworkState.update { it.copy(isDialogVisible = isDialogVisible) }
+    }
+
     private fun getHomeworkList() {
         viewModelScope.launch {
             studyRepository.getHomeworks(0, 1000)
                 .onSuccess { studyModel ->
-                    _homeworkState.update { it.copy(homeworkList = studyModel.items.toPersistentList()) }
+                    _homeworkState.update {
+                        it.copy(
+                            homeworkList = studyModel.items.toPersistentList(),
+                            isListEmpty = studyModel.items.isEmpty()
+                        )
+                    }
                 }.onFailure {
                     _homeworkSideEffect.emit(HomeworkSideEffect.ErrorToast)
                 }
@@ -58,7 +67,8 @@ class HomeworkViewModel @Inject constructor(
                                         false
                                     )
                                 )
-                                .sortedBy { it.completed }.toPersistentList()
+                                .sortedBy { it.completed }.toPersistentList(),
+                            isDialogVisible = false
                         )
                     }
                     _homeworkSideEffect.emit(HomeworkSideEffect.SuccessAddToast)

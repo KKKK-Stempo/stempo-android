@@ -27,6 +27,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.domain.entity.response.StudyModel
+import com.kkkk.presentation.main.component.TextFieldDialog
 import com.kkkk.presentation.main.homework.component.HomeworkModeToggle
 import com.kkkk.presentation.main.homework.component.HomeworkProgressBar
 import com.kkkk.presentation.main.homework.component.HomeworkTaskList
@@ -63,10 +64,19 @@ fun HomeworkRoute(
     HomeworkScreen(
         homeworkState = homeworkState,
         onToggleSelected = viewModel::changeSelectedMode,
-        onCheckedBtnClick = { viewModel.updateHomework(it.id, it.description, !it.completed)},
-        onDeleteBtnClick = {viewModel.deleteHomework(it.id)},
-        onAddBtnClick = {}
+        onCheckedBtnClick = { viewModel.updateHomework(it.id, it.description, !it.completed) },
+        onDeleteBtnClick = { viewModel.deleteHomework(it.id) },
+        onAddBtnClick = { viewModel.changeDialogVisible(true) }
     )
+
+    if (homeworkState.isDialogVisible) {
+        TextFieldDialog(
+            title = stringResource(R.string.study_add_title),
+            onDismissRequest = { viewModel.changeDialogVisible(false) },
+            onExitBtnClick = { viewModel.changeDialogVisible(false) },
+            onSaveBtnClick = { viewModel.addHomework(it) }
+        )
+    }
 }
 
 @Composable
