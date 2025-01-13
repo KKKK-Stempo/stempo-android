@@ -23,17 +23,24 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.LottieComposition
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.domain.entity.response.StudyModel
 import com.kkkk.presentation.main.component.TextFieldDialog
+import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.homework.component.HomeworkModeToggle
 import com.kkkk.presentation.main.homework.component.HomeworkProgressBar
 import com.kkkk.presentation.main.homework.component.HomeworkTaskList
 import com.kkkk.presentation.main.homework.model.HomeworkMode
 import com.kkkk.presentation.main.theme.Gray100
 import com.kkkk.presentation.main.theme.StempoTheme
+import com.kkkk.presentation.main.theme.Transparent50
 import com.kkkk.stempo.presentation.R
 
 @Composable
@@ -46,6 +53,10 @@ fun HomeworkRoute(
     val context = LocalContext.current
     val systemUiController = rememberSystemUiController()
 
+    val lottieLoading by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.stempo_loading)
+    )
+
     LaunchedEffect(viewModel.homeworkSideEffect, lifecycleOwner) {
         viewModel.homeworkSideEffect.collect { sideEffect ->
             when (sideEffect) {
@@ -56,12 +67,13 @@ fun HomeworkRoute(
         }
     }
 
-    LaunchedEffect(Unit) {
-        systemUiController.setStatusBarColor(color = Gray100)
+    LaunchedEffect(homeworkState.isLoading) {
+        systemUiController.setStatusBarColor(color = if (homeworkState.isLoading) Transparent50 else Gray100)
     }
 
     HomeworkScreen(
         homeworkState = homeworkState,
+        lottieLoading = lottieLoading,
         onToggleSelected = viewModel::changeSelectedMode,
         onCheckedBtnClick = { viewModel.updateHomework(it.id, it.description, !it.completed) },
         onDeleteBtnClick = { viewModel.deleteHomework(it.id) },
@@ -81,6 +93,7 @@ fun HomeworkRoute(
 @Composable
 private fun HomeworkScreen(
     homeworkState: HomeworkState,
+    lottieLoading: LottieComposition? = null,
     onToggleSelected: (HomeworkMode) -> Unit = {},
     onCheckedBtnClick: (StudyModel.StudyItemModel) -> Unit = {},
     onDeleteBtnClick: (StudyModel.StudyItemModel) -> Unit = {},
@@ -112,6 +125,18 @@ private fun HomeworkScreen(
                 onAddBtnClick = onAddBtnClick
             )
 
+        }
+
+        if (homeworkState.isLoading) {
+            LottieAnimation(
+                composition = lottieLoading,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Transparent50)
+                    .padding(horizontal = 50.dp)
+                    .clickableWithoutRipple { }
+            )
         }
     }
 }

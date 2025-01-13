@@ -37,7 +37,12 @@ class HomeworkViewModel @Inject constructor(
         _homeworkState.update { it.copy(isDialogVisible = isDialogVisible) }
     }
 
+    fun changeIsLoading(isLoading: Boolean) {
+        _homeworkState.update { it.copy(isLoading = isLoading) }
+    }
+
     private fun getHomeworkList() {
+        changeIsLoading(true)
         viewModelScope.launch {
             studyRepository.getHomeworks(0, 1000)
                 .onSuccess { studyModel ->
@@ -47,6 +52,7 @@ class HomeworkViewModel @Inject constructor(
                             isListEmpty = studyModel.items.isEmpty()
                         )
                     }
+                    changeIsLoading(false)
                 }.onFailure {
                     _homeworkSideEffect.emit(HomeworkSideEffect.ErrorToast)
                 }

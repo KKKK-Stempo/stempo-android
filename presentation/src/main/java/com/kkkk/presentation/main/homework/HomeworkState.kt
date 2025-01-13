@@ -10,6 +10,7 @@ data class HomeworkState(
     val homeworkList: PersistentList<StudyItemModel> = persistentListOf(),
     val isListEmpty: Boolean = true,
     val isDialogVisible: Boolean = false,
+    val isLoading: Boolean = true,
 ) {
     val progress: Float
         get() = if (homeworkList.isEmpty()) 0f else homeworkList.count { it.completed } / homeworkList.size.toFloat()
