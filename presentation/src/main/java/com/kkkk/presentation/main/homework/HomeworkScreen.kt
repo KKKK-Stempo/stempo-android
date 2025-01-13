@@ -35,7 +35,7 @@ import com.kkkk.domain.entity.response.StudyModel
 import com.kkkk.presentation.main.component.TextFieldDialog
 import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.homework.component.HomeworkModeToggle
-import com.kkkk.presentation.main.homework.component.HomeworkProgressBar
+import com.kkkk.presentation.main.homework.component.HomeworkProgressBarBox
 import com.kkkk.presentation.main.homework.component.HomeworkTaskList
 import com.kkkk.presentation.main.homework.model.HomeworkMode
 import com.kkkk.presentation.main.theme.Gray100
@@ -112,7 +112,7 @@ private fun HomeworkScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            HomeworkProgressBar(
+            HomeworkProgressBarBox(
                 homeworkState = homeworkState
             )
 

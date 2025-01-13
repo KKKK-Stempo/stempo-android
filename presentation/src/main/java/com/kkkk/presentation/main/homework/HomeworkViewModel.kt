@@ -75,6 +75,7 @@ class HomeworkViewModel @Inject constructor(
                                 )
                                 .sortedWith(compareBy<StudyModel.StudyItemModel> { it.completed }.thenBy { it.id })
                                 .toPersistentList(),
+                            isListEmpty = false,
                             isDialogVisible = false
                         )
                     }
@@ -92,7 +93,8 @@ class HomeworkViewModel @Inject constructor(
                     _homeworkState.update { state ->
                         state.copy(
                             homeworkList = state.homeworkList
-                                .filter { it.id != homeworkId }.toPersistentList()
+                                .filter { it.id != homeworkId }.toPersistentList(),
+                            isListEmpty = state.homeworkList.isEmpty()
                         )
                     }
                     _homeworkSideEffect.emit(HomeworkSideEffect.SuccessDeleteToast)
