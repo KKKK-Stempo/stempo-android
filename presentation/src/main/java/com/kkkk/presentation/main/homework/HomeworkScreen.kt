@@ -26,8 +26,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
+import com.kkkk.domain.entity.response.StudyModel
 import com.kkkk.presentation.main.homework.component.HomeworkModeToggle
 import com.kkkk.presentation.main.homework.component.HomeworkProgressBar
+import com.kkkk.presentation.main.homework.component.HomeworkTaskList
 import com.kkkk.presentation.main.homework.model.HomeworkMode
 import com.kkkk.presentation.main.theme.Gray100
 import com.kkkk.presentation.main.theme.StempoTheme
@@ -65,7 +67,10 @@ fun HomeworkRoute(
 private fun HomeworkScreen(
     homeworkState: HomeworkState,
     onToggleSelected: (HomeworkMode) -> Unit = {},
-) {
+    onCheckedBtnClick: (StudyModel.StudyItemModel) -> Unit = {},
+    onDeleteBtnClick: (StudyModel.StudyItemModel) -> Unit = {},
+    onAddBtnClick: () -> Unit = {}
+    ) {
     Box(
         modifier = Modifier
             .background(Gray100)
@@ -84,6 +89,13 @@ private fun HomeworkScreen(
             )
 
             Spacer(modifier = Modifier.height(24.dp))
+
+            HomeworkTaskList(
+                homeworkState = homeworkState,
+                onCheckedBtnClick = onCheckedBtnClick,
+                onDeleteBtnClick = onDeleteBtnClick,
+                onAddBtnClick = onAddBtnClick
+            )
 
         }
     }

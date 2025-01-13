@@ -69,15 +69,23 @@ fun HomeworkTaskList(
                 .border(1.dp, Gray200, RoundedCornerShape(8.dp))
                 .padding(12.dp)
         ) {
-            LazyColumn {
-                items(homeworkState.homeworkList, key = { item -> item.id }) { item ->
-                    HomeworkListItem(
-                        homeworkState = homeworkState,
-                        studyItem = item,
-                        onCheckedBtnClick = onCheckedBtnClick,
-                        onDeleteBtnClick = onDeleteBtnClick
-                    )
+            if (!homeworkState.isListEmpty) {
+                LazyColumn {
+                    items(homeworkState.homeworkList, key = { item -> item.id }) { item ->
+                        HomeworkListItem(
+                            homeworkState = homeworkState,
+                            studyItem = item,
+                            onCheckedBtnClick = onCheckedBtnClick,
+                            onDeleteBtnClick = onDeleteBtnClick
+                        )
+                    }
                 }
+            } else {
+                Image(
+                    imageVector = ImageVector.vectorResource(id = R.drawable.img_study_empty),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)
+                )
             }
 
             if (homeworkState.selectedMode == HomeworkMode.TEACHER) {
