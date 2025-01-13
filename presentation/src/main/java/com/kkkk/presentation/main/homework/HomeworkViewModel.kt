@@ -2,7 +2,7 @@ package com.kkkk.presentation.main.homework
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kkkk.domain.entity.response.StudyModel
+import com.kkkk.domain.entity.response.StudyModel.StudyItemModel
 import com.kkkk.domain.repository.StudyRepository
 import com.kkkk.presentation.main.homework.model.HomeworkMode
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,21 +37,20 @@ class HomeworkViewModel @Inject constructor(
         _homeworkState.update { it.copy(isDialogVisible = isDialogVisible) }
     }
 
-    fun changeIsLoading(isLoading: Boolean) {
+    private fun changeIsLoading(isLoading: Boolean) {
         _homeworkState.update { it.copy(isLoading = isLoading) }
+    }
+
+    private fun updateHomeworkList(homeworkList: List<StudyItemModel>) {
+        _homeworkState.update { it.copy(homeworkList = homeworkList.toPersistentList()) }
     }
 
     private fun getHomeworkList() {
         changeIsLoading(true)
         viewModelScope.launch {
             studyRepository.getHomeworks(0, 1000)
-                .onSuccess { studyModel ->
-                    _homeworkState.update {
-                        it.copy(
-                            homeworkList = studyModel.items.toPersistentList(),
-                            isListEmpty = studyModel.items.isEmpty()
-                        )
-                    }
+                .onSuccess {
+                    updateHomeworkList(it.items)
                     changeIsLoading(false)
                 }.onFailure {
                     _homeworkSideEffect.emit(HomeworkSideEffect.ErrorToast)
@@ -63,22 +62,12 @@ class HomeworkViewModel @Inject constructor(
         viewModelScope.launch {
             studyRepository.addHomework(description)
                 .onSuccess { id ->
-                    _homeworkState.update { state ->
-                        state.copy(
-                            homeworkList = state.homeworkList
-                                .add(
-                                    StudyModel.StudyItemModel(
-                                        id,
-                                        description,
-                                        false
-                                    )
-                                )
-                                .sortedWith(compareBy<StudyModel.StudyItemModel> { it.completed }.thenBy { it.id })
-                                .toPersistentList(),
-                            isListEmpty = false,
-                            isDialogVisible = false
-                        )
-                    }
+                    updateHomeworkList(
+                        homeworkState.value.homeworkList
+                            .add(StudyItemModel(id, description, false))
+                            .sortedWith(compareBy<StudyItemModel> { it.completed }.thenBy { it.id })
+                    )
+                    changeDialogVisible(false)
                     _homeworkSideEffect.emit(HomeworkSideEffect.SuccessAddToast)
                 }.onFailure {
                     _homeworkSideEffect.emit(HomeworkSideEffect.ErrorToast)
@@ -90,13 +79,9 @@ class HomeworkViewModel @Inject constructor(
         viewModelScope.launch {
             studyRepository.deleteHomework(homeworkId)
                 .onSuccess {
-                    _homeworkState.update { state ->
-                        state.copy(
-                            homeworkList = state.homeworkList
-                                .filter { it.id != homeworkId }.toPersistentList(),
-                            isListEmpty = state.homeworkList.isEmpty()
-                        )
-                    }
+                    updateHomeworkList(
+                        homeworkState.value.homeworkList.filter { it.id != homeworkId }
+                    )
                     _homeworkSideEffect.emit(HomeworkSideEffect.SuccessDeleteToast)
                 }.onFailure {
                     _homeworkSideEffect.emit(HomeworkSideEffect.ErrorToast)
@@ -108,19 +93,18 @@ class HomeworkViewModel @Inject constructor(
         viewModelScope.launch {
             studyRepository.updateHomework(homeworkId, description, completed)
                 .onSuccess {
-                    _homeworkState.update { state ->
-                        state.copy(
-                            homeworkList = state.homeworkList
-                                .map {
-                                    if (it.id == homeworkId) it.copy(
+                    updateHomeworkList(
+                        homeworkState.value.homeworkList
+                            .map {
+                                if (it.id == homeworkId) {
+                                    it.copy(
                                         description = description,
-                                        completed = completed
-                                    ) else it
-                                }
-                                .sortedWith(compareBy<StudyModel.StudyItemModel> { it.completed }.thenBy { it.id })
-                                .toPersistentList()
-                        )
-                    }
+                                        completed = completed,
+                                    )
+                                } else it
+                            }
+                            .sortedWith(compareBy<StudyItemModel> { it.completed }.thenBy { it.id })
+                    )
                 }.onFailure {
                     _homeworkSideEffect.emit(HomeworkSideEffect.ErrorToast)
                 }

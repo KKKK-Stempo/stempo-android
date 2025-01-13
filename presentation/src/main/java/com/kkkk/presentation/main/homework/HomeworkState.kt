@@ -8,7 +8,6 @@ import kotlinx.collections.immutable.persistentListOf
 data class HomeworkState(
     val selectedMode: HomeworkMode = HomeworkMode.MYSELF,
     val homeworkList: PersistentList<StudyItemModel> = persistentListOf(),
-    val isListEmpty: Boolean = true,
     val isDialogVisible: Boolean = false,
     val isLoading: Boolean = true,
 ) {

@@ -52,7 +52,7 @@ fun HomeworkProgressBarBox(
             .padding(horizontal = 16.dp)
             .background(Dark, RoundedCornerShape(12.dp))
     ) {
-        if (!homeworkState.isListEmpty) {
+        if (!homeworkState.homeworkList.isEmpty()) {
             Column(
                 modifier = Modifier.padding(16.dp),
             ) {
@@ -151,7 +151,6 @@ fun HomeworkProgressBarPreview() {
                     StudyModel.StudyItemModel(0, "description", true),
                     StudyModel.StudyItemModel(1, "description", false)
                 ),
-                isListEmpty = false
             )
         )
     }

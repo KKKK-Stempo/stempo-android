@@ -71,7 +71,7 @@ fun HomeworkTaskList(
                 .border(1.dp, Gray200, RoundedCornerShape(8.dp))
                 .padding(12.dp)
         ) {
-            if (!homeworkState.isListEmpty) {
+            if (!homeworkState.homeworkList.isEmpty()) {
                 LazyColumn {
                     items(homeworkState.homeworkList, key = { item -> item.id }) { item ->
                         HomeworkListItem(
