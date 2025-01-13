@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.presentation.main.homework.component.HomeworkModeToggle
+import com.kkkk.presentation.main.homework.component.HomeworkProgressBar
 import com.kkkk.presentation.main.homework.model.HomeworkMode
 import com.kkkk.presentation.main.theme.Gray100
 import com.kkkk.presentation.main.theme.StempoTheme
@@ -69,25 +71,46 @@ private fun HomeworkScreen(
             .fillMaxSize(),
     ) {
         Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp)
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = stringResource(id = R.string.study_tv_title),
-                    style = StempoTheme.typography.head2,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-                HomeworkModeToggle(
-                    selectedMode = homeworkState.selectedMode,
-                    onToggleSelected = onToggleSelected
-                )
-            }
+            HomeworkTopContent(
+                homeworkState = homeworkState,
+                onToggleSelected = onToggleSelected
+            )
+
+            Spacer(modifier = Modifier.padding(top = 24.dp))
+
+            HomeworkProgressBar(
+                homeworkState = homeworkState
+            )
+
+            Spacer(modifier = Modifier.padding(top = 24.dp))
+
         }
+    }
+}
+
+@Composable
+fun HomeworkTopContent(
+    homeworkState: HomeworkState,
+    modifier: Modifier = Modifier,
+    onToggleSelected: (HomeworkMode) -> Unit = {},
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp)
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = stringResource(id = R.string.study_tv_title),
+            style = StempoTheme.typography.head2,
+            modifier = Modifier.padding(start = 8.dp)
+        )
+        HomeworkModeToggle(
+            selectedMode = homeworkState.selectedMode,
+            onToggleSelected = onToggleSelected
+        )
     }
 }
 
