@@ -56,18 +56,19 @@ class HomeworkViewModel @Inject constructor(
     fun addHomework(description: String) {
         viewModelScope.launch {
             studyRepository.addHomework(description)
-                .onSuccess {
+                .onSuccess { id ->
                     _homeworkState.update { state ->
                         state.copy(
                             homeworkList = state.homeworkList
                                 .add(
                                     StudyModel.StudyItemModel(
-                                        state.homeworkList.size,
+                                        id,
                                         description,
                                         false
                                     )
                                 )
-                                .sortedBy { it.completed }.toPersistentList(),
+                                .sortedWith(compareBy<StudyModel.StudyItemModel> { it.completed }.thenBy { it.id })
+                                .toPersistentList(),
                             isDialogVisible = false
                         )
                     }
@@ -107,10 +108,11 @@ class HomeworkViewModel @Inject constructor(
                                         description = description,
                                         completed = completed
                                     ) else it
-                                }.toPersistentList()
+                                }
+                                .sortedWith(compareBy<StudyModel.StudyItemModel> { it.completed }.thenBy { it.id })
+                                .toPersistentList()
                         )
                     }
-                    _homeworkSideEffect.emit(HomeworkSideEffect.SuccessUpdateToast)
                 }.onFailure {
                     _homeworkSideEffect.emit(HomeworkSideEffect.ErrorToast)
                 }

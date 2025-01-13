@@ -1,5 +1,7 @@
 package com.kkkk.presentation.main.homework.component
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -73,6 +76,12 @@ fun HomeworkTaskList(
                 LazyColumn {
                     items(homeworkState.homeworkList, key = { item -> item.id }) { item ->
                         HomeworkListItem(
+                            modifier = Modifier.animateItem(
+                                tween(
+                                    durationMillis = 500,
+                                    easing = LinearOutSlowInEasing
+                                )
+                            ),
                             homeworkState = homeworkState,
                             studyItem = item,
                             onCheckedBtnClick = onCheckedBtnClick,

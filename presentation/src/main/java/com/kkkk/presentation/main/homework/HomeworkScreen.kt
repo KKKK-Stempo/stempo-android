@@ -52,7 +52,6 @@ fun HomeworkRoute(
                 HomeworkSideEffect.ErrorToast -> context.toast(context.stringOf(R.string.error_msg))
                 HomeworkSideEffect.SuccessAddToast -> context.toast(context.stringOf(R.string.study_toast_add))
                 HomeworkSideEffect.SuccessDeleteToast -> context.toast(context.stringOf(R.string.study_toast_delete))
-                HomeworkSideEffect.SuccessUpdateToast -> context.toast(context.stringOf(R.string.study_toast_update))
             }
         }
     }

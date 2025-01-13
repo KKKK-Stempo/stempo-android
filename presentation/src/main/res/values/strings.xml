@@ -89,9 +89,8 @@
     <string name="study_add_exit">취소하기</string>
     <string name="study_add_save">추가하기</string>
 
-    <string name="study_toast_add">추가되었습니다</string>
-    <string name="study_toast_delete">삭제되었습니다</string>
-    <string name="study_toast_update">수정되었습니다</string>
+    <string name="study_toast_add">과제가 추가되었어요</string>
+    <string name="study_toast_delete">과제가 삭제되었어요</string>
 
     <string name="statistics_counter">%d회</string>
 

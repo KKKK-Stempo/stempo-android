@@ -4,5 +4,4 @@ sealed class HomeworkSideEffect {
     data object ErrorToast : HomeworkSideEffect()
     data object SuccessAddToast : HomeworkSideEffect()
     data object SuccessDeleteToast : HomeworkSideEffect()
-    data object SuccessUpdateToast : HomeworkSideEffect()
 }
