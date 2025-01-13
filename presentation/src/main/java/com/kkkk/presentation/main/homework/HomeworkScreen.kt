@@ -49,6 +49,9 @@ fun HomeworkRoute(
         viewModel.homeworkSideEffect.collect { sideEffect ->
             when (sideEffect) {
                 HomeworkSideEffect.ErrorToast -> context.toast(context.stringOf(R.string.error_msg))
+                HomeworkSideEffect.SuccessAddToast -> context.toast(context.stringOf(R.string.study_toast_add))
+                HomeworkSideEffect.SuccessDeleteToast -> context.toast(context.stringOf(R.string.study_toast_delete))
+                HomeworkSideEffect.SuccessUpdateToast -> context.toast(context.stringOf(R.string.study_toast_update))
             }
         }
     }
@@ -59,7 +62,10 @@ fun HomeworkRoute(
 
     HomeworkScreen(
         homeworkState = homeworkState,
-        onToggleSelected = viewModel::changeSelectedMode
+        onToggleSelected = viewModel::changeSelectedMode,
+        onCheckedBtnClick = { viewModel.updateHomework(it.id, it.description, !it.completed)},
+        onDeleteBtnClick = {viewModel.deleteHomework(it.id)},
+        onAddBtnClick = {}
     )
 }
 
@@ -70,7 +76,7 @@ private fun HomeworkScreen(
     onCheckedBtnClick: (StudyModel.StudyItemModel) -> Unit = {},
     onDeleteBtnClick: (StudyModel.StudyItemModel) -> Unit = {},
     onAddBtnClick: () -> Unit = {}
-    ) {
+) {
     Box(
         modifier = Modifier
             .background(Gray100)

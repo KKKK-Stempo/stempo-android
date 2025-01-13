@@ -84,6 +84,10 @@
     <string name="study_tv_teacher">입력한 과제에요!</string>
     <string name="study_btn_add">+ 과제 추가하기</string>
 
+    <string name="study_toast_add">추가되었습니다</string>
+    <string name="study_toast_delete">삭제되었습니다</string>
+    <string name="study_toast_update">수정되었습니다</string>
+
     <string name="statistics_counter">%d회</string>
 
 </resources>
