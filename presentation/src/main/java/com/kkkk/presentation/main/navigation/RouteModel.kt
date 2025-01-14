@@ -15,7 +15,7 @@ sealed interface MainTabRoute : Route {
     data object Record : MainTabRoute
 
     @Serializable
-    data object Result : MainTabRoute
+    data object Homework : MainTabRoute
 
     @Serializable
     data object Profile : MainTabRoute

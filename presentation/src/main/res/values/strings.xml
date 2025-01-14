@@ -30,6 +30,7 @@
     <string name="rhythm_btn_change_level">단계 변경하기</string>
     <string name="rhythm_btn_submit_level">완료하기</string>
     <string name="rhythm_toast_save_success">기록 저장이 완료되었어요!</string>
+    <string name="rhythm_stretch_info">스트레칭 모드에서는\n자동 리듬을 제공해요</string>
 
     <string name="rhythm_wearable_sync">"워치와 리듬 동기화를 위해\n스템포 워치 앱 화면을 켜고\n확인 버튼을 눌러주세요"</string>
 
@@ -76,8 +77,20 @@
     <string name="profile_withdraw_cancel">취소하기</string>
     <string name="profile_withdraw_delete">삭제하기</string>
 
+    <string name="study_tv_title">과제</string>
+    <string name="study_tv_empty">스템포와 운동해볼까요?</string>
+    <string name="study_tv_progress">과제 진척도</string>
     <string name="study_tv_my">진행해야 할 과제에요!</string>
     <string name="study_tv_teacher">입력한 과제에요!</string>
+    <string name="study_btn_add">+ 과제 추가하기</string>
+
+    <string name="study_add_title">숙제를 추가해주세요</string>
+    <string name="study_add_hint">숙제를 입력해주세요</string>
+    <string name="study_add_exit">취소하기</string>
+    <string name="study_add_save">추가하기</string>
+
+    <string name="study_toast_add">과제가 추가되었어요</string>
+    <string name="study_toast_delete">과제가 삭제되었어요</string>
 
     <string name="statistics_counter">%d회</string>
 

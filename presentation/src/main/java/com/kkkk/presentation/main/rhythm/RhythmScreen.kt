@@ -71,6 +71,7 @@ import com.kkkk.presentation.main.rhythm.component.RhythmModeToggle
 import com.kkkk.presentation.main.rhythm.model.PlayState
 import com.kkkk.presentation.main.rhythm.model.RhythmMode
 import com.kkkk.presentation.main.theme.Dark
+import com.kkkk.presentation.main.theme.Gray500
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.Transparent50
 import com.kkkk.presentation.main.theme.White
@@ -286,11 +287,20 @@ private fun RhythmScreen(
                     rhythmState = rhythmState,
                     onChangeBtnClick = onChangeBtnClick
                 )
+                RhythmChangeBtn(
+                    onChangeBtnClick = onChangeBtnClick
+                )
+            } else {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 60.dp),
+                    textAlign = TextAlign.Center,
+                    text = stringResource(id = R.string.rhythm_stretch_info),
+                    style = StempoTheme.typography.body2,
+                    color = Gray500,
+                )
             }
-
-            RhythmChangeBtn(
-                onChangeBtnClick = onChangeBtnClick
-            )
         }
 
         if (rhythmState.isLoading) {
@@ -321,7 +331,6 @@ fun RhythmPlayBtnWithLottie(
             .padding(horizontal = 40.dp)
             .fillMaxWidth()
             .aspectRatio(1f)
-            .padding(bottom = 10.dp)
     )
     Image(
         imageVector = ImageVector.vectorResource(
@@ -330,7 +339,6 @@ fun RhythmPlayBtnWithLottie(
         contentDescription = null,
         modifier = Modifier
             .size(120.dp)
-            .padding(bottom = 10.dp)
             .clickableWithoutRipple { if (rhythmState.isPlaying == PlayState.PLAYING) onStopBtnClick() else onPlayBtnClick() }
     )
     if (rhythmState.isPlaying == PlayState.PLAYING) {
@@ -385,7 +393,7 @@ fun ColumnScope.RhythmInfoChips(
 ) {
     Row(
         modifier = Modifier
-            .padding(bottom = 34.dp)
+            .padding(bottom = 20.dp)
             .align(Alignment.CenterHorizontally)
             .clickableWithoutRipple { onChangeBtnClick() },
         horizontalArrangement = Arrangement.Center

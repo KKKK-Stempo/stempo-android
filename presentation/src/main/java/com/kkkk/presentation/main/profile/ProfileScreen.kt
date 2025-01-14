@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -117,6 +119,8 @@ private fun ProfileScreen(
         Column {
             ProfileTitle()
 
+            Spacer(modifier = Modifier.height(12.dp))
+
             ProfileContentBox(
                 firstItemText = stringResource(id = R.string.profile_btn_announce),
                 onFirstItemClick = { onAnnounceBtnClick(ProfileButtonType.URL_ANNOUNCE) },
@@ -124,12 +128,16 @@ private fun ProfileScreen(
                 onSecondItemClick = { onFaqBtnClick(ProfileButtonType.URL_FAQ) }
             )
 
+            Spacer(modifier = Modifier.height(12.dp))
+
             ProfileContentBox(
                 firstItemText = stringResource(id = R.string.profile_btn_suggest),
                 onFirstItemClick = { onSuggestBtnClick(ProfileButtonType.URL_SUGGEST) },
                 secondItemText = stringResource(id = R.string.profile_btn_voice),
                 onSecondItemClick = onVoiceBtnClick
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             ProfileContentBox(
                 firstItemText = stringResource(id = R.string.profile_version),
@@ -173,7 +181,6 @@ fun ProfileContentBox(
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp)
-            .padding(top = 12.dp)
             .background(White, RoundedCornerShape(8.dp))
             .border(1.dp, Gray200, RoundedCornerShape(8.dp))
             .fillMaxWidth()
