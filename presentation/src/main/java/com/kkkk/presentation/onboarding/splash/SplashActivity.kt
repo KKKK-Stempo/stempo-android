@@ -23,7 +23,6 @@ import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.core.extension.setNavigationBarColorFromResource
 import com.kkkk.core.extension.setStatusBarColorFromResource
 import com.kkkk.presentation.main.MainActivity
-import com.kkkk.presentation.onboarding.onbarding.OnboardingActivity
 import com.kkkk.presentation.onboarding.terms.TermsActivity
 import com.kkkk.stempo.presentation.R
 import com.kkkk.stempo.presentation.databinding.ActivitySplashBinding

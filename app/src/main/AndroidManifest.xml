@@ -34,12 +34,12 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.kkkk.presentation.main.MainActivity"
+            android:name="com.kkkk.presentation.onboarding.onbarding.OnboardingActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name="com.kkkk.presentation.onboarding.onbarding.OnboardingActivity"
+            android:name="com.kkkk.presentation.main.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 

@@ -5,6 +5,7 @@ plugins {
     id("kotlin-parcelize")
     id("dagger.hilt.android.plugin")
     id("org.jetbrains.compose")
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
 }
 
 android {
@@ -109,5 +110,8 @@ dependencies {
         implementation(androidxComposePreview)
         implementation(hiltNavigationCompose)
         implementation(androidxUiGraphics)
+        implementation(androidxImmutableList)
+        implementation(lottieCompose)
+        implementation(accompanist)
     }
 }

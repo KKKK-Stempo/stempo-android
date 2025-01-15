@@ -1,20 +1,35 @@
 package com.kkkk.presentation.main.rhythm
 
-import androidx.lifecycle.MutableLiveData
+import android.content.res.AssetFileDescriptor
+import android.media.MediaPlayer
+import android.media.PlaybackParams
+import android.media.SoundPool
+import android.view.Choreographer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kkkk.core.state.UiState
 import com.kkkk.domain.entity.request.RecordRequestModel
 import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
+import com.kkkk.presentation.main.rhythm.model.PlayState
+import com.kkkk.presentation.main.rhythm.model.RhythmMode
+import com.kkkk.presentation.manager.PhoneDataManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 @HiltViewModel
 class RhythmViewModel
@@ -22,36 +37,19 @@ class RhythmViewModel
 constructor(
     private val rhythmRepository: RhythmRepository,
     private val userRepository: UserRepository,
+    private val phoneDataManager: PhoneDataManager
 ) : ViewModel() {
-    var bpm = MIN_BPM
-    var bit = MAX_BIT
-    var filename: String = "stempo_bpm_${bpm}_bit_${bit}"
+    private val _rhythmState = MutableStateFlow(RhythmState())
+    val rhythmState = _rhythmState.asStateFlow()
 
-    var tempBpm = MutableLiveData<Int>(MIN_BPM)
-    var tempBit = MutableLiveData<Int>(MIN_BIT)
-    var isBpmMinusAvailable = MutableLiveData<Boolean>(false)
-    var isBpmPlusAvailable = MutableLiveData<Boolean>(true)
+    private val _rhythmSideEffect = MutableSharedFlow<RhythmSideEffect>()
+    val rhythmSideEffect = _rhythmSideEffect.asSharedFlow()
 
-    var watchAccuracy: Double = 0.0
+    private var soundPool = SoundPool.Builder().setMaxStreams(1).build()
+    private var mediaPlayer = MediaPlayer()
 
-    private val _isStretchView = MutableSharedFlow<Boolean>()
-    val isStretchView: SharedFlow<Boolean> = _isStretchView
-
-    private val _isRhythmChanged = MutableSharedFlow<Boolean>()
-    val isRhythmChanged: SharedFlow<Boolean> = _isRhythmChanged
-
-    private val _rhythmUrlState = MutableStateFlow<UiState<String>>(UiState.Empty)
-    val rhythmUrlState: StateFlow<UiState<String>> = _rhythmUrlState
-
-    private val _downloadWavState = MutableStateFlow<UiState<ByteArray>>(UiState.Empty)
-    val downloadWavState: StateFlow<UiState<ByteArray>> = _downloadWavState
-
-    private val _isRecordSaved = MutableSharedFlow<Boolean>()
-    val isRecordSaved: SharedFlow<Boolean>
-        get() = _isRecordSaved
-
-    private val _stepCount = MutableStateFlow(0)
-    val stepCount: StateFlow<Int> = _stepCount
+    private var beatSound: Int = 0
+    private var beatStream: Int = 0
 
     private val _oddStepCount = MutableStateFlow(0)
     private val _oddStepTime = MutableStateFlow(0L)
@@ -61,167 +59,276 @@ constructor(
 
     private val _beforeStepTime = MutableStateFlow(0L)
 
+    var wearableAccuracy: Double = 0.0
+
     init {
-        initRhythmLevelFromDataStore()
-
+        initRhythmFromDataStore()
     }
 
-    private fun initRhythmLevelFromDataStore() {
-        bpm = userRepository.getBpm()
-        bit = userRepository.getBit()
-        filename = "stempo_bpm_${bpm}_bit_${bit}"
+    private fun initRhythmFromDataStore() {
+        _rhythmState.update {
+            it.copy(bit = userRepository.getBit(), bpm = userRepository.getBpm())
+        }
     }
 
-    fun setTempBpm(bpm: Int) {
-        tempBpm.value = bpm
-        isBpmMinusAvailable.value = bpm != MIN_BPM
-        isBpmPlusAvailable.value = bpm != MAX_BPM
+    fun changeSelectedMode(selectedMode: RhythmMode) {
+        _rhythmState.update { it.copy(selectedMode = selectedMode, isPlaying = PlayState.DEFAULT) }
     }
 
-    fun plusTempBpm() {
-        if (tempBpm.value == MAX_BPM) return
-        tempBpm.value = tempBpm.value?.plus(5)
-        isBpmMinusAvailable.value = tempBpm.value != MIN_BPM
-        isBpmPlusAvailable.value = tempBpm.value != MAX_BPM
+    fun changeIsPlaying(isPlaying: PlayState) {
+        _rhythmState.update { it.copy(isPlaying = isPlaying) }
     }
 
-    fun minusTempBpm() {
-        if (tempBpm.value == MIN_BPM) return
-        tempBpm.value = tempBpm.value?.minus(5)
-        isBpmMinusAvailable.value = tempBpm.value != MIN_BPM
-        isBpmPlusAvailable.value = tempBpm.value != MAX_BPM
+    private fun changeIsLoading(isLoading: Boolean) {
+        _rhythmState.update { it.copy(isLoading = isLoading) }
     }
 
-    fun setTempBit(bit: Int) {
-        tempBit.value = bit
+    fun showBottomSheet(show: Boolean) {
+        _rhythmState.update { it.copy(isBottomSheetVisible = show, isPlaying = PlayState.DEFAULT) }
     }
 
-    fun setRhythmToTemp() {
-        tempBpm.value = bpm
-        tempBit.value = bit
+    fun showSaveDialog(show: Boolean) {
+        _rhythmState.update { it.copy(isSaveDialogVisible = show) }
     }
 
-    fun setTempToRhythm() {
-        bpm = tempBpm.value ?: MIN_BPM
-        bit = tempBit.value ?: MIN_BIT
-        filename = "stempo_bpm_${bpm}_bit_${bit}"
+    fun showSyncDialog(show: Boolean) {
+        _rhythmState.update { it.copy(isSyncDialogVisible = show) }
+    }
+
+    fun updateRhythm(bit: Int, bpm: Int) {
+        _rhythmState.update { it.copy(bit = bit, bpm = bpm, isPlaying = PlayState.DEFAULT) }
         userRepository.setBpm(bpm)
         userRepository.setBit(bit)
-        viewModelScope.launch {
-            _isRhythmChanged.emit(true)
-        }
     }
 
-    fun resetRhythmChangedState() {
-        viewModelScope.launch {
-            _isRhythmChanged.emit(false)
-        }
+    fun updateIsPlayerLoaded(isPlayerLoaded: Boolean) {
+        _rhythmState.update { it.copy(isPlayerLoaded = isPlayerLoaded) }
     }
 
-    fun navigateToStretchView(isStretch: Boolean) {
+    fun setMusicPlayer(soundPoolFile: File, mediaPlayerAfd: AssetFileDescriptor) {
         viewModelScope.launch {
-            _isStretchView.emit(isStretch)
-            _isStretchView.resetReplayCache()
-        }
-    }
-
-    fun postToGetRhythmUrlFromServer() {
-        _rhythmUrlState.value = UiState.Loading
-        viewModelScope.launch {
-            rhythmRepository.postToGetRhythmUrl(RhythmRequestModel(bpm, bit))
-                .onSuccess {
-                    _rhythmUrlState.value = UiState.Success(it)
-                }
-                .onFailure {
-                    _rhythmUrlState.value = UiState.Failure(it.message.toString())
-                }
-        }
-    }
-
-    fun getRhythmWavFile(url: String) {
-        viewModelScope.launch {
-            _downloadWavState.value = UiState.Loading
-            rhythmRepository.getRhythmWav(url)
-                .onSuccess {
-                    _downloadWavState.value = UiState.Success(it)
-                    _beforeStepTime.value = System.currentTimeMillis()
-                }
-                .onFailure {
-                    _downloadWavState.value = UiState.Failure(it.message.toString())
-                }
-        }
-    }
-
-    fun addStepCount(newStepCount: Int) {
-        _stepCount.value += newStepCount
-
-
-        if (_stepCount.value < 2) {
-            _beforeStepTime.value = System.currentTimeMillis()
-            return
-        }
-
-        if (_stepCount.value % 2 == 0) {
-            _oddStepCount.value += newStepCount
-            _oddStepTime.value += System.currentTimeMillis() - _beforeStepTime.value
-        } else {
-            _evenStepCount.value += newStepCount
-            _evenStepTime.value += System.currentTimeMillis() - _beforeStepTime.value
-        }
-
-        _beforeStepTime.value = System.currentTimeMillis()
-    }
-
-    fun postRhythmRecordToSave() {
-        if ((_oddStepCount.value == 0 || _evenStepCount.value == 0) && watchAccuracy == 0.0) return
-
-        val accuracy = if (watchAccuracy == 0.0) {
-            calculateAccuracy(
-                _oddStepTime.value / _oddStepCount.value,
-                _evenStepTime.value / _evenStepCount.value
-            )
-        } else {
-            watchAccuracy
-        }
-        watchAccuracy = 0.0
-
-        if (accuracy == 0.0) return
-
-        viewModelScope.launch {
-            rhythmRepository.postRhythmRecord(
-                RecordRequestModel(
-                    accuracy,
-                    0,
-                    stepCount.value
-                )
-            ).onSuccess {
-                resetStepInfo()
-                _isRecordSaved.emit(true)
+            runCatching {
+                listOf(
+                    async { setSoundPoolAsync(soundPoolFile) },
+                    async { setMediaPlayerAsync(mediaPlayerAfd) }
+                ).awaitAll()
+            }.onSuccess {
+                updateIsPlayerLoaded(true)
+                changeIsLoading(false)
+                mediaPlayerAfd.close()
             }.onFailure {
-                _isRecordSaved.emit(false)
+                _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
             }
         }
     }
 
-    private fun calculateAccuracy(time1: Long, time2: Long): Double {
-        val difference = kotlin.math.abs(time1 - time2)
-
-        return (1.0 - difference.toDouble() / (time1 + time2)) * 100
+    private suspend fun setSoundPoolAsync(file: File) {
+        suspendCancellableCoroutine<Unit> { continuation ->
+            runCatching {
+                soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
+                    setOnLoadCompleteListener { _, sampleId, _ ->
+                        if (sampleId == beatSound) {
+                            continuation.resume(Unit)
+                        } else {
+                            continuation.resumeWithException(IllegalStateException())
+                        }
+                    }
+                }
+                beatStream = 0
+                beatSound = soundPool.load(file.absolutePath, 1)
+            }.onFailure { continuation.resumeWithException(it) }
+        }
     }
 
-    fun resetStepInfo() {
+    private suspend fun setMediaPlayerAsync(afd: AssetFileDescriptor) {
+        suspendCancellableCoroutine<Unit> { continuation ->
+            runCatching {
+                mediaPlayer = MediaPlayer().apply {
+                    reset()
+                    setOnPreparedListener { continuation.resume(Unit) }
+                    setOnErrorListener { _, _, _ ->
+                        continuation.resumeWithException(IllegalStateException())
+                        true
+                    }
+                    setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                    isLooping = true
+                    setVolume(0.2f, 0.2f)
+                    if (rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
+                        playbackParams = PlaybackParams().setSpeed(rhythmState.value.speedByBpm)
+                    }
+                }
+                mediaPlayer.prepareAsync()
+            }.onFailure { continuation.resumeWithException(it) }
+        }
+    }
+
+    fun releaseMusicPlayers() {
+        soundPool.release()
+        mediaPlayer.release()
+    }
+
+    fun playMusic() {
+        if (rhythmState.value.isPlayerLoaded) {
+            Choreographer.getInstance().postFrameCallback {
+                mediaPlayer.start()
+                playOrResumeSoundPool()
+            }
+        } else {
+            viewModelScope.launch {
+                changeIsPlaying(PlayState.DEFAULT)
+                _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+            }
+        }
+    }
+
+    private fun playOrResumeSoundPool() {
+        if (beatStream != 0) {
+            soundPool.resume(beatStream)
+        } else {
+            beatStream = soundPool.play(beatSound, 10f, 10f, 1, -1, 1f)
+        }
+    }
+
+    fun pauseMusic(isDialogNeeded: Boolean) {
+        Choreographer.getInstance().postFrameCallback {
+            if (beatStream != 0) soundPool.pause(beatStream)
+            runCatching {  if (mediaPlayer.isPlaying) mediaPlayer.pause() }
+        }
+        if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
+            showSaveDialog(true)
+        }
+    }
+
+    fun downloadNewMusicFile(filePath: Path) {
+        changeIsLoading(true)
+        viewModelScope.launch {
+            runCatching {
+                val url = getRhythmUrl()
+                val wavFile = getRhythmFile(url)
+                saveRhythmFile(wavFile, filePath)
+            }.onSuccess {
+                updateIsPlayerLoaded(false)
+            }.onFailure {
+                _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+            }
+        }
+    }
+
+    private suspend fun getRhythmUrl(): String =
+        rhythmRepository.postToGetRhythmUrl(
+            RhythmRequestModel(
+                rhythmState.value.bpm,
+                rhythmState.value.bit
+            )
+        ).getOrThrow()
+
+    private suspend fun getRhythmFile(url: String): ByteArray =
+        rhythmRepository.getRhythmWav(url).getOrThrow()
+
+    private suspend fun saveRhythmFile(wavFile: ByteArray, filePath: Path) {
+        runCatching {
+            Files.newOutputStream(filePath).use { outputStream ->
+                outputStream.write(wavFile)
+                outputStream.flush()
+            }
+        }.getOrThrow()
+    }
+
+    fun addStepCount() {
+        _rhythmState.update { it.copy(stepCount = it.stepCount + 1) }
+        val currentTime = System.currentTimeMillis()
+        if (rhythmState.value.stepCount < 2) {
+            _beforeStepTime.value = currentTime
+            return
+        }
+        val isEven = rhythmState.value.stepCount % 2 == 0
+        val elapsedTime = currentTime - _beforeStepTime.value
+        if (isEven) {
+            _evenStepCount.value++
+            _evenStepTime.value += elapsedTime
+        } else {
+            _oddStepCount.value++
+            _oddStepTime.value += elapsedTime
+        }
+        _beforeStepTime.value = currentTime
+    }
+
+    fun recordCurrentStepAccuracy() {
+        val accuracy = calculateAccuracy()
+        if (accuracy == 0.0) {
+            resetStepCount()
+        } else {
+            postRhythmRecordToSave(accuracy)
+        }
+    }
+
+    fun postRhythmRecordToSave(accuracy: Double) {
+        viewModelScope.launch {
+            rhythmRepository.postRhythmRecord(
+                RecordRequestModel(
+                    accuracy = accuracy,
+                    steps = rhythmState.value.stepCount,
+                )
+            ).onSuccess {
+                resetStepCount()
+                _rhythmSideEffect.emit(RhythmSideEffect.SaveSuccessToast)
+            }.onFailure {
+                _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+            }
+        }
+    }
+
+    private fun calculateAccuracy(): Double {
+        when {
+            wearableAccuracy != 0.0 -> {
+                return wearableAccuracy
+            }
+
+            _oddStepCount.value == 0 || _evenStepCount.value == 0 -> {
+                return 0.0
+            }
+
+            else -> {
+                val time1 = _oddStepTime.value.toDouble() / _oddStepCount.value
+                val time2 = _evenStepTime.value.toDouble() / _evenStepCount.value
+                return (1.0 - kotlin.math.abs(time1 - time2) / (time1 + time2)) * 100
+            }
+        }
+    }
+
+    private fun resetStepCount() {
+        showSaveDialog(false)
+        updateIsPlayerLoaded(false)
+        _rhythmState.update { it.copy(stepCount = 0) }
         _oddStepCount.value = 0
         _evenStepCount.value = 0
-        _stepCount.value = 0
-        _oddStepTime.value = 0L
-        _evenStepTime.value = 0L
-        _beforeStepTime.value = System.currentTimeMillis()
+        _oddStepTime.value = 0
+        _evenStepTime.value = 0
+        wearableAccuracy = 0.0
+    }
+
+    fun sendBpmToWearable() {
+        phoneDataManager.sendIntToWearable(
+            PhoneDataManager.PATH_BPM,
+            PhoneDataManager.KEY_BPM,
+            rhythmState.value.bpm
+        )
+        showSyncDialog(false)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        soundPool.release()
+        mediaPlayer.release()
     }
 
     companion object {
-        const val MIN_BPM = 60
-        const val MAX_BPM = 120
-        const val MIN_BIT = 2
-        const val MAX_BIT = 8
+        const val KEY_RECORD = "KEY_RECORD"
+        const val KEY_START = "KEY_START"
+        const val KEY_END = "KEY_END"
+
+        const val PATH_RECORD = "/record"
+        const val PATH_START = "/start"
+        const val PATH_END = "/end"
     }
 }

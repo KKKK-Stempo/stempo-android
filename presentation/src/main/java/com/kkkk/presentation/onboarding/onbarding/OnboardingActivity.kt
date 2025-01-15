@@ -30,7 +30,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
     private val vibrator by lazy {
         if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.S) {
             this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        } else{
+        } else {
             this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
         }
     }
@@ -63,6 +63,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
                         vibrate()
                         navigateTo<OnboardingEndFragment>()
                     }
+
                     OnboardingState.DONE -> navigateToScreenClear<MainActivity>()
                 }
             }.launchIn(lifecycleScope)

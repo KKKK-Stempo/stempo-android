@@ -1,15 +1,16 @@
 package com.kkkk.presentation.main.record
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.Entry
-import com.kkkk.core.state.UiState
-import com.kkkk.domain.entity.response.StatisticsModel
+import com.kkkk.domain.entity.response.RecordModel
 import com.kkkk.domain.repository.RecordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -23,84 +24,91 @@ class RecordViewModel
 constructor(
     private val recordRepository: RecordRepository,
 ) : ViewModel() {
+    private val _recordState = MutableStateFlow(RecordState())
+    val recordState = _recordState.asStateFlow()
 
-    val isChangingMonth = MutableLiveData<Boolean>(false)
-    val reportMonth = MutableLiveData<Int>(3)
-
-    private val _chartEntry = MutableStateFlow<UiState<MutableList<Entry>>>(UiState.Empty)
-    val chartEntry: StateFlow<UiState<MutableList<Entry>>> = _chartEntry
-
-    private val _statistics = MutableStateFlow<UiState<StatisticsModel>>(UiState.Empty)
-    val statistics: StateFlow<UiState<StatisticsModel>> = _statistics
-
-    var dateList = listOf<String>()
-    var accuracyAverage = 0
-
-    var startDate = ""
-    var endDate = ""
+    private val _recordSideEffect = MutableSharedFlow<RecordSideEffect>()
+    val recordSideEffect = _recordSideEffect.asSharedFlow()
 
     init {
-        getStatistics()
+        getStatisticBadges()
     }
 
-    private fun getStatistics() {
+    fun updateIsLoading(isLoading: Boolean) {
+        _recordState.update { it.copy(isLoading = isLoading) }
+    }
+
+    fun changeIsDialogVisible() {
+        _recordState.update { it.copy(isDropDownVisible = !it.isDropDownVisible) }
+    }
+
+    fun updateSelectedMonth(month: Int) {
+        _recordState.update { it.copy(selectedMonth = month, isDropDownVisible = false) }
+    }
+
+    private fun getStatisticBadges() {
         viewModelScope.launch {
             recordRepository.getRecordStatistics()
                 .onSuccess { statistics ->
-                    _statistics.value = UiState.Success(statistics)
+                    _recordState.update {
+                        it.copy(
+                            countToday = statistics.todayWalkTrainingCount,
+                            countWeek = statistics.weeklyWalkTrainingCount,
+                            countConsecutive = statistics.consecutiveWalkTrainingDays
+                        )
+                    }
                 }
                 .onFailure {
-                    _chartEntry.value = UiState.Failure(it.message.toString())
+                    _recordSideEffect.emit(RecordSideEffect.ErrorToast)
                 }
         }
-    }
-
-    fun setIsChangingMonth() {
-        isChangingMonth.value = isChangingMonth.value?.not() ?: false
-    }
-
-    fun setReportMonth(month: Int) {
-        reportMonth.value = month
-        isChangingMonth.value = false
-        setGraphWithDate()
     }
 
     fun setGraphWithDate() {
-        endDate = DATE_FORMAT.format(Date())
-        DATE_FORMAT.parse(endDate)?.let { date ->
-            val postCalendar = Calendar.getInstance().apply {
-                time = date
-                add(Calendar.MONTH, -(reportMonth.value ?: 3))
-            }
-            startDate = DATE_FORMAT.format(postCalendar.time)
-        }
-        setGraphValue()
+        val endDate = DATE_FORMAT.format(Date())
+        val startDate = runCatching {
+            Calendar.getInstance().apply {
+                time = DATE_FORMAT.parse(endDate) as Date
+                add(Calendar.MONTH, -recordState.value.selectedMonth)
+            }.time
+        }.getOrNull()?.let { DATE_FORMAT.format(it) } ?: return
+        setGraphValue(startDate, endDate)
     }
 
-    private fun setGraphValue() {
-        _chartEntry.value = UiState.Loading
+    private fun setGraphValue(startDate: String, endDate: String) {
         viewModelScope.launch {
             recordRepository.getRecordList(startDate, endDate)
                 .onSuccess { recordList ->
-                    if (recordList.records.isEmpty() || recordList.records.size == 1) {
-                        _chartEntry.value = UiState.Empty
-                        return@launch
+                    if (recordList.records.size <= 1) {
+                        _recordState.update { it.copy(isRecordEmpty = true) }
+                    } else {
+                        _recordState.update {
+                            it.copy(
+                                isRecordEmpty = false,
+                                averageAccuracy = recordList.accuracyAverage,
+                                dateList = recordList.records.toDateList(),
+                                entriesList = recordList.records.toEntryList(),
+                            )
+                        }
                     }
-                    dateList = recordList.records.map { record ->
-                        DATE_FORMAT.parse(record.date)?.let { DISPLAY_DATE_FORMAT.format(it) } ?: ""
-                    }
-                    accuracyAverage = recordList.accuracyAverage
-                    _chartEntry.value = UiState.Success(
-                        recordList.records.mapIndexed { index, record ->
-                            Entry(index.toFloat(), record.accuracy.toFloat())
-                        }.toMutableList()
-                    )
+                    updateIsLoading(false)
                 }
                 .onFailure {
-                    _chartEntry.value = UiState.Failure(it.message.toString())
+                    _recordSideEffect.emit(RecordSideEffect.ErrorToast)
+                    updateIsLoading(false)
                 }
         }
     }
+
+    private fun List<RecordModel>.toDateList(): List<String> =
+        map { record ->
+            DATE_FORMAT.parse(record.date)?.let { DISPLAY_DATE_FORMAT.format(it) }.orEmpty()
+        }
+
+    private fun List<RecordModel>.toEntryList(): MutableList<Entry> =
+        mapIndexed { index, record ->
+            Entry(index.toFloat(), record.accuracy.toFloat())
+        }.toMutableList()
 
     companion object {
         private val DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd", Locale.KOREA)
