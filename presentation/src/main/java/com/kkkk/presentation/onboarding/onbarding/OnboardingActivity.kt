@@ -18,7 +18,6 @@ import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.presentation.main.MainActivity
-import com.kkkk.presentation.xmlmain.XmlMainActivity
 import com.kkkk.stempo.presentation.R
 import com.kkkk.stempo.presentation.databinding.ActivityOnboardingBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,7 +30,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
     private val vibrator by lazy {
         if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.S) {
             this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        } else{
+        } else {
             this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
         }
     }
@@ -64,6 +63,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
                         vibrate()
                         navigateTo<OnboardingEndFragment>()
                     }
+
                     OnboardingState.DONE -> navigateToScreenClear<MainActivity>()
                 }
             }.launchIn(lifecycleScope)
