@@ -262,12 +262,17 @@ constructor(
         }
     }
 
-    fun postRhythmRecordToSave(accuracy: Double) {
+    private fun postRhythmRecordToSave(accuracy: Double) {
         viewModelScope.launch {
             rhythmRepository.postRhythmRecord(
                 RecordRequestModel(
                     accuracy = accuracy,
+                    duration = _oddStepTime.value.toInt() + _evenStepTime.value.toInt(),
                     steps = rhythmState.value.stepCount,
+                    leftFootAverageSpeed = _oddStepTime.value / _oddStepCount.value,
+                    rightFootAverageSpeed = _evenStepTime.value / _evenStepCount.value,
+                    bit = rhythmState.value.bit,
+                    bpm = rhythmState.value.bpm
                 )
             ).onSuccess {
                 resetStepCount()
