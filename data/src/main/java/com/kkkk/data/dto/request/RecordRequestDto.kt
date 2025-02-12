@@ -12,8 +12,24 @@ data class RecordRequestDto(
     val duration: Int,
     @SerialName("steps")
     val steps: Int,
+    @SerialName("leftFootAverageSpeed")
+    val leftFootAverageSpeed: Long,
+    @SerialName("rightFootAverageSpeed")
+    val rightFootAverageSpeed: Long,
+    @SerialName("bit")
+    val bit: Int,
+    @SerialName("bpm")
+    val bpm: Int,
 ) {
     companion object {
-        fun RecordRequestModel.toDto() = RecordRequestDto(accuracy, duration, steps)
+        fun RecordRequestModel.toDto() = RecordRequestDto(
+            accuracy,
+            duration,
+            steps,
+            leftFootAverageSpeed,
+            rightFootAverageSpeed,
+            bit,
+            bpm
+        )
     }
 }
