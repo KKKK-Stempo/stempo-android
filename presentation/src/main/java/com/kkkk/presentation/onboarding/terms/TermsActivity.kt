@@ -16,6 +16,8 @@ class TermsActivity : BaseActivity<ActivityTermsBinding>(R.layout.activity_terms
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        AmplitudeManager.trackEvent("view_terms")
+
         binding.tvTerms.setOnClickListener {
             navigateToWeb(URL_TERMS)
         }

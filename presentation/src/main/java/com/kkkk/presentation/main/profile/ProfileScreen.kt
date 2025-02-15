@@ -28,8 +28,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.kkkk.core.extension.stringOf
@@ -42,6 +44,7 @@ import com.kkkk.presentation.main.theme.Gray200
 import com.kkkk.presentation.main.theme.Gray500
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.White
+import com.kkkk.presentation.manager.AmplitudeManager
 import com.kkkk.stempo.presentation.BuildConfig
 import com.kkkk.stempo.presentation.R
 
@@ -54,6 +57,12 @@ fun ProfileRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val systemUiController = rememberSystemUiController()
+
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            AmplitudeManager.trackEvent("view_profile")
+        }
+    }
 
     LaunchedEffect(viewModel.profileSideEffect, lifecycleOwner) {
         viewModel.profileSideEffect.collect { sideEffect ->
