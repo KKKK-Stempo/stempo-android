@@ -23,6 +23,7 @@ import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.core.extension.setNavigationBarColorFromResource
 import com.kkkk.core.extension.setStatusBarColorFromResource
 import com.kkkk.presentation.main.MainActivity
+import com.kkkk.presentation.manager.AmplitudeManager
 import com.kkkk.presentation.onboarding.terms.TermsActivity
 import com.kkkk.stempo.presentation.R
 import com.kkkk.stempo.presentation.databinding.ActivitySplashBinding
@@ -80,7 +81,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
     }
 
     private fun login() {
-        viewModel.setAndroidId(getDeviceTag())
+        val deviceTag = getDeviceTag()
+        viewModel.setAndroidId(deviceTag)
+        AmplitudeManager.setUserId(deviceTag)
     }
 
     private fun isActivityRecognitionPermissionGranted(context: Context): Boolean {

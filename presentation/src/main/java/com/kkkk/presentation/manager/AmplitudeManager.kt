@@ -21,6 +21,10 @@ object AmplitudeManager {
             )
     }
 
+    fun setUserId(userId: String) {
+        amplitude.setUserId(userId)
+    }
+
     fun trackEvent(
         eventName: String,
         properties1: Map<String, Any>? = null,
