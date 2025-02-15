@@ -94,6 +94,7 @@ dependencies {
         implementation(circularProgressBar)
         implementation(circleIndicator)
         implementation(phoenix)
+        implementation(amplitude)
     }
 
     JitPackDependencies.run {
