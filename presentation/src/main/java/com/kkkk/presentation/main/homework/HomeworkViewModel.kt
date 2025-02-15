@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.entity.response.StudyModel.StudyItemModel
 import com.kkkk.domain.repository.StudyRepository
 import com.kkkk.presentation.main.homework.model.HomeworkMode
+import com.kkkk.presentation.manager.AmplitudeManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,6 +32,7 @@ class HomeworkViewModel @Inject constructor(
 
     fun changeSelectedMode(selectedMode: HomeworkMode) {
         _homeworkState.update { it.copy(selectedMode = selectedMode) }
+        AmplitudeManager.trackEvent("homework_mode_change", mapOf("mode" to selectedMode.name))
     }
 
     fun changeDialogVisible(isDialogVisible: Boolean) {
@@ -68,6 +70,7 @@ class HomeworkViewModel @Inject constructor(
                             .sortedWith(compareBy<StudyItemModel> { it.completed }.thenBy { it.id })
                     )
                     changeDialogVisible(false)
+                    AmplitudeManager.trackEvent("add_homework")
                     _homeworkSideEffect.emit(HomeworkSideEffect.SuccessAddToast)
                 }.onFailure {
                     _homeworkSideEffect.emit(HomeworkSideEffect.ErrorToast)
@@ -82,6 +85,7 @@ class HomeworkViewModel @Inject constructor(
                     updateHomeworkList(
                         homeworkState.value.homeworkList.filter { it.id != homeworkId }
                     )
+                    AmplitudeManager.trackEvent("delete_homework")
                     _homeworkSideEffect.emit(HomeworkSideEffect.SuccessDeleteToast)
                 }.onFailure {
                     _homeworkSideEffect.emit(HomeworkSideEffect.ErrorToast)
@@ -105,6 +109,7 @@ class HomeworkViewModel @Inject constructor(
                             }
                             .sortedWith(compareBy<StudyItemModel> { it.completed }.thenBy { it.id })
                     )
+                    AmplitudeManager.trackEvent("update_homework")
                 }.onFailure {
                     _homeworkSideEffect.emit(HomeworkSideEffect.ErrorToast)
                 }

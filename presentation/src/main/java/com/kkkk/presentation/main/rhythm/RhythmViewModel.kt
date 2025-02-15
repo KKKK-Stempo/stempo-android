@@ -13,6 +13,7 @@ import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
 import com.kkkk.presentation.main.rhythm.model.PlayState
 import com.kkkk.presentation.main.rhythm.model.RhythmMode
+import com.kkkk.presentation.manager.AmplitudeManager
 import com.kkkk.presentation.manager.PhoneDataManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -73,10 +74,12 @@ constructor(
 
     fun changeSelectedMode(selectedMode: RhythmMode) {
         _rhythmState.update { it.copy(selectedMode = selectedMode, isPlaying = PlayState.DEFAULT) }
+        AmplitudeManager.trackEvent("change_rhythm_mode", mapOf("mode" to selectedMode.name))
     }
 
     fun changeIsPlaying(isPlaying: PlayState) {
         _rhythmState.update { it.copy(isPlaying = isPlaying) }
+        AmplitudeManager.trackEvent("change_rhythm_play_state", mapOf("state" to isPlaying.name))
     }
 
     private fun changeIsLoading(isLoading: Boolean) {
@@ -85,20 +88,28 @@ constructor(
 
     fun showBottomSheet(show: Boolean) {
         _rhythmState.update { it.copy(isBottomSheetVisible = show, isPlaying = PlayState.DEFAULT) }
+        if (show) AmplitudeManager.trackEvent("show_rhythm_bottom_sheet")
     }
 
     fun showSaveDialog(show: Boolean) {
         _rhythmState.update { it.copy(isSaveDialogVisible = show) }
+        if (show) AmplitudeManager.trackEvent("show_rhythm_save_dialog")
     }
 
     fun showSyncDialog(show: Boolean) {
         _rhythmState.update { it.copy(isSyncDialogVisible = show) }
+        if (show) AmplitudeManager.trackEvent("show_rhythm_sync_dialog")
     }
 
     fun updateRhythm(bit: Int, bpm: Int) {
         _rhythmState.update { it.copy(bit = bit, bpm = bpm, isPlaying = PlayState.DEFAULT) }
         userRepository.setBpm(bpm)
         userRepository.setBit(bit)
+        AmplitudeManager.apply {
+            trackEvent("change_rhythm_bit_bpm", mapOf("bit" to bit, "bpm" to bpm))
+            updateIntProperties("bit", bit)
+            updateIntProperties("bpm", bpm)
+        }
     }
 
     fun updateIsPlayerLoaded(isPlayerLoaded: Boolean) {
@@ -192,7 +203,7 @@ constructor(
     fun pauseMusic(isDialogNeeded: Boolean) {
         Choreographer.getInstance().postFrameCallback {
             if (beatStream != 0) soundPool.pause(beatStream)
-            runCatching {  if (mediaPlayer.isPlaying) mediaPlayer.pause() }
+            runCatching { if (mediaPlayer.isPlaying) mediaPlayer.pause() }
         }
         if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
             showSaveDialog(true)
@@ -277,6 +288,7 @@ constructor(
             ).onSuccess {
                 resetStepCount()
                 _rhythmSideEffect.emit(RhythmSideEffect.SaveSuccessToast)
+                AmplitudeManager.trackEvent("save_rhythm_record", mapOf("accuracy" to accuracy))
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
             }

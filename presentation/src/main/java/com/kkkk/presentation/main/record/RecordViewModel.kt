@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.mikephil.charting.data.Entry
 import com.kkkk.domain.entity.response.RecordModel
 import com.kkkk.domain.repository.RecordRepository
+import com.kkkk.presentation.manager.AmplitudeManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +45,7 @@ constructor(
 
     fun updateSelectedMonth(month: Int) {
         _recordState.update { it.copy(selectedMonth = month, isDropDownVisible = false) }
+        AmplitudeManager.trackEvent("change_selected_record_month")
     }
 
     private fun getStatisticBadges() {
