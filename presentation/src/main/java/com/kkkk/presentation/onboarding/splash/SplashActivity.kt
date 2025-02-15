@@ -72,6 +72,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
     private fun observeUserState() {
         viewModel.userState.flowWithLifecycle(lifecycle).onEach { isSuccess ->
+            AmplitudeManager.updateBooleanProperties("is_signed_up", isSuccess)
             if (isSuccess) {
                 navigateToScreenClear<MainActivity>()
             } else {

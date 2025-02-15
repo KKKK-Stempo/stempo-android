@@ -55,6 +55,13 @@ object AmplitudeManager {
         amplitude.identify(Identify().set(propertyName, values))
     }
 
+    fun updateBooleanProperties(
+        propertyName: String,
+        values: Boolean,
+    ) {
+        amplitude.identify(Identify().set(propertyName, values))
+    }
+
     fun updateIntProperties(
         propertyName: String,
         intValues: Int,
