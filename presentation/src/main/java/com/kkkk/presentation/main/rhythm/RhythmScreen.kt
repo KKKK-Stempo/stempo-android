@@ -43,8 +43,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -75,6 +77,7 @@ import com.kkkk.presentation.main.theme.Gray500
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.Transparent50
 import com.kkkk.presentation.main.theme.White
+import com.kkkk.presentation.manager.AmplitudeManager
 import com.kkkk.stempo.presentation.R
 import kotlinx.coroutines.launch
 import java.io.File
@@ -107,6 +110,12 @@ fun RhythmRoute(
     val maxHeight = LocalConfiguration.current.screenHeightDp.dp * 0.9f
 
     val systemUiController = rememberSystemUiController()
+
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            AmplitudeManager.trackEvent("view_rhythm")
+        }
+    }
 
     LaunchedEffect(viewModel.rhythmSideEffect, lifecycleOwner) {
         viewModel.rhythmSideEffect.collect { sideEffect ->

@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
+import com.kkkk.presentation.manager.AmplitudeManager
 import com.kkkk.presentation.onboarding.onbarding.OnboardingActivity
 import com.kkkk.stempo.presentation.R
 import com.kkkk.stempo.presentation.databinding.ActivityTermsBinding
@@ -15,6 +16,8 @@ class TermsActivity : BaseActivity<ActivityTermsBinding>(R.layout.activity_terms
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        AmplitudeManager.trackEvent("view_terms")
+
         binding.tvTerms.setOnClickListener {
             navigateToWeb(URL_TERMS)
         }
@@ -24,6 +27,7 @@ class TermsActivity : BaseActivity<ActivityTermsBinding>(R.layout.activity_terms
         }
 
         binding.btnTermsAgree.setOnClickListener {
+            AmplitudeManager.updateBooleanProperties("agreed_to_terms", true)
             navigateToScreenClear<OnboardingActivity>()
         }
     }

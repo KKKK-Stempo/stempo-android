@@ -21,8 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -41,6 +43,7 @@ import com.kkkk.presentation.main.homework.model.HomeworkMode
 import com.kkkk.presentation.main.theme.Gray100
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.Transparent50
+import com.kkkk.presentation.manager.AmplitudeManager
 import com.kkkk.stempo.presentation.R
 
 @Composable
@@ -56,6 +59,12 @@ fun HomeworkRoute(
     val lottieLoading by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.stempo_loading)
     )
+
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            AmplitudeManager.trackEvent("view_homework")
+        }
+    }
 
     LaunchedEffect(viewModel.homeworkSideEffect, lifecycleOwner) {
         viewModel.homeworkSideEffect.collect { sideEffect ->

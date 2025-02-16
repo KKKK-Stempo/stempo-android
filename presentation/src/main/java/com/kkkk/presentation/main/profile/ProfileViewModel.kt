@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.repository.AuthRepository
 import com.kkkk.domain.repository.UserRepository
 import com.kkkk.presentation.main.profile.model.ProfileButtonType
+import com.kkkk.presentation.manager.AmplitudeManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +31,7 @@ constructor(
         viewModelScope.launch {
             _profileSideEffect.emit(ProfileSideEffect.WebsiteClicked(btnType.url))
         }
+        AmplitudeManager.trackEvent("click_website", mapOf("website" to btnType.name))
     }
 
     fun showNotPreparedToast() {
@@ -48,6 +50,7 @@ constructor(
                 authorization = BEARER + " " + userRepository.getRefreshToken()
             ).onSuccess {
                 userRepository.clearInfo()
+                AmplitudeManager.trackEvent("withdraw_account")
                 _profileSideEffect.emit(ProfileSideEffect.ProfileCleared)
             }
         }

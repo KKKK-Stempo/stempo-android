@@ -24,7 +24,20 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField(
+                "String",
+                "AMPLITUDE_KEY",
+                gradleLocalProperties(rootDir).getProperty("amplitude.dev.key"),
+            )
+        }
         release {
+            buildConfigField(
+                "String",
+                "AMPLITUDE_KEY",
+                gradleLocalProperties(rootDir).getProperty("amplitude.prod.key"),
+            )
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

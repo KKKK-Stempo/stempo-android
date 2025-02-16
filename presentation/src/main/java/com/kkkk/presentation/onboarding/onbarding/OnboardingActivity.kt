@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import com.kkkk.core.base.BaseActivity
 import com.kkkk.core.extension.navigateToScreenClear
 import com.kkkk.presentation.main.MainActivity
+import com.kkkk.presentation.manager.AmplitudeManager
 import com.kkkk.stempo.presentation.R
 import com.kkkk.stempo.presentation.databinding.ActivityOnboardingBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,6 +41,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        AmplitudeManager.trackEvent("view_onboarding")
         initFragmentManager()
         observeOnboardingState()
     }

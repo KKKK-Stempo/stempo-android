@@ -75,6 +75,8 @@ object ThirdPartyDependencies {
     const val circleIndicator = "me.relex:circleindicator:${Versions.circleIndicatorVersion}"
     const val shimmer = "com.facebook.shimmer:shimmer:${Versions.shimmerVersion}"
     const val phoenix = "com.jakewharton:process-phoenix:${Versions.phoenix}"
+
+    const val amplitude = "com.amplitude:analytics-android:${Versions.amplitudeVersion}"
 }
 
 object JitPackDependencies {

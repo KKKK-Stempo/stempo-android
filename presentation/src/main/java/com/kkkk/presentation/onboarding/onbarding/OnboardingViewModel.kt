@@ -1,10 +1,10 @@
 package com.kkkk.presentation.onboarding.onbarding
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.repository.AuthRepository
 import com.kkkk.domain.repository.UserRepository
+import com.kkkk.presentation.manager.AmplitudeManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +33,7 @@ class OnboardingViewModel @Inject constructor(
 
     fun setBpmLevel(deviceTag: String) {
         val bpm = round(_stepCount.value.coerceIn(60, 120) / 10.0) * 10
+        AmplitudeManager.updateIntProperties("recommanded_bpm", bpm.toInt())
 
         viewModelScope.launch {
             authRepository.signup(deviceTag).onSuccess {
