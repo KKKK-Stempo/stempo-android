@@ -50,6 +50,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
+import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.record.component.DottedShape
 import com.kkkk.presentation.main.record.component.RecordLineChart
@@ -237,7 +238,7 @@ fun RecordMonthSelectBtn(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
-        Text(
+        FixedText(
             modifier = Modifier.padding(start = 17.dp),
             text = stringResource(id = R.string.report_tv_month, recordState.selectedMonth),
             style = StempoTheme.typography.head1
@@ -267,13 +268,13 @@ fun RecordTitleWithAccuracy(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
+        FixedText(
             modifier = Modifier.padding(start = 16.dp),
             text = stringResource(id = R.string.report_tv_title),
             style = StempoTheme.typography.head1
         )
         if (!recordState.isRecordEmpty) {
-            Text(
+            FixedText(
                 modifier = Modifier.padding(end = 20.dp),
                 text = stringResource(
                     id = R.string.report_tv_accuracy_average,
@@ -299,7 +300,7 @@ fun RecordDropDown(
     ) {
         LazyColumn {
             items(immutableListOf(1, 3, 6), key = { it }) { month ->
-                Text(
+               FixedText(
                     text = stringResource(id = R.string.report_tv_month, month),
                     style = StempoTheme.typography.body1,
                     textAlign = TextAlign.Center,
@@ -347,13 +348,13 @@ fun RecordBadge(
             imageVector = ImageVector.vectorResource(imageRes),
             contentDescription = null
         )
-        Text(
+        FixedText(
             modifier = Modifier.padding(top = 2.dp),
             text = stringResource(text),
             style = StempoTheme.typography.caption1,
             color = Gray600
         )
-        Text(
+        FixedText(
             modifier = Modifier.padding(top = 4.dp),
             text = stringResource(R.string.report_tv_achieve_count, count),
             style = StempoTheme.typography.body1
@@ -374,7 +375,7 @@ fun RecordAchievementTitle(
             imageVector = ImageVector.vectorResource(R.drawable.ic_crown),
             contentDescription = null,
         )
-        Text(
+       FixedText(
             text = stringResource(id = R.string.report_tv_achieve_title),
             style = StempoTheme.typography.head3,
         )

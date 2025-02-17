@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.navigation.MainTabRoute
 import com.kkkk.presentation.main.navigation.Route
 import com.kkkk.presentation.main.theme.Dark
@@ -110,7 +111,7 @@ private fun MainBottomBarItem(
             tint = Color.Unspecified,
         )
 
-        Text(
+        FixedText(
             text = tab.title,
             color = if (selected) {
                 Dark

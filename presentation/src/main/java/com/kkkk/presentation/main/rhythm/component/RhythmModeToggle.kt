@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.rhythm.model.RhythmMode
 import com.kkkk.presentation.main.theme.Black
@@ -69,7 +70,7 @@ fun RhythmModeToggleItem(
             .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(
+        FixedText(
             text = mode.text,
             color = if (selectedMode == mode) Black else Gray600,
             style = StempoTheme.typography.head3,

@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.kkkk.domain.entity.response.StudyModel
+import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.homework.HomeworkState
 import com.kkkk.presentation.main.theme.Dark
 import com.kkkk.presentation.main.theme.Gray600
@@ -56,7 +57,7 @@ fun HomeworkProgressBarBox(
             Column(
                 modifier = Modifier.padding(16.dp),
             ) {
-                Text(
+                FixedText(
                     text = stringResource(R.string.study_tv_progress),
                     style = StempoTheme.typography.head4,
                     color = White
@@ -128,7 +129,7 @@ fun HomeworkEmptyBox(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
+        FixedText(
             text = stringResource(R.string.study_tv_empty),
             style = StempoTheme.typography.head4,
             color = White

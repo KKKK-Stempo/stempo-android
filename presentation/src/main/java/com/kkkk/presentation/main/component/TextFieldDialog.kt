@@ -11,14 +11,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.kkkk.presentation.main.theme.Gray100
@@ -46,40 +49,44 @@ fun TextFieldDialog(
                 .padding(horizontal = 16.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
+            FixedText(
                 text = title,
                 style = StempoTheme.typography.head3,
             )
 
-            TextField(
-                value = textValue.value,
-                onValueChange = { newValue ->
-                    textValue.value = newValue
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                shape = RoundedCornerShape(8.dp),
-                textStyle = StempoTheme.typography.body2,
-                placeholder = {
-                    Text(
-                        text = stringResource(R.string.study_add_hint),
-                        style = StempoTheme.typography.body2,
-                        color = Gray500
+            CompositionLocalProvider(
+                LocalDensity provides Density(LocalDensity.current.density, fontScale = 1f)
+            ) {
+                TextField(
+                    value = textValue.value,
+                    onValueChange = { newValue ->
+                        textValue.value = newValue
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    textStyle = StempoTheme.typography.body2,
+                    placeholder = {
+                        Text(
+                            text = stringResource(R.string.study_add_hint),
+                            style = StempoTheme.typography.body2,
+                            color = Gray500
+                        )
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Transparent,
+                        unfocusedIndicatorColor = Transparent,
+                        disabledIndicatorColor = Transparent,
+                        errorIndicatorColor = Transparent,
+                        focusedContainerColor = Gray100,
+                        unfocusedContainerColor = Gray100,
+                        disabledContainerColor = Gray100,
+                        errorContainerColor = Gray100,
+                        cursorColor = Purple50,
                     )
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Transparent,
-                    unfocusedIndicatorColor = Transparent,
-                    disabledIndicatorColor = Transparent,
-                    errorIndicatorColor = Transparent,
-                    focusedContainerColor = Gray100,
-                    unfocusedContainerColor = Gray100,
-                    disabledContainerColor = Gray100,
-                    errorContainerColor = Gray100,
-                    cursorColor = Purple50,
                 )
-            )
+            }
 
             Row(
                 modifier = Modifier
@@ -87,7 +94,7 @@ fun TextFieldDialog(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(
+               FixedText(
                     text = stringResource(R.string.study_add_exit),
                     style = StempoTheme.typography.head4,
                     color = Purple50,
@@ -100,7 +107,7 @@ fun TextFieldDialog(
                         .clickableWithoutRipple { onExitBtnClick() }
                         .padding(vertical = 15.dp)
                 )
-                Text(
+                FixedText(
                     text = stringResource(R.string.study_add_save),
                     style = StempoTheme.typography.head4,
                     color = Purple10,

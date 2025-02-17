@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Gray200
 import com.kkkk.presentation.main.theme.Gray600
@@ -32,7 +33,7 @@ fun RhythmBitItem(
             .padding(vertical = 12.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(
+        FixedText(
             text = "$bit 박자",
             style = StempoTheme.typography.head2,
             color = if (isSelected) White else Gray600

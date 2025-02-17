@@ -34,6 +34,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
 import com.kkkk.domain.entity.response.StudyModel
+import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.component.TextFieldDialog
 import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.homework.component.HomeworkModeToggle
@@ -164,7 +165,7 @@ fun HomeworkTopContent(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
+        FixedText(
             text = stringResource(id = R.string.study_tv_title),
             style = StempoTheme.typography.head2,
             modifier = Modifier.padding(start = 8.dp)
