@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.theme.Gray100
 import com.kkkk.presentation.main.theme.Gray300
@@ -39,7 +40,7 @@ fun RhythmBpmItem(
             .padding(vertical = 12.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(
+       FixedText(
             text = bpm.toString(),
             color = if (isSelected) Purple50 else Gray500,
             style = StempoTheme.typography.head3

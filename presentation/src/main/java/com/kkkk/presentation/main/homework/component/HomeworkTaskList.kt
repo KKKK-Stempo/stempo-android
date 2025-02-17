@@ -26,6 +26,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kkkk.domain.entity.response.StudyModel
+import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.homework.HomeworkState
 import com.kkkk.presentation.main.homework.model.HomeworkMode
@@ -52,7 +53,7 @@ fun HomeworkTaskList(
             .padding(horizontal = 16.dp)
             .background(Gray100)
     ) {
-        Text(
+        FixedText(
             text = stringResource(
                 id = if (homeworkState.selectedMode == HomeworkMode.MYSELF) {
                     R.string.study_tv_my
@@ -110,7 +111,7 @@ fun HomeworkTaskList(
                         contentColor = Purple50
                     )
                 ) {
-                    Text(
+                    FixedText(
                         text = stringResource(id = R.string.study_btn_add),
                         style = StempoTheme.typography.body3,
                         modifier = Modifier.padding(vertical = 6.dp)
@@ -148,7 +149,7 @@ fun HomeworkListItem(
             modifier = Modifier.clickableWithoutRipple { onCheckedBtnClick(studyItem) }
         )
 
-        Text(
+        FixedText(
             text = studyItem.description,
             style = StempoTheme.typography.head4,
             modifier = Modifier

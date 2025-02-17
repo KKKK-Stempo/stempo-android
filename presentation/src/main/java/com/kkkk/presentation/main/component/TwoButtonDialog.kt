@@ -39,7 +39,7 @@ fun TwoButtonDialog(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
+            FixedText(
                 text = content,
                 style = StempoTheme.typography.head3.copy(
                     lineHeight = 28.sp
@@ -54,7 +54,7 @@ fun TwoButtonDialog(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(
+               FixedText(
                     modifier = Modifier
                         .padding(end = 6.dp)
                         .background(color = Purple10, shape = RoundedCornerShape(12.dp))
@@ -66,7 +66,7 @@ fun TwoButtonDialog(
                     textAlign = TextAlign.Center,
                     color = Purple50
                 )
-                Text(
+              FixedText(
                     modifier = Modifier
                         .padding(start = 6.dp)
                         .background(color = Purple50, shape = RoundedCornerShape(12.dp))

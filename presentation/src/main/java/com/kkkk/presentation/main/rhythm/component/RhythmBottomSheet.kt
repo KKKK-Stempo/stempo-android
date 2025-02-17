@@ -34,6 +34,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.rhythm.RhythmState
 import com.kkkk.presentation.main.rhythm.RhythmState.Companion.MAX_BPM
@@ -86,7 +87,7 @@ fun RhythmBottomSheet(
                 .fillMaxWidth()
                 .padding(top = 10.dp),
         ) {
-            Text(
+           FixedText(
                 text = "박자 선택",
                 style = StempoTheme.typography.head4,
                 modifier = Modifier.padding(horizontal = 30.dp)
@@ -104,7 +105,7 @@ fun RhythmBottomSheet(
                 color = Gray300
             )
 
-            Text(
+          FixedText(
                 text = "빠르기 선택",
                 style = StempoTheme.typography.head4,
                 modifier = Modifier.padding(horizontal = 30.dp)
@@ -171,7 +172,7 @@ fun RhythmBpmUpDownBtns(
             onClick = { if (tempBpm > MIN_BPM) onMinusBtnClick() },
             modifier = Modifier.padding(start = 20.dp)
         )
-        Text(
+        FixedText(
             text = "$tempBpm",
             style = StempoTheme.typography.head1,
         )
@@ -211,7 +212,7 @@ fun RhythmBpmSelectGrid(
 fun ColumnScope.RhythmSubmitBtn(
     onSubmitBtnClick: () -> Unit
 ) {
-    Text(
+    FixedText(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)

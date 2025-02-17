@@ -36,6 +36,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
+import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.component.TwoButtonDialog
 import com.kkkk.presentation.main.component.clickableWithoutRipple
 import com.kkkk.presentation.main.profile.model.ProfileButtonType
@@ -170,7 +171,7 @@ fun ProfileTitle(
             imageVector = ImageVector.vectorResource(R.drawable.ic_logo_purple),
             contentDescription = null,
         )
-        Text(
+        FixedText(
             text = stringResource(id = R.string.profile_tv_title),
             style = StempoTheme.typography.head2,
             modifier = Modifier.padding(start = 8.dp)
@@ -221,7 +222,7 @@ fun ProfileContentItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
+        FixedText(
             text = text,
             style = StempoTheme.typography.head4
         )
@@ -231,7 +232,7 @@ fun ProfileContentItem(
                 contentDescription = null
             )
         } else {
-            Text(
+            FixedText(
                 text = versionText,
                 style = StempoTheme.typography.body2,
                 color = Gray500

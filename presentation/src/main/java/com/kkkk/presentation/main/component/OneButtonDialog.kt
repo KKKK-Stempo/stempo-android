@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,13 +36,13 @@ fun OneButtonDialog(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
+            FixedText(
                 text = content,
                 style = StempoTheme.typography.head3.copy(
                     lineHeight = 28.sp
                 ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 16.dp),
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -56,7 +55,7 @@ fun OneButtonDialog(
                     .padding(vertical = 15.dp, horizontal = 120.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
+                FixedText(
                     text = "확인",
                     style = StempoTheme.typography.head4,
                     color = Purple10

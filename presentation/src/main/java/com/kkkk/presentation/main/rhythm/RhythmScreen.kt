@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -59,6 +58,7 @@ import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.kkkk.core.extension.stringOf
 import com.kkkk.core.extension.toast
+import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.component.OneButtonDialog
 import com.kkkk.presentation.main.component.TwoButtonDialog
 import com.kkkk.presentation.main.component.clickableWithoutRipple
@@ -300,7 +300,7 @@ private fun RhythmScreen(
                     onChangeBtnClick = onChangeBtnClick
                 )
             } else {
-                Text(
+                FixedText(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 60.dp),
@@ -381,7 +381,7 @@ fun WatchSyncBtn(
 fun ColumnScope.RhythmTitleText(
     rhythmState: RhythmState
 ) {
-    Text(
+    FixedText(
         modifier = Modifier
             .padding(top = 26.dp, start = 60.dp, end = 60.dp)
             .align(Alignment.CenterHorizontally),
@@ -444,7 +444,7 @@ fun RhythmChangeBtn(
             contentDescription = null,
             modifier = Modifier.padding(top = 1.dp)
         )
-        Text(
+        FixedText(
             text = stringResource(id = R.string.rhythm_btn_change_level),
             style = StempoTheme.typography.head4,
             color = White
