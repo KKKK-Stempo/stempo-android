@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,12 +19,13 @@ import com.kkkk.presentation.main.theme.White
 
 @Composable
 fun RhythmBitItem(
-    bit: Int,
-    isSelected: Boolean,
-    onBitClick: () -> Unit = {}
+    modifier: Modifier = Modifier,
+    bit: Int = 2,
+    isSelected: Boolean = false,
+    onBitClick: () -> Unit = {},
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp)
             .clip(RoundedCornerShape(17.dp))
             .background(if (isSelected) Purple50 else Gray200)
