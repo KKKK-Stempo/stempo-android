@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,12 +21,13 @@ import com.kkkk.presentation.main.theme.White
 
 @Composable
 fun RhythmBpmItem(
-    bpm: Int,
-    isSelected: Boolean,
-    onBpmSelected: (Int) -> Unit
+    modifier: Modifier = Modifier,
+    bpm: Int = 60,
+    isSelected: Boolean = false,
+    onBpmSelected: (Int) -> Unit = {},
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .padding(8.dp)
             .clip(RoundedCornerShape(25.dp))
             .background(if (isSelected) White else Gray100)
@@ -37,10 +37,10 @@ fun RhythmBpmItem(
                 shape = RoundedCornerShape(25.dp)
             )
             .clickableWithoutRipple { onBpmSelected(bpm) }
-            .padding(vertical = 12.dp),
+            .padding(vertical = 42.dp),
         contentAlignment = Alignment.Center
     ) {
-       FixedText(
+        FixedText(
             text = bpm.toString(),
             color = if (isSelected) Purple50 else Gray500,
             style = StempoTheme.typography.head3

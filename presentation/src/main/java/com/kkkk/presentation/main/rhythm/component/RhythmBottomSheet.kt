@@ -10,16 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,7 +42,6 @@ import com.kkkk.presentation.main.theme.Purple50
 import com.kkkk.presentation.main.theme.StempoTheme
 import com.kkkk.presentation.main.theme.White
 import com.kkkk.stempo.presentation.R
-import okhttp3.internal.immutableListOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,11 +78,9 @@ fun RhythmBottomSheet(
         sheetState = sheetState
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp),
+            modifier = Modifier.fillMaxWidth(),
         ) {
-           FixedText(
+            FixedText(
                 text = "박자 선택",
                 style = StempoTheme.typography.head4,
                 modifier = Modifier.padding(horizontal = 30.dp)
@@ -105,7 +98,7 @@ fun RhythmBottomSheet(
                 color = Gray300
             )
 
-          FixedText(
+            FixedText(
                 text = "빠르기 선택",
                 style = StempoTheme.typography.head4,
                 modifier = Modifier.padding(horizontal = 30.dp)
@@ -136,19 +129,28 @@ fun RhythmBitSelectGrid(
     tempBit: Int,
     onBitClick: (bit: Int) -> Unit
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+    Column(
         modifier = Modifier
             .padding(top = 10.dp)
             .padding(horizontal = 20.dp)
             .fillMaxWidth()
     ) {
-        items(immutableListOf(2, 3, 4, 6, 8), key = { it }) { bit ->
-            RhythmBitItem(
-                bit = bit,
-                isSelected = bit == tempBit,
-                onBitClick = { onBitClick(bit) }
-            )
+        listOf(2, 3, 4, 6, 8).chunked(2).forEach { rowItems ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                rowItems.forEach { bit ->
+                    RhythmBitItem(
+                        modifier = Modifier.weight(1f),
+                        bit = bit,
+                        isSelected = bit == tempBit,
+                        onBitClick = { onBitClick(bit) },
+                    )
+                }
+                if (rowItems.size < 2) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
         }
     }
 }
@@ -190,20 +192,25 @@ fun RhythmBpmSelectGrid(
     tempBpm: Int,
     onBpmSelected: (bpm: Int) -> Unit
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
+    Column(
         modifier = Modifier
             .padding(top = 24.dp)
             .padding(horizontal = 20.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+            .fillMaxWidth()
     ) {
-        items(immutableListOf(65, 75, 85, 95, 105, 115), key = { it }) { bpm ->
-            RhythmBpmItem(
-                bpm = bpm,
-                isSelected = tempBpm == bpm,
-                onBpmSelected = { onBpmSelected(bpm) }
-            )
+        listOf(65, 75, 85, 95, 105, 115).chunked(3).forEach { rowItems ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                rowItems.forEach { bpm ->
+                    RhythmBpmItem(
+                        modifier = Modifier.weight(1f),
+                        bpm = bpm,
+                        isSelected = tempBpm == bpm,
+                        onBpmSelected = { onBpmSelected(bpm) }
+                    )
+                }
+            }
         }
     }
 }
