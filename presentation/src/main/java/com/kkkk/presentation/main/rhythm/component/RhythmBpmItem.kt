@@ -37,7 +37,7 @@ fun RhythmBpmItem(
                 shape = RoundedCornerShape(25.dp)
             )
             .clickableWithoutRipple { onBpmSelected(bpm) }
-            .padding(vertical = 42.dp),
+            .padding(vertical = 12.dp),
         contentAlignment = Alignment.Center
     ) {
         FixedText(
