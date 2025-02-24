@@ -42,11 +42,11 @@ class MusicManager @Inject constructor(
      * @param speed ExoPlayer의 재생 속도 (기본값 1.0f).
      * @param file SoundPool이 사용할 사운드 파일.
      */
-    suspend fun load(resourceId: Int, speed: Float = 1.0f, file: File) =
+    suspend fun load(resourceId: Int, speed: Float = 1.0f, filename: String) =
         coroutineScope {
             listOf(
                 async { loadExoPlayerAsync(resourceId, speed) },
-                async { loadSoundPoolAsync(file) }
+                async { loadSoundPoolAsync(filename) }
             ).awaitAll()
         }
 
@@ -104,7 +104,7 @@ class MusicManager @Inject constructor(
         }
     }
 
-    private suspend fun loadSoundPoolAsync(file: File) =
+    private suspend fun loadSoundPoolAsync(filename: String) =
         suspendCancellableCoroutine { continuation ->
             runCatching {
                 setupSoundPoolIfNeeded()
@@ -124,7 +124,7 @@ class MusicManager @Inject constructor(
 
                 // 새로운 음원 로드
                 beatStream = NO_STREAM
-                beatSound = soundPool.load(file.absolutePath, 1)
+                beatSound = soundPool.load(File(appContext.filesDir, filename).absolutePath, 1)
             }.onFailure {
                 continuation.resumeWithException(it)
             }
@@ -154,7 +154,7 @@ class MusicManager @Inject constructor(
     fun pause() {
         Choreographer.getInstance().postFrameCallback {
             if (beatStream != NO_STREAM) soundPool.pause(beatStream)
-            exoPlayer.pause()
+            if (::exoPlayer.isInitialized) exoPlayer.pause()
         }
     }
 
