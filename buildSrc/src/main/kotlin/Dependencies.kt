@@ -34,7 +34,7 @@ object AndroidXDependencies {
         "com.google.android.gms:play-services-oss-licenses:${Versions.ossVersion}"
     const val wearable = "com.google.android.gms:play-services-wearable:${Versions.wearableVersion}"
 
-    const val exoplayer = "androidx.media3:media3-exoplayer${Versions.exoplayerVersion}"
+    const val exoplayer = "androidx.media3:media3-exoplayer:${Versions.exoplayerVersion}"
 }
 
 object TestDependencies {

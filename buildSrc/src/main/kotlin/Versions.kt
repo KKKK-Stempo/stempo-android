@@ -40,7 +40,7 @@ object Versions {
 
     const val amplitudeVersion = "1.17.3"
 
-    const val exoplayerVersion = "1.5.0"
+    const val exoplayerVersion = "1.5.1"
 
     const val junitVersion = "4.13.2"
     const val espressoVersion = "3.5.1"
