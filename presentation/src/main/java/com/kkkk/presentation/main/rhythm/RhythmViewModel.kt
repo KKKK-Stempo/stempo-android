@@ -11,6 +11,7 @@ import com.kkkk.domain.entity.request.RecordRequestModel
 import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
+import com.kkkk.presentation.main.rhythm.manager.MusicManager
 import com.kkkk.presentation.main.rhythm.model.PlayState
 import com.kkkk.presentation.main.rhythm.model.RhythmMode
 import com.kkkk.presentation.manager.AmplitudeManager
@@ -38,7 +39,8 @@ class RhythmViewModel
 constructor(
     private val rhythmRepository: RhythmRepository,
     private val userRepository: UserRepository,
-    private val phoneDataManager: PhoneDataManager
+    private val phoneDataManager: PhoneDataManager,
+    private val musicManager: MusicManager
 ) : ViewModel() {
     private val _rhythmState = MutableStateFlow(RhythmState())
     val rhythmState = _rhythmState.asStateFlow()
