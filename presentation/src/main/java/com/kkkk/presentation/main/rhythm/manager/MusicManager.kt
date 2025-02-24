@@ -3,6 +3,7 @@ package com.kkkk.presentation.main.rhythm.manager
 import android.content.Context
 import android.media.SoundPool
 import android.net.Uri
+import android.view.Choreographer
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.PlaybackParameters
@@ -41,7 +42,7 @@ class MusicManager @Inject constructor(
      * @param speed ExoPlayer의 재생 속도 (기본값 1.0f).
      * @param file SoundPool이 사용할 사운드 파일.
      */
-    suspend fun loadRhythmAndBeatPlayer(resourceId: Int, speed: Float = 1.0f, file: File) =
+    suspend fun load(resourceId: Int, speed: Float = 1.0f, file: File) =
         coroutineScope {
             listOf(
                 async { loadExoPlayerAsync(resourceId, speed) },
@@ -129,14 +130,37 @@ class MusicManager @Inject constructor(
             }
         }
 
+    /**
+     * 시작 프레임 콜백에서 ExoPlayer를 재생 상태로 전환하고, SoundPool의 사운드를 재개하거나 새로 재생합니다.
+     */
     fun play() {
-        exoPlayer.play()
+        Choreographer.getInstance().postFrameCallback {
+            exoPlayer.play()
+            playOrResumeSoundPool()
+        }
     }
 
+    private fun playOrResumeSoundPool() {
+        if (beatStream != 0) {
+            soundPool.resume(beatStream)
+        } else {
+            beatStream = soundPool.play(beatSound, 10f, 10f, 1, -1, 1f)
+        }
+    }
+
+    /**
+     * 시작 프레임 콜백에서 SoundPool에 재생 중인 사운드가 있다면 일시정지시키고, ExoPlayer를 일시정지합니다.
+     */
     fun pause() {
-        exoPlayer.pause()
+        Choreographer.getInstance().postFrameCallback {
+            if (beatStream != NO_STREAM) soundPool.pause(beatStream)
+            exoPlayer.pause()
+        }
     }
 
+    /**
+     * ExoPlayer와 SoundPool에 할당된 리소스를 해제합니다.
+     */
     fun release() {
         exoPlayer.release()
         soundPool.release()
