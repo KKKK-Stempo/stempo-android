@@ -28,11 +28,26 @@ class MusicManager @Inject constructor(
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var soundPool: SoundPool
 
-    // 현재 로드된 음원의 사운드 ID
+    // 현재 로드된 비트(SoundPool)의 사운드 ID
     private var beatSound: Int = NO_SOUND
 
-    // 현재 재생 중이거나 일시정지된 음원의 스트림 ID
+    // 현재 재생 중이거나 일시정지된 비트(SoundPool)의 스트림 ID
     private var beatStream: Int = NO_STREAM
+
+    /**
+     * 동시에 ExoPlayer와 SoundPool을 로드하여 리듬 및 비트 사운드를 초기화합니다.
+     *
+     * @param resourceId ExoPlayer가 사용할 raw 리소스의 리소스 ID.
+     * @param speed ExoPlayer의 재생 속도 (기본값 1.0f).
+     * @param file SoundPool이 사용할 사운드 파일.
+     */
+    suspend fun loadRhythmAndBeatPlayer(resourceId: Int, speed: Float = 1.0f, file: File) =
+        coroutineScope {
+            listOf(
+                async { loadExoPlayerAsync(resourceId, speed) },
+                async { loadSoundPoolAsync(file) }
+            ).awaitAll()
+        }
 
     private fun setupExoPlayerIfNeeded() {
         if (!::exoPlayer.isInitialized) {
@@ -42,22 +57,6 @@ class MusicManager @Inject constructor(
             }
         }
     }
-
-    private fun setupSoundPoolIfNeeded() {
-        if (!::soundPool.isInitialized) {
-            soundPool = SoundPool.Builder()
-                .setMaxStreams(1)
-                .build()
-        }
-    }
-
-    suspend fun loadRhythmAndBeatPlayer(resourceId: Int, file: File, speed: Float = 1.0f) =
-        coroutineScope {
-            listOf(
-                async { loadExoPlayerAsync(resourceId, speed) },
-                async { loadSoundPoolAsync(file) }
-            ).awaitAll()
-        }
 
     private suspend fun loadExoPlayerAsync(resourceId: Int, speed: Float) =
         suspendCancellableCoroutine { continuation ->
@@ -95,6 +94,14 @@ class MusicManager @Inject constructor(
                 continuation.resumeWithException(it)
             }
         }
+
+    private fun setupSoundPoolIfNeeded() {
+        if (!::soundPool.isInitialized) {
+            soundPool = SoundPool.Builder()
+                .setMaxStreams(1)
+                .build()
+        }
+    }
 
     private suspend fun loadSoundPoolAsync(file: File) =
         suspendCancellableCoroutine { continuation ->
