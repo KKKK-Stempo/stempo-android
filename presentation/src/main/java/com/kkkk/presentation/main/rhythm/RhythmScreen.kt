@@ -199,7 +199,8 @@ fun RhythmRoute(
         onWatchBtnClick = { viewModel.showSyncDialog(true) },
         onPlayBtnClick = { viewModel.changeIsPlaying(PlayState.PLAYING) },
         onPauseBtnClick = { viewModel.changeIsPlaying(PlayState.PAUSE) },
-        onChangeBtnClick = { viewModel.showBottomSheet(true) }
+        onChangeBtnClick = { viewModel.showBottomSheet(true) },
+        onMuteBtnClick = viewModel::changeIsMute
     )
 
     if (rhythmState.isBottomSheetVisible) {

@@ -136,10 +136,10 @@ class MusicManager @Inject constructor(
     /**
      * ExoPlayer와 SoundPool을 재생합니다.
      */
-    suspend fun play() {
+    suspend fun play(isMute : Boolean) {
         coroutineScope {
             listOf(
-                async { exoPlayer.play() },
+                async { if (!isMute) exoPlayer.play() },
                 async { playOrResumeSoundPool() }
             ).awaitAll()
         }
@@ -156,11 +156,11 @@ class MusicManager @Inject constructor(
     /**
      *  ExoPlayer와 SoundPool을 일시정지합니다.
      */
-    suspend fun pause() {
+    suspend fun pause(isMute: Boolean) {
         coroutineScope {
             listOf(
-                async { if (beatStream != NO_STREAM) soundPool.pause(beatStream) },
-                async { if (::exoPlayer.isInitialized) exoPlayer.pause() }
+                async { if (::exoPlayer.isInitialized && !isMute) exoPlayer.pause() },
+                async { if (beatStream != NO_STREAM) soundPool.pause(beatStream) }
             ).awaitAll()
         }
     }

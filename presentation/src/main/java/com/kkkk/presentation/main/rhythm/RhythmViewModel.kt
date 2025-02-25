@@ -74,6 +74,13 @@ constructor(
         _rhythmState.update { it.copy(isLoading = isLoading) }
     }
 
+    fun changeIsMute() {
+        if (rhythmState.value.isPlaying == PlayState.DEFAULT || rhythmState.value.isPlaying == PlayState.STOP) {
+            _rhythmState.update { it.copy(isMute = !it.isMute) }
+            AmplitudeManager.trackEvent("change_rhythm_mute_state")
+        }
+    }
+
     fun showBottomSheet(show: Boolean) {
         _rhythmState.update { it.copy(isBottomSheetVisible = show, isPlaying = PlayState.DEFAULT) }
         if (show) AmplitudeManager.trackEvent("show_rhythm_bottom_sheet")
@@ -105,6 +112,7 @@ constructor(
     }
 
     fun loadMusicPlayers() {
+        changeIsLoading(true)
         viewModelScope.launch {
             runCatching {
                 val (resourceId, speed, filename) = if (rhythmState.value.selectedMode == RhythmMode.STRETCH) {
@@ -133,7 +141,7 @@ constructor(
         viewModelScope.launch {
             runCatching {
                 check(rhythmState.value.isPlayerLoaded)
-                musicManager.play()
+                musicManager.play(rhythmState.value.isMute)
             }.onFailure {
                 changeIsPlaying(PlayState.DEFAULT)
                 loadMusicPlayers()
@@ -146,7 +154,7 @@ constructor(
     fun pauseMusic(isDialogNeeded: Boolean) {
         viewModelScope.launch {
             runCatching {
-                musicManager.pause()
+                musicManager.pause(rhythmState.value.isMute)
             }.onSuccess {
                 if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
                     showSaveDialog(true)
