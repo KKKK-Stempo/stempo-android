@@ -181,10 +181,6 @@ fun RhythmRoute(
         onDispose { wearableDataClient.removeListener(wearableDataListener) }
     }
 
-    DisposableEffect(Unit) {
-        onDispose { viewModel.releaseMusicPlayers() }
-    }
-
     RhythmScreen(
         rhythmState = rhythmState,
         lottiePlaying = lottiePlaying,

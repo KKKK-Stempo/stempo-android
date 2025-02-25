@@ -125,15 +125,12 @@ constructor(
         }
     }
 
-    fun releaseMusicPlayers() {
-        musicManager.release()
-    }
-
     fun playMusic() {
-        if (rhythmState.value.isPlayerLoaded) {
-            musicManager.play()
-        } else {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            runCatching {
+                if (!rhythmState.value.isPlayerLoaded) throw IllegalStateException()
+                musicManager.play()
+            }.onFailure {
                 changeIsPlaying(PlayState.DEFAULT)
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
             }
@@ -141,10 +138,22 @@ constructor(
     }
 
     fun pauseMusic(isDialogNeeded: Boolean) {
-        musicManager.pause()
-        if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
-            showSaveDialog(true)
+        viewModelScope.launch {
+            runCatching {
+                musicManager.pause()
+            }.onSuccess {
+                if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
+                    showSaveDialog(true)
+                }
+            }.onFailure {
+                _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+            }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        musicManager.release()
     }
 
     fun downloadNewMusicFile(filePath: Path) {

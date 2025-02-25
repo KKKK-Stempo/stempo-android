@@ -3,7 +3,6 @@ package com.kkkk.presentation.main.rhythm.manager
 import android.content.Context
 import android.media.SoundPool
 import android.net.Uri
-import android.view.Choreographer
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.PlaybackParameters
@@ -131,12 +130,14 @@ class MusicManager @Inject constructor(
         }
 
     /**
-     * 시작 프레임 콜백에서 ExoPlayer를 재생 상태로 전환하고, SoundPool의 사운드를 재개하거나 새로 재생합니다.
+     * ExoPlayer와 SoundPool을 재생합니다.
      */
-    fun play() {
-        Choreographer.getInstance().postFrameCallback {
-            exoPlayer.play()
-            playOrResumeSoundPool()
+    suspend fun play() {
+        coroutineScope {
+            listOf(
+                async { exoPlayer.play() },
+                async { playOrResumeSoundPool() }
+            ).awaitAll()
         }
     }
 
@@ -149,12 +150,14 @@ class MusicManager @Inject constructor(
     }
 
     /**
-     * 시작 프레임 콜백에서 SoundPool에 재생 중인 사운드가 있다면 일시정지시키고, ExoPlayer를 일시정지합니다.
+     *  ExoPlayer와 SoundPool을 일시정지합니다.
      */
-    fun pause() {
-        Choreographer.getInstance().postFrameCallback {
-            if (beatStream != NO_STREAM) soundPool.pause(beatStream)
-            if (::exoPlayer.isInitialized) exoPlayer.pause()
+    suspend fun pause() {
+        coroutineScope {
+            listOf(
+                async { if (beatStream != NO_STREAM) soundPool.pause(beatStream) },
+                async { if (::exoPlayer.isInitialized) exoPlayer.pause() }
+            ).awaitAll()
         }
     }
 
