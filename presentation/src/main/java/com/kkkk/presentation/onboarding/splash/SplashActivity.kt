@@ -41,13 +41,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
         AmplitudeManager.trackEvent("view_splash")
         setStatusBarColor()
         setNavigationBarColor()
-        observeStates()
+        observeUserState()
     }
 
     override fun onResume() {
         super.onResume()
         if (isActivityRecognitionPermissionGranted(this)) {
-            viewModel.checkTokenState()
+            login()
         } else {
             showDialog()
         }
@@ -55,21 +55,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
     private fun setStatusBarColor() = setStatusBarColorFromResource(R.color.purple_50)
     private fun setNavigationBarColor() = setNavigationBarColorFromResource(R.color.purple_50)
-
-    private fun observeStates() {
-        observeTokenState()
-        observeUserState()
-    }
-
-    private fun observeTokenState() {
-        viewModel.isValidToken.flowWithLifecycle(lifecycle).onEach { isValidToken ->
-            if (isValidToken) {
-                navigateToScreenClear<MainActivity>()
-            } else {
-                login()
-            }
-        }.launchIn(lifecycleScope)
-    }
 
     private fun observeUserState() {
         viewModel.userState.flowWithLifecycle(lifecycle).onEach { isSuccess ->
@@ -84,8 +69,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
 
     private fun login() {
         val deviceTag = getDeviceTag()
-        viewModel.setAndroidId(deviceTag)
+        viewModel.loginWIthDeviceTag(deviceTag)
         AmplitudeManager.setUserId(deviceTag)
+        AmplitudeManager.trackEvent("login_with_device_tag")
     }
 
     private fun isActivityRecognitionPermissionGranted(context: Context): Boolean {
@@ -101,6 +87,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
     }
 
     private fun showDialog() {
+        AmplitudeManager.trackEvent("view_permission_dialog")
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.dialog_single_button)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -132,7 +119,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>(R.layout.activity_spl
         if (requestCode == 200) {
             if (permissions.isNotEmpty() && permissions[0] == Manifest.permission.ACTIVITY_RECOGNITION) {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    viewModel.checkTokenState()
+                    login()
                 } else {
                     navigateToSettings()
                 }
