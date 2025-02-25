@@ -128,7 +128,7 @@ constructor(
     fun playMusic() {
         viewModelScope.launch {
             runCatching {
-                if (!rhythmState.value.isPlayerLoaded) throw IllegalStateException()
+                check(rhythmState.value.isPlayerLoaded)
                 musicManager.play()
             }.onFailure {
                 changeIsPlaying(PlayState.DEFAULT)
