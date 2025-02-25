@@ -142,7 +142,7 @@ class MusicManager @Inject constructor(
     }
 
     private fun playOrResumeSoundPool() {
-        if (beatStream != 0) {
+        if (beatStream != NO_STREAM) {
             soundPool.resume(beatStream)
         } else {
             beatStream = soundPool.play(beatSound, 10f, 10f, 1, -1, 1f)

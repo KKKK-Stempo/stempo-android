@@ -164,7 +164,7 @@ constructor(
                 val wavFile = getRhythmFile(url)
                 saveRhythmFile(wavFile, filePath)
             }.onSuccess {
-                updateIsPlayerLoaded(false)
+                loadMusicPlayers()
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
             }
