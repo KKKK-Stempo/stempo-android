@@ -36,10 +36,14 @@ class OnboardingViewModel @Inject constructor(
         AmplitudeManager.updateIntProperties("recommanded_bpm", bpm.toInt())
 
         viewModelScope.launch {
-            authRepository.signup(deviceTag).onSuccess {
-                userRepository.setTokens(it.accessToken, it.refreshToken)
-                userRepository.setBpm(bpm.toInt())
-            }.onFailure(Timber::e)
+            authRepository.signup(deviceTag)
+                .onSuccess {
+                    userRepository.setTokens(it.accessToken, it.refreshToken)
+                    userRepository.setBpm(bpm.toInt())
+                    AmplitudeManager.trackEvent("signup_success")
+                }.onFailure {
+                    AmplitudeManager.trackError("error_signup", it)
+                }
         }
     }
 }

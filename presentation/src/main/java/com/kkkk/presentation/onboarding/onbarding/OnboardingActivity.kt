@@ -57,6 +57,7 @@ class OnboardingActivity : BaseActivity<ActivityOnboardingBinding>(R.layout.acti
                 when (state) {
                     OnboardingState.START -> navigateTo<OnboardingStartFragment>()
                     OnboardingState.MEASURE -> {
+                        AmplitudeManager.trackEvent("start_onboarding_measure")
                         navigateTo<OnboardingMeasureFragment>()
                         startTimer()
                     }

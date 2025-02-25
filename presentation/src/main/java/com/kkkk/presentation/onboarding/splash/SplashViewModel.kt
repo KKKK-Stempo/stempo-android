@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.repository.AuthRepository
 import com.kkkk.domain.repository.UserRepository
+import com.kkkk.presentation.manager.AmplitudeManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,23 +17,14 @@ class SplashViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
 ) : ViewModel() {
-    private val _isValidToken = MutableSharedFlow<Boolean>(replay = 1)
-    val isValidToken: SharedFlow<Boolean>
-        get() = _isValidToken
 
     private val _userState = MutableSharedFlow<Boolean>()
     val userState: SharedFlow<Boolean>
         get() = _userState
 
-    fun checkTokenState() {
+    fun loginWIthDeviceTag(deviceTag: String) {
         viewModelScope.launch {
             delay(DELAY_TIME)
-            _isValidToken.emit(userRepository.getAccessToken().isNotBlank())
-        }
-    }
-
-    fun setAndroidId(deviceTag: String) {
-        viewModelScope.launch {
             authRepository.login(deviceTag)
                 .onSuccess { response ->
                     userRepository.setTokens(response.accessToken, response.refreshToken)
@@ -40,6 +32,7 @@ class SplashViewModel @Inject constructor(
                     _userState.emit(true)
                 }.onFailure { error -> // 401일 때 회원가입으로 이동 하도록 구현 필요
                     _userState.emit(false)
+                    AmplitudeManager.trackError("login_error", error)
                 }
         }
     }
