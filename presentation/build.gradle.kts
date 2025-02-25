@@ -69,6 +69,7 @@ dependencies {
         implementation(workManager)
         implementation(hiltWorkManager)
         implementation(wearable)
+        implementation(exoplayer)
     }
 
     KaptDependencies.run {

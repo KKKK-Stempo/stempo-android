@@ -62,7 +62,6 @@ import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.component.OneButtonDialog
 import com.kkkk.presentation.main.component.TwoButtonDialog
 import com.kkkk.presentation.main.component.clickableWithoutRipple
-import com.kkkk.presentation.main.rhythm.RhythmState.Companion.STRETCH_MUSIC_FILE
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.KEY_RECORD
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_END
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_RECORD
@@ -139,19 +138,7 @@ fun RhythmRoute(
     }
 
     LaunchedEffect(rhythmState.isPlayerLoaded) {
-        if (!rhythmState.isPlayerLoaded) {
-            if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
-                viewModel.setMusicPlayer(
-                    soundPoolFile = File(context.filesDir, rhythmState.filename),
-                    mediaPlayerAfd = context.resources.openRawResourceFd(rhythmState.musicByBpm)
-                )
-            } else {
-                viewModel.setMusicPlayer(
-                    soundPoolFile = File(context.filesDir, STRETCH_MUSIC_FILE),
-                    mediaPlayerAfd = context.resources.openRawResourceFd(R.raw.music_stretch)
-                )
-            }
-        }
+        if (!rhythmState.isPlayerLoaded) viewModel.loadMusicPlayers()
     }
 
     LaunchedEffect(rhythmState.isPlaying) {
@@ -195,7 +182,10 @@ fun RhythmRoute(
     }
 
     DisposableEffect(Unit) {
-        onDispose { viewModel.releaseMusicPlayers() }
+        onDispose {
+            viewModel.changeIsPlaying(PlayState.DEFAULT)
+            viewModel.pauseMusic(false)
+        }
     }
 
     RhythmScreen(
