@@ -8,6 +8,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import com.kkkk.presentation.manager.AmplitudeManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -86,6 +87,7 @@ class MusicManager @Inject constructor(
                         override fun onPlayerError(error: PlaybackException) {
                             removeListener(this)
                             continuation.resumeWithException(IllegalStateException(error))
+                            AmplitudeManager.trackEvent("error_load_exoplayer", mapOf("error" to error.message.toString()))
                         }
                     })
                     prepare()
@@ -118,6 +120,8 @@ class MusicManager @Inject constructor(
                         continuation.resume(Unit)
                     } else {
                         continuation.resumeWithException(IllegalStateException(status.toString()))
+                        AmplitudeManager.trackEvent("error_load_soundpool", mapOf("error" to status.toString()))
+
                     }
                 }
 

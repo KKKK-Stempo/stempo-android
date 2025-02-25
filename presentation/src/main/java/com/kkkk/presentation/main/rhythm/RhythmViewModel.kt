@@ -121,6 +121,7 @@ constructor(
                 changeIsLoading(false)
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackEvent("error_load_music", mapOf("error" to it.message.toString()))
             }
         }
     }
@@ -133,6 +134,7 @@ constructor(
             }.onFailure {
                 changeIsPlaying(PlayState.DEFAULT)
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackEvent("error_play_music", mapOf("error" to it.message.toString()))
             }
         }
     }
@@ -147,6 +149,7 @@ constructor(
                 }
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackEvent("error_pause_music", mapOf("error" to it.message.toString()))
             }
         }
     }
@@ -167,6 +170,7 @@ constructor(
                 loadMusicPlayers()
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackEvent("error_download_music", mapOf("error" to it.message.toString()))
             }
         }
     }
@@ -238,6 +242,7 @@ constructor(
                 AmplitudeManager.trackEvent("save_rhythm_record", mapOf("accuracy" to accuracy))
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackEvent("error_save_rhythm_record", mapOf("error" to it.message.toString()))
             }
         }
     }
