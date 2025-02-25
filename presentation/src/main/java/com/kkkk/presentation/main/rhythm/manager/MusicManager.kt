@@ -8,6 +8,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import com.kkkk.presentation.manager.AmplitudeManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -85,7 +86,8 @@ class MusicManager @Inject constructor(
 
                         override fun onPlayerError(error: PlaybackException) {
                             removeListener(this)
-                            continuation.resumeWithException(IllegalStateException(error))
+                            continuation.resumeWithException(error)
+                            AmplitudeManager.trackError("error_load_exoplayer", error)
                         }
                     })
                     prepare()
@@ -117,7 +119,9 @@ class MusicManager @Inject constructor(
                     if (sampleId == beatSound) {
                         continuation.resume(Unit)
                     } else {
-                        continuation.resumeWithException(IllegalStateException(status.toString()))
+                        val error = IllegalStateException(status.toString())
+                        continuation.resumeWithException((error))
+                        AmplitudeManager.trackError("error_load_soundpool", error)
                     }
                 }
 
@@ -132,10 +136,10 @@ class MusicManager @Inject constructor(
     /**
      * ExoPlayer와 SoundPool을 재생합니다.
      */
-    suspend fun play() {
+    suspend fun play(isMute : Boolean) {
         coroutineScope {
             listOf(
-                async { exoPlayer.play() },
+                async { if (!isMute) exoPlayer.play() },
                 async { playOrResumeSoundPool() }
             ).awaitAll()
         }
@@ -152,11 +156,11 @@ class MusicManager @Inject constructor(
     /**
      *  ExoPlayer와 SoundPool을 일시정지합니다.
      */
-    suspend fun pause() {
+    suspend fun pause(isMute: Boolean) {
         coroutineScope {
             listOf(
-                async { if (beatStream != NO_STREAM) soundPool.pause(beatStream) },
-                async { if (::exoPlayer.isInitialized) exoPlayer.pause() }
+                async { if (::exoPlayer.isInitialized && !isMute) exoPlayer.pause() },
+                async { if (beatStream != NO_STREAM) soundPool.pause(beatStream) }
             ).awaitAll()
         }
     }
@@ -165,8 +169,8 @@ class MusicManager @Inject constructor(
      * ExoPlayer와 SoundPool에 할당된 리소스를 해제합니다.
      */
     fun release() {
-        exoPlayer.release()
-        soundPool.release()
+        if (::exoPlayer.isInitialized) exoPlayer.release()
+        if (::soundPool.isInitialized) soundPool.release()
     }
 
     companion object {

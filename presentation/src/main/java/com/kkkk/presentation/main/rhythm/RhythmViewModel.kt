@@ -14,6 +14,7 @@ import com.kkkk.presentation.manager.AmplitudeManager
 import com.kkkk.presentation.manager.PhoneDataManager
 import com.kkkk.stempo.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -73,6 +74,13 @@ constructor(
         _rhythmState.update { it.copy(isLoading = isLoading) }
     }
 
+    fun changeIsMute() {
+        if (rhythmState.value.isPlaying == PlayState.DEFAULT || rhythmState.value.isPlaying == PlayState.STOP) {
+            _rhythmState.update { it.copy(isMute = !it.isMute) }
+            AmplitudeManager.trackEvent("change_rhythm_mute_state")
+        }
+    }
+
     fun showBottomSheet(show: Boolean) {
         _rhythmState.update { it.copy(isBottomSheetVisible = show, isPlaying = PlayState.DEFAULT) }
         if (show) AmplitudeManager.trackEvent("show_rhythm_bottom_sheet")
@@ -104,6 +112,7 @@ constructor(
     }
 
     fun loadMusicPlayers() {
+        changeIsLoading(true)
         viewModelScope.launch {
             runCatching {
                 val (resourceId, speed, filename) = if (rhythmState.value.selectedMode == RhythmMode.STRETCH) {
@@ -117,10 +126,13 @@ constructor(
                 }
                 musicManager.load(resourceId, speed, filename)
             }.onSuccess {
+                // 충분한 로딩 시간 부여 용도 (정밀한 동기화를 위해)
+                delay(1000)
                 updateIsPlayerLoaded(true)
                 changeIsLoading(false)
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackError("error_load_music", it)
             }
         }
     }
@@ -129,10 +141,12 @@ constructor(
         viewModelScope.launch {
             runCatching {
                 check(rhythmState.value.isPlayerLoaded)
-                musicManager.play()
+                musicManager.play(rhythmState.value.isMute)
             }.onFailure {
                 changeIsPlaying(PlayState.DEFAULT)
+                loadMusicPlayers()
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackError("error_play_music", it)
             }
         }
     }
@@ -140,13 +154,14 @@ constructor(
     fun pauseMusic(isDialogNeeded: Boolean) {
         viewModelScope.launch {
             runCatching {
-                musicManager.pause()
+                musicManager.pause(rhythmState.value.isMute)
             }.onSuccess {
                 if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
                     showSaveDialog(true)
                 }
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackError("error_pause_music", it)
             }
         }
     }
@@ -167,17 +182,19 @@ constructor(
                 loadMusicPlayers()
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackError("error_download_music", it)
             }
         }
     }
 
-    private suspend fun getRhythmUrl(): String =
-        rhythmRepository.postToGetRhythmUrl(
-            RhythmRequestModel(
-                rhythmState.value.bpm,
-                rhythmState.value.bit
-            )
-        ).getOrThrow()
+    private suspend fun getRhythmUrl(): String {
+        val (bpm, bit) = if (rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
+            rhythmState.value.bpm to rhythmState.value.bit
+        } else {
+            60 to 2
+        }
+        return rhythmRepository.postToGetRhythmUrl(RhythmRequestModel(bpm, bit)).getOrThrow()
+    }
 
     private suspend fun getRhythmFile(url: String): ByteArray =
         rhythmRepository.getRhythmWav(url).getOrThrow()
@@ -237,6 +254,7 @@ constructor(
                 AmplitudeManager.trackEvent("save_rhythm_record", mapOf("accuracy" to accuracy))
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackError("error_save_rhythm_record", it)
             }
         }
     }

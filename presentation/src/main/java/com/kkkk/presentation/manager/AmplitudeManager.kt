@@ -48,6 +48,10 @@ object AmplitudeManager {
         }
     }
 
+    fun trackError(eventName: String, error: Throwable) {
+        trackEvent(eventName, mapOf("error" to error.message.toString()))
+    }
+
     fun updateProperties(
         propertyName: String,
         values: String,
