@@ -12,6 +12,7 @@ data class RhythmState(
     val selectedMode: RhythmMode = RhythmMode.RHYTHM,
     val isPlaying: PlayState = PlayState.DEFAULT,
     val isLoading: Boolean = false,
+    val isMute: Boolean = false,
     val isBottomSheetVisible: Boolean = false,
     val isSaveDialogVisible: Boolean = false,
     val isSyncDialogVisible: Boolean = false,
