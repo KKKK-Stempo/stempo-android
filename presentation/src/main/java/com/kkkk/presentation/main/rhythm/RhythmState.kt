@@ -49,7 +49,7 @@ data class RhythmState(
         }
 
     val animationSpeed: Float
-        get() = if (selectedMode == RhythmMode.RHYTHM) bpm / FLOAT_80 else 0.75F
+        get() = if (selectedMode == RhythmMode.RHYTHM) bpm.toFloat() / 80F else 0.75F
 
     val musicByBpm: Int
         get() = when (bpm / 20) {
@@ -74,8 +74,6 @@ data class RhythmState(
         const val MAX_BPM = 120
         const val MIN_BIT = 2
         const val MAX_BIT = 8
-
-        const val FLOAT_80 = 80.00000000000000000000F
 
         const val STRETCH_MUSIC_FILE = "stempo_bpm_60_bit_2"
     }

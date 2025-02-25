@@ -14,6 +14,7 @@ import com.kkkk.presentation.manager.AmplitudeManager
 import com.kkkk.presentation.manager.PhoneDataManager
 import com.kkkk.stempo.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -117,11 +118,13 @@ constructor(
                 }
                 musicManager.load(resourceId, speed, filename)
             }.onSuccess {
+                // 충분한 로딩 시간 부여 용도 (정밀한 동기화를 위해)
+                delay(1000)
                 updateIsPlayerLoaded(true)
                 changeIsLoading(false)
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
-                AmplitudeManager.trackEvent("error_load_music", mapOf("error" to it.message.toString()))
+                AmplitudeManager.trackError("error_load_music", it)
             }
         }
     }
@@ -133,8 +136,9 @@ constructor(
                 musicManager.play()
             }.onFailure {
                 changeIsPlaying(PlayState.DEFAULT)
+                loadMusicPlayers()
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
-                AmplitudeManager.trackEvent("error_play_music", mapOf("error" to it.message.toString()))
+                AmplitudeManager.trackError("error_play_music", it)
             }
         }
     }
@@ -149,7 +153,7 @@ constructor(
                 }
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
-                AmplitudeManager.trackEvent("error_pause_music", mapOf("error" to it.message.toString()))
+                AmplitudeManager.trackError("error_pause_music", it)
             }
         }
     }
@@ -170,7 +174,7 @@ constructor(
                 loadMusicPlayers()
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
-                AmplitudeManager.trackEvent("error_download_music", mapOf("error" to it.message.toString()))
+                AmplitudeManager.trackError("error_download_music", it)
             }
         }
     }
@@ -242,7 +246,7 @@ constructor(
                 AmplitudeManager.trackEvent("save_rhythm_record", mapOf("accuracy" to accuracy))
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
-                AmplitudeManager.trackEvent("error_save_rhythm_record", mapOf("error" to it.message.toString()))
+                AmplitudeManager.trackError("error_save_rhythm_record", it)
             }
         }
     }

@@ -86,8 +86,8 @@ class MusicManager @Inject constructor(
 
                         override fun onPlayerError(error: PlaybackException) {
                             removeListener(this)
-                            continuation.resumeWithException(IllegalStateException(error))
-                            AmplitudeManager.trackEvent("error_load_exoplayer", mapOf("error" to error.message.toString()))
+                            continuation.resumeWithException(error)
+                            AmplitudeManager.trackError("error_load_exoplayer", error)
                         }
                     })
                     prepare()
@@ -119,9 +119,9 @@ class MusicManager @Inject constructor(
                     if (sampleId == beatSound) {
                         continuation.resume(Unit)
                     } else {
-                        continuation.resumeWithException(IllegalStateException(status.toString()))
-                        AmplitudeManager.trackEvent("error_load_soundpool", mapOf("error" to status.toString()))
-
+                        val error = IllegalStateException(status.toString())
+                        continuation.resumeWithException((error))
+                        AmplitudeManager.trackError("error_load_soundpool", error)
                     }
                 }
 
