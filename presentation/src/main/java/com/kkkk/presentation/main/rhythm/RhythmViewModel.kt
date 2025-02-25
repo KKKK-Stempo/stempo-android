@@ -171,13 +171,14 @@ constructor(
         }
     }
 
-    private suspend fun getRhythmUrl(): String =
-        rhythmRepository.postToGetRhythmUrl(
-            RhythmRequestModel(
-                rhythmState.value.bpm,
-                rhythmState.value.bit
-            )
-        ).getOrThrow()
+    private suspend fun getRhythmUrl(): String {
+        val (bpm, bit) = if (rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
+            rhythmState.value.bpm to rhythmState.value.bit
+        } else {
+            60 to 2
+        }
+        return rhythmRepository.postToGetRhythmUrl(RhythmRequestModel(bpm, bit)).getOrThrow()
+    }
 
     private suspend fun getRhythmFile(url: String): ByteArray =
         rhythmRepository.getRhythmWav(url).getOrThrow()

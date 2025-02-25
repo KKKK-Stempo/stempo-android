@@ -62,6 +62,7 @@ import com.kkkk.presentation.main.component.FixedText
 import com.kkkk.presentation.main.component.OneButtonDialog
 import com.kkkk.presentation.main.component.TwoButtonDialog
 import com.kkkk.presentation.main.component.clickableWithoutRipple
+import com.kkkk.presentation.main.rhythm.RhythmState.Companion.STRETCH_MUSIC_FILE
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.KEY_RECORD
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_END
 import com.kkkk.presentation.main.rhythm.RhythmViewModel.Companion.PATH_RECORD
@@ -130,8 +131,10 @@ fun RhythmRoute(
     }
 
     LaunchedEffect(rhythmState.bit, rhythmState.bpm, rhythmState.selectedMode) {
-        if (!File(context.filesDir, rhythmState.filename).exists()) {
-            viewModel.downloadNewMusicFile(File(context.filesDir, rhythmState.filename).toPath())
+        val fileName: String =
+            if (rhythmState.selectedMode == RhythmMode.RHYTHM) rhythmState.filename else STRETCH_MUSIC_FILE
+        if (!File(context.filesDir, fileName).exists()) {
+            viewModel.downloadNewMusicFile(File(context.filesDir, fileName).toPath())
         } else {
             viewModel.updateIsPlayerLoaded(false)
         }

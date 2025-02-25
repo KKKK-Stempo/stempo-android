@@ -165,8 +165,8 @@ class MusicManager @Inject constructor(
      * ExoPlayer와 SoundPool에 할당된 리소스를 해제합니다.
      */
     fun release() {
-        exoPlayer.release()
-        soundPool.release()
+        if (::exoPlayer.isInitialized) exoPlayer.release()
+        if (::soundPool.isInitialized) soundPool.release()
     }
 
     companion object {
