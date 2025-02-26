@@ -166,8 +166,8 @@ constructor(
     fun pauseMusic(isDialogNeeded: Boolean) {
         viewModelScope.launch {
             runCatching {
-                audioFocusManager.abandonAudioFocus()
                 musicManager.pause(rhythmState.value.isMute)
+                audioFocusManager.abandonAudioFocus()
             }.onSuccess {
                 if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
                     showSaveDialog(true)
