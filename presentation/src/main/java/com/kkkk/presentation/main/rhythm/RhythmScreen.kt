@@ -131,27 +131,17 @@ fun RhythmRoute(
     }
 
     LaunchedEffect(rhythmState.bit, rhythmState.bpm, rhythmState.selectedMode) {
-        if (!File(context.filesDir, rhythmState.filename).exists()) {
-            viewModel.downloadNewMusicFile(File(context.filesDir, rhythmState.filename).toPath())
+        val fileName: String =
+            if (rhythmState.selectedMode == RhythmMode.RHYTHM) rhythmState.filename else STRETCH_MUSIC_FILE
+        if (!File(context.filesDir, fileName).exists()) {
+            viewModel.downloadNewMusicFile(File(context.filesDir, fileName).toPath())
         } else {
             viewModel.updateIsPlayerLoaded(false)
         }
     }
 
     LaunchedEffect(rhythmState.isPlayerLoaded) {
-        if (!rhythmState.isPlayerLoaded) {
-            if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
-                viewModel.setMusicPlayer(
-                    soundPoolFile = File(context.filesDir, rhythmState.filename),
-                    mediaPlayerAfd = context.resources.openRawResourceFd(rhythmState.musicByBpm)
-                )
-            } else {
-                viewModel.setMusicPlayer(
-                    soundPoolFile = File(context.filesDir, STRETCH_MUSIC_FILE),
-                    mediaPlayerAfd = context.resources.openRawResourceFd(R.raw.music_stretch)
-                )
-            }
-        }
+        if (!rhythmState.isPlayerLoaded) viewModel.loadMusicPlayers()
     }
 
     LaunchedEffect(rhythmState.isPlaying) {
@@ -195,7 +185,10 @@ fun RhythmRoute(
     }
 
     DisposableEffect(Unit) {
-        onDispose { viewModel.releaseMusicPlayers() }
+        onDispose {
+            viewModel.changeIsPlaying(PlayState.DEFAULT)
+            viewModel.pauseMusic(false)
+        }
     }
 
     RhythmScreen(
@@ -206,7 +199,8 @@ fun RhythmRoute(
         onWatchBtnClick = { viewModel.showSyncDialog(true) },
         onPlayBtnClick = { viewModel.changeIsPlaying(PlayState.PLAYING) },
         onPauseBtnClick = { viewModel.changeIsPlaying(PlayState.PAUSE) },
-        onChangeBtnClick = { viewModel.showBottomSheet(true) }
+        onChangeBtnClick = { viewModel.showBottomSheet(true) },
+        onMuteBtnClick = viewModel::changeIsMute
     )
 
     if (rhythmState.isBottomSheetVisible) {
@@ -254,7 +248,8 @@ private fun RhythmScreen(
     onWatchBtnClick: () -> Unit = {},
     onPlayBtnClick: () -> Unit = {},
     onPauseBtnClick: () -> Unit = {},
-    onChangeBtnClick: () -> Unit = {}
+    onChangeBtnClick: () -> Unit = {},
+    onMuteBtnClick: () -> Unit = {},
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -271,8 +266,7 @@ private fun RhythmScreen(
             modifier = Modifier.fillMaxSize(),
         ) {
             Box(
-                modifier = Modifier.padding(top = 24.dp),
-                contentAlignment = Alignment.CenterEnd
+                modifier = Modifier.padding(top = 24.dp)
             ) {
                 RhythmModeToggle(
                     modifier = Modifier.padding(horizontal = 60.dp),
@@ -280,8 +274,17 @@ private fun RhythmScreen(
                     onToggleSelected = onToggleSelected
                 )
 
+                RhythmMusicMuteBtn(
+                    modifier = Modifier.align(Alignment.CenterStart),
+                    isMute = rhythmState.isMute,
+                    onMuteBtnClick = onMuteBtnClick
+                )
+
                 if (rhythmState.selectedMode == RhythmMode.RHYTHM) {
-                    WatchSyncBtn(onWatchBtnClick)
+                    WatchSyncBtn(
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                        onWatchBtnClick = onWatchBtnClick
+                    )
                 }
             }
 
@@ -327,6 +330,23 @@ private fun RhythmScreen(
 }
 
 @Composable
+fun RhythmMusicMuteBtn(
+    modifier: Modifier = Modifier,
+    isMute: Boolean = false,
+    onMuteBtnClick: () -> Unit = {}
+) {
+    Image(
+        imageVector = ImageVector.vectorResource(if (isMute) R.drawable.ic_music_off else R.drawable.ic_music_on),
+        contentDescription = null,
+        modifier = modifier
+            .padding(start = 8.dp)
+            .clickableWithoutRipple { onMuteBtnClick() }
+            .padding(6.dp)
+            .size(32.dp)
+    )
+}
+
+@Composable
 fun RhythmPlayBtnWithLottie(
     rhythmState: RhythmState,
     lottieComposition: LottieComposition?,
@@ -365,15 +385,17 @@ fun RhythmPlayBtnWithLottie(
 
 @Composable
 fun WatchSyncBtn(
+    modifier: Modifier = Modifier,
     onWatchBtnClick: () -> Unit = {}
 ) {
     Image(
         imageVector = ImageVector.vectorResource(R.drawable.ic_watch),
         contentDescription = null,
-        modifier = Modifier
+        modifier = modifier
             .padding(end = 8.dp)
             .clickableWithoutRipple { onWatchBtnClick() }
             .padding(6.dp)
+            .size(32.dp)
     )
 }
 

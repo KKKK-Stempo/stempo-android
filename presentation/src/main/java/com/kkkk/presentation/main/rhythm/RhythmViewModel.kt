@@ -1,36 +1,29 @@
 package com.kkkk.presentation.main.rhythm
 
-import android.content.res.AssetFileDescriptor
-import android.media.MediaPlayer
-import android.media.PlaybackParams
-import android.media.SoundPool
-import android.view.Choreographer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kkkk.domain.entity.request.RecordRequestModel
 import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
+import com.kkkk.presentation.main.rhythm.RhythmState.Companion.STRETCH_MUSIC_FILE
+import com.kkkk.presentation.main.rhythm.manager.MusicManager
 import com.kkkk.presentation.main.rhythm.model.PlayState
 import com.kkkk.presentation.main.rhythm.model.RhythmMode
 import com.kkkk.presentation.manager.AmplitudeManager
 import com.kkkk.presentation.manager.PhoneDataManager
+import com.kkkk.stempo.presentation.R
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 @HiltViewModel
 class RhythmViewModel
@@ -38,19 +31,14 @@ class RhythmViewModel
 constructor(
     private val rhythmRepository: RhythmRepository,
     private val userRepository: UserRepository,
-    private val phoneDataManager: PhoneDataManager
+    private val phoneDataManager: PhoneDataManager,
+    private val musicManager: MusicManager
 ) : ViewModel() {
     private val _rhythmState = MutableStateFlow(RhythmState())
     val rhythmState = _rhythmState.asStateFlow()
 
     private val _rhythmSideEffect = MutableSharedFlow<RhythmSideEffect>()
     val rhythmSideEffect = _rhythmSideEffect.asSharedFlow()
-
-    private var soundPool = SoundPool.Builder().setMaxStreams(1).build()
-    private var mediaPlayer = MediaPlayer()
-
-    private var beatSound: Int = 0
-    private var beatStream: Int = 0
 
     private val _oddStepCount = MutableStateFlow(0)
     private val _oddStepTime = MutableStateFlow(0L)
@@ -86,6 +74,13 @@ constructor(
         _rhythmState.update { it.copy(isLoading = isLoading) }
     }
 
+    fun changeIsMute() {
+        if (rhythmState.value.isPlaying == PlayState.DEFAULT || rhythmState.value.isPlaying == PlayState.STOP) {
+            _rhythmState.update { it.copy(isMute = !it.isMute) }
+            AmplitudeManager.trackEvent("change_rhythm_mute_state")
+        }
+    }
+
     fun showBottomSheet(show: Boolean) {
         _rhythmState.update { it.copy(isBottomSheetVisible = show, isPlaying = PlayState.DEFAULT) }
         if (show) AmplitudeManager.trackEvent("show_rhythm_bottom_sheet")
@@ -116,98 +111,64 @@ constructor(
         _rhythmState.update { it.copy(isPlayerLoaded = isPlayerLoaded) }
     }
 
-    fun setMusicPlayer(soundPoolFile: File, mediaPlayerAfd: AssetFileDescriptor) {
+    fun loadMusicPlayers() {
+        changeIsLoading(true)
         viewModelScope.launch {
             runCatching {
-                listOf(
-                    async { setSoundPoolAsync(soundPoolFile) },
-                    async { setMediaPlayerAsync(mediaPlayerAfd) }
-                ).awaitAll()
+                val (resourceId, speed, filename) = if (rhythmState.value.selectedMode == RhythmMode.STRETCH) {
+                    Triple(R.raw.music_stretch, 1.0f, STRETCH_MUSIC_FILE)
+                } else {
+                    Triple(
+                        rhythmState.value.musicByBpm,
+                        rhythmState.value.speedByBpm,
+                        rhythmState.value.filename
+                    )
+                }
+                musicManager.load(resourceId, speed, filename)
             }.onSuccess {
+                // 충분한 로딩 시간 부여 용도 (정밀한 동기화를 위해)
+                delay(1000)
                 updateIsPlayerLoaded(true)
                 changeIsLoading(false)
-                mediaPlayerAfd.close()
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackError("error_load_music", it)
             }
         }
-    }
-
-    private suspend fun setSoundPoolAsync(file: File) {
-        suspendCancellableCoroutine<Unit> { continuation ->
-            runCatching {
-                soundPool = SoundPool.Builder().setMaxStreams(1).build().apply {
-                    setOnLoadCompleteListener { _, sampleId, _ ->
-                        if (sampleId == beatSound) {
-                            continuation.resume(Unit)
-                        } else {
-                            continuation.resumeWithException(IllegalStateException())
-                        }
-                    }
-                }
-                beatStream = 0
-                beatSound = soundPool.load(file.absolutePath, 1)
-            }.onFailure { continuation.resumeWithException(it) }
-        }
-    }
-
-    private suspend fun setMediaPlayerAsync(afd: AssetFileDescriptor) {
-        suspendCancellableCoroutine<Unit> { continuation ->
-            runCatching {
-                mediaPlayer = MediaPlayer().apply {
-                    reset()
-                    setOnPreparedListener { continuation.resume(Unit) }
-                    setOnErrorListener { _, _, _ ->
-                        continuation.resumeWithException(IllegalStateException())
-                        true
-                    }
-                    setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
-                    isLooping = true
-                    setVolume(0.2f, 0.2f)
-                    if (rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
-                        playbackParams = PlaybackParams().setSpeed(rhythmState.value.speedByBpm)
-                    }
-                }
-                mediaPlayer.prepareAsync()
-            }.onFailure { continuation.resumeWithException(it) }
-        }
-    }
-
-    fun releaseMusicPlayers() {
-        soundPool.release()
-        mediaPlayer.release()
     }
 
     fun playMusic() {
-        if (rhythmState.value.isPlayerLoaded) {
-            Choreographer.getInstance().postFrameCallback {
-                mediaPlayer.start()
-                playOrResumeSoundPool()
-            }
-        } else {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            runCatching {
+                check(rhythmState.value.isPlayerLoaded)
+                musicManager.play(rhythmState.value.isMute)
+            }.onFailure {
                 changeIsPlaying(PlayState.DEFAULT)
+                loadMusicPlayers()
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackError("error_play_music", it)
             }
-        }
-    }
-
-    private fun playOrResumeSoundPool() {
-        if (beatStream != 0) {
-            soundPool.resume(beatStream)
-        } else {
-            beatStream = soundPool.play(beatSound, 10f, 10f, 1, -1, 1f)
         }
     }
 
     fun pauseMusic(isDialogNeeded: Boolean) {
-        Choreographer.getInstance().postFrameCallback {
-            if (beatStream != 0) soundPool.pause(beatStream)
-            runCatching { if (mediaPlayer.isPlaying) mediaPlayer.pause() }
+        viewModelScope.launch {
+            runCatching {
+                musicManager.pause(rhythmState.value.isMute)
+            }.onSuccess {
+                if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
+                    showSaveDialog(true)
+                }
+            }.onFailure {
+                _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackError("error_pause_music", it)
+            }
         }
-        if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
-            showSaveDialog(true)
-        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        musicManager.release()
     }
 
     fun downloadNewMusicFile(filePath: Path) {
@@ -218,20 +179,22 @@ constructor(
                 val wavFile = getRhythmFile(url)
                 saveRhythmFile(wavFile, filePath)
             }.onSuccess {
-                updateIsPlayerLoaded(false)
+                loadMusicPlayers()
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackError("error_download_music", it)
             }
         }
     }
 
-    private suspend fun getRhythmUrl(): String =
-        rhythmRepository.postToGetRhythmUrl(
-            RhythmRequestModel(
-                rhythmState.value.bpm,
-                rhythmState.value.bit
-            )
-        ).getOrThrow()
+    private suspend fun getRhythmUrl(): String {
+        val (bpm, bit) = if (rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
+            rhythmState.value.bpm to rhythmState.value.bit
+        } else {
+            60 to 2
+        }
+        return rhythmRepository.postToGetRhythmUrl(RhythmRequestModel(bpm, bit)).getOrThrow()
+    }
 
     private suspend fun getRhythmFile(url: String): ByteArray =
         rhythmRepository.getRhythmWav(url).getOrThrow()
@@ -291,6 +254,7 @@ constructor(
                 AmplitudeManager.trackEvent("save_rhythm_record", mapOf("accuracy" to accuracy))
             }.onFailure {
                 _rhythmSideEffect.emit(RhythmSideEffect.ErrorToast)
+                AmplitudeManager.trackError("error_save_rhythm_record", it)
             }
         }
     }
@@ -331,12 +295,6 @@ constructor(
             rhythmState.value.bpm
         )
         showSyncDialog(false)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        soundPool.release()
-        mediaPlayer.release()
     }
 
     companion object {
