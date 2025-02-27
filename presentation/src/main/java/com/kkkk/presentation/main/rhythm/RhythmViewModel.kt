@@ -7,6 +7,8 @@ import com.kkkk.domain.entity.request.RhythmRequestModel
 import com.kkkk.domain.repository.RhythmRepository
 import com.kkkk.domain.repository.UserRepository
 import com.kkkk.presentation.main.rhythm.RhythmState.Companion.STRETCH_MUSIC_FILE
+import com.kkkk.presentation.main.rhythm.manager.AudioFocusCallback
+import com.kkkk.presentation.main.rhythm.manager.AudioFocusManager
 import com.kkkk.presentation.main.rhythm.manager.MusicManager
 import com.kkkk.presentation.main.rhythm.model.PlayState
 import com.kkkk.presentation.main.rhythm.model.RhythmMode
@@ -32,8 +34,9 @@ constructor(
     private val rhythmRepository: RhythmRepository,
     private val userRepository: UserRepository,
     private val phoneDataManager: PhoneDataManager,
-    private val musicManager: MusicManager
-) : ViewModel() {
+    private val musicManager: MusicManager,
+    private val audioFocusManager: AudioFocusManager,
+) : ViewModel(), AudioFocusCallback {
     private val _rhythmState = MutableStateFlow(RhythmState())
     val rhythmState = _rhythmState.asStateFlow()
 
@@ -52,11 +55,19 @@ constructor(
 
     init {
         initRhythmFromDataStore()
+        audioFocusManager.audioFocusCallback = this
     }
 
     private fun initRhythmFromDataStore() {
         _rhythmState.update {
             it.copy(bit = userRepository.getBit(), bpm = userRepository.getBpm())
+        }
+    }
+
+    override fun onFocusChange(isPlayable: Boolean) {
+        when (isPlayable) {
+            true -> changeIsPlaying(PlayState.PLAYING)
+            false -> changeIsPlaying(PlayState.DEFAULT)
         }
     }
 
@@ -140,6 +151,7 @@ constructor(
     fun playMusic() {
         viewModelScope.launch {
             runCatching {
+                if (!audioFocusManager.requestAudioFocus()) return@launch
                 check(rhythmState.value.isPlayerLoaded)
                 musicManager.play(rhythmState.value.isMute)
             }.onFailure {
@@ -155,6 +167,7 @@ constructor(
         viewModelScope.launch {
             runCatching {
                 musicManager.pause(rhythmState.value.isMute)
+                audioFocusManager.abandonAudioFocus()
             }.onSuccess {
                 if (isDialogNeeded && rhythmState.value.selectedMode == RhythmMode.RHYTHM) {
                     showSaveDialog(true)
