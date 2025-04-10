@@ -67,10 +67,14 @@ class HomeViewModel @Inject constructor(
         vibrationJob?.cancel()
         vibrationJob = null
 
-        val accuracy = calculateAccuracy(
-            _oddStepTime.value / _oddStepCount.value,
-            _evenStepTime.value / _evenStepCount.value
-        )
+        val accuracy = if (_oddStepCount.value == 0 || _evenStepCount.value == 0) {
+            0.0
+        } else {
+            calculateAccuracy(
+                _oddStepTime.value / _oddStepCount.value,
+                _evenStepTime.value / _evenStepCount.value
+            )
+        }
 
         viewModelScope.launch {
             _sideEffect.emit(
